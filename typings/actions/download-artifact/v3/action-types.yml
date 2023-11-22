@@ -1,0 +1,6 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  name:
+    type: string
+  path:
+    type: string
