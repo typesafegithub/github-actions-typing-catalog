@@ -41,6 +41,8 @@ inputs:
     type: boolean
   cache-overwrite-existing:
     type: boolean
+  artifact-retention-days:
+    type: integer
 # Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   build-scan-url:
