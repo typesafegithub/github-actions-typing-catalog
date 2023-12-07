@@ -31,3 +31,13 @@ inputs:
     type: string
   bake-target:
     type: string
+  annotations:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+  sep-annotations:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
