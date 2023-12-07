@@ -22,3 +22,8 @@ inputs:
     type: boolean
   audience:
     type: string
+  auth-type:
+    type: enum
+    allowed-values:
+    - SERVICE_PRINCIPAL
+    - IDENTITY
