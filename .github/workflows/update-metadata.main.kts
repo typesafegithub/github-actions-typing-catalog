@@ -10,7 +10,7 @@ import io.github.typesafegithub.workflows.yaml.writeToFile
 workflow(
     name = "Update metadata",
     sourceFile = __FILE__.toPath(),
-    on = listOf(Push(branches = listOf("main", "generate-metadata"))),
+    on = listOf(Push(branches = listOf("main"))),
 ) {
     job(
         id = "generate",

@@ -7,7 +7,6 @@ on:
   push:
     branches:
     - 'main'
-    - 'generate-metadata'
 jobs:
   check_yaml_consistency:
     name: 'Check YAML consistency'
