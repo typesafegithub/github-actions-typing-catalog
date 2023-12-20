@@ -1,6 +1,8 @@
 #!/usr/bin/env kotlin
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:2.7.1")
+@file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r")
 
+import org.eclipse.jgit.api.Git
 import org.snakeyaml.engine.v2.api.Dump
 import org.snakeyaml.engine.v2.api.DumpSettings
 import org.snakeyaml.engine.v2.common.ScalarStyle
@@ -8,6 +10,7 @@ import java.io.File
 
 removeMetadataFiles()
 generateMetadataFiles()
+commitChanges()
 
 fun removeMetadataFiles() {
     File("typings").walk()
@@ -27,7 +30,12 @@ fun generateMetadataFiles() {
         }
 }
 
-fun File.isActionRootDir() = path.split("/").filter { it.isNotBlank() }.size == 3
+fun commitChanges() {
+    Git.open(File(".")).apply {
+        add().addFilepattern(".").call()
+        commit().setMessage("Update metadata").call()
+    }
+}
 
 fun writeToMetadataFile(actionRootDir: File, versionsWithTypings: List<String>) {
     val structureToDump = mapOf(
@@ -40,3 +48,5 @@ fun writeToMetadataFile(actionRootDir: File, versionsWithTypings: List<String>) 
     val yamlAsString = dump.dumpToString(structureToDump)
     actionRootDir.resolve("metadata.yml").writeText(yamlAsString)
 }
+
+fun File.isActionRootDir() = path.split("/").filter { it.isNotBlank() }.size == 3
