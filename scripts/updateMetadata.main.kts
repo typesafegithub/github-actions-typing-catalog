@@ -7,7 +7,7 @@ import org.snakeyaml.engine.v2.common.ScalarStyle
 import java.io.File
 
 removeMetadataFiles()
-//generateMetadataFiles()
+generateMetadataFiles()
 
 fun removeMetadataFiles() {
     File("typings").walk()
