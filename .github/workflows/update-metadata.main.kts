@@ -1,6 +1,7 @@
 #!/usr/bin/env kotlin
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.7.0")
 
+import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.domain.triggers.Push
@@ -15,6 +16,7 @@ workflow(
         id = "generate",
         runsOn = RunnerType.UbuntuLatest,
     ) {
+        uses(action = CheckoutV4())
         run(
             name = "Configure git",
             command = """

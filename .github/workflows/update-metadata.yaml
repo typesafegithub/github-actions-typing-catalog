@@ -28,13 +28,15 @@ jobs:
     - 'check_yaml_consistency'
     steps:
     - id: 'step-0'
+      uses: 'actions/checkout@v4'
+    - id: 'step-1'
       name: 'Configure git'
       run: |-
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config user.name "github-actions[bot]"
-    - id: 'step-1'
+    - id: 'step-2'
       name: 'Run generation logic'
       run: 'scripts/updateMetadata.main.kts'
-    - id: 'step-2'
+    - id: 'step-3'
       name: 'Push new commit'
       run: 'git push'
