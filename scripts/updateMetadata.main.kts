@@ -33,7 +33,10 @@ fun generateMetadataFiles() {
 fun commitChanges() {
     Git.open(File(".")).apply {
         add().addFilepattern("typings/").call()
-        commit().setMessage("Update metadata").call()
+
+        if (status().call().hasUncommittedChanges()) {
+            commit().setMessage("Update metadata").call()
+        }
     }
 }
 
