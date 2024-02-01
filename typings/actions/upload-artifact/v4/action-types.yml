@@ -27,6 +27,8 @@ inputs:
       BestSpeed: 1
       DefaultCompression: 6
       BestCompression: 9
+  overwrite:
+    type: boolean
 outputs:
   artifact-id:
     type: string
