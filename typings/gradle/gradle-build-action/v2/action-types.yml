@@ -33,6 +33,7 @@ inputs:
       - generate
       - generate-and-submit
       - download-and-submit
+      - clear
   gradle-home-cache-strict-match:
     type: string
   workflow-job-context:
