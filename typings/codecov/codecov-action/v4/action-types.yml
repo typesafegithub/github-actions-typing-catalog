@@ -1,0 +1,99 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  token:
+    type: string
+  codecov_yml_path:
+    type: string
+  commit_parent:
+    type: string
+  directory:
+    type: string
+  disable_search:
+    type: boolean
+  disable_file_fixes:
+    type: boolean
+  dry_run:
+    type: boolean
+  env_vars:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  exclude:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  fail_ci_if_error:
+    type: boolean
+  file:
+    type: string
+  files:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  flags:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  handle_no_reports_found:
+    type: boolean
+  job_code:
+    type: string
+  name:
+    type: string
+  os:
+    type: enum
+    name: OperatingSystem
+    allowed-values:
+    - linux
+    - macos
+    - windows
+  override_branch:
+    type: string
+  override_build:
+    type: string
+  override_build_url:
+    type: string
+  override_commit:
+    type: string
+  override_pr:
+    type: integer
+  plugin:
+    type: list
+    separator: ','
+    list-item:
+      type: enum
+      name: Plugin
+      allowed-valies:
+      - xcode
+      - gcov
+      - pycoverage
+  plugins:
+    type: list
+    separator: ','
+    list-item:
+      type: enum
+      name: Plugin
+      allowed-valies:
+      - xcode
+      - gcov
+      - pycoverage
+  report_code:
+    type: string
+  root_dir:
+    type: string
+  slug:
+    type: string
+  url:
+    type: string
+  use_legacy_upload_endpoint:
+    type: boolean
+  verbose:
+    type: boolean
+  version:
+    type: string
+  working-directory:
+    type: string
