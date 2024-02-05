@@ -67,7 +67,7 @@ inputs:
     list-item:
       type: enum
       name: Plugin
-      allowed-valies:
+      allowed-values:
       - xcode
       - gcov
       - pycoverage
@@ -77,7 +77,7 @@ inputs:
     list-item:
       type: enum
       name: Plugin
-      allowed-valies:
+      allowed-values:
       - xcode
       - gcov
       - pycoverage
