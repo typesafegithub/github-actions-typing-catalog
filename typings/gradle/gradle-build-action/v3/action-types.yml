@@ -1,0 +1,69 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  gradle-version:
+    type: string
+  cache-disabled:
+    type: boolean
+  cache-read-only:
+    type: boolean
+  cache-write-only:
+    type: boolean
+  gradle-home-cache-includes:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
+  gradle-home-cache-excludes:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
+  arguments:
+    type: string
+  build-root-directory:
+    type: string
+  generate-job-summary:
+    type: boolean
+  dependency-graph:
+    type: enum
+    allowed-values:
+      - disabled
+      - generate
+      - generate-and-submit
+      - download-and-submit
+      - clear
+  gradle-home-cache-strict-match:
+    type: string
+  workflow-job-context:
+    type: string
+  gradle-home-cache-cleanup:
+    type: boolean
+  cache-overwrite-existing:
+    type: boolean
+  artifact-retention-days:
+    type: integer
+  cache-encryption-key:
+    type: string
+  add-job-summary:
+    type: enum
+    allowed-values:
+    - never
+    - always
+    - on-failure
+  add-job-summary-as-pr-comment:
+    type: enum
+    allowed-values:
+    - never
+    - always
+    - on-failure
+  dependency-graph-continue-on-failure:
+    type: boolean
+  build-scan-publish:
+    type: boolean
+  build-scan-terms-of-service-url:
+    type: string
+  build-scan-terms-of-service-agree:
+    type: boolean
+outputs:
+  build-scan-url:
+    type: string
