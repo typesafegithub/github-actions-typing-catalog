@@ -63,7 +63,7 @@ inputs:
   build-scan-terms-of-service-url:
     type: string
   build-scan-terms-of-service-agree:
-    type: boolean
+    type: string
 outputs:
   build-scan-url:
     type: string
