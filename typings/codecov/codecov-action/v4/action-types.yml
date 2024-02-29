@@ -97,3 +97,7 @@ inputs:
     type: string
   working-directory:
     type: string
+  disable_safe_directory:
+    type: boolean
+  git_service:
+    type: string
