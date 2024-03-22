@@ -31,12 +31,6 @@ inputs:
     type: boolean
   append_body:
     type: boolean
-  make_latest:
-    type: enum
-    allowed-values:
-      - true
-      - false
-      - legacy
 # Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   url:
