@@ -1,6 +1,6 @@
 #!/usr/bin/env kotlin
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.11.0")
-@file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:2.7.1")
+@file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:2.7.5")
 @file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r")
 
 import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
