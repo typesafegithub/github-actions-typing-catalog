@@ -21,6 +21,8 @@ inputs:
     allowed-values:
     - x64
     - arm64
+  dry-run:
+    type: boolean
 # Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   CACHE-PATH:
