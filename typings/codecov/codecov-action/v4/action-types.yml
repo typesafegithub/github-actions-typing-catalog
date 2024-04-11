@@ -101,3 +101,9 @@ inputs:
     type: boolean
   git_service:
     type: string
+  network_filter:
+    type: string
+  network_prefix:
+    type: string
+  use_oidc:
+    type: boolean
