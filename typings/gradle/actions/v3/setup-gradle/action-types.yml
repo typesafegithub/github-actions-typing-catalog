@@ -64,6 +64,8 @@ inputs:
     type: string
   build-scan-terms-of-service-agree:
     type: string
+  validate-wrappers:
+    type: boolean
 outputs:
   build-scan-url:
     type: string
