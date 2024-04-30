@@ -1,9 +1,13 @@
 #!/usr/bin/env kotlin
+@file:Repository("https://repo1.maven.org/maven2/")
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:1.15.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:2.7.5")
 @file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r")
 
-import io.github.typesafegithub.workflows.actions.actions.CheckoutV4
+@file:Repository("https://github-workflows-kt-bindings.colman.com.br/binding/")
+@file:DependsOn("actions:checkout:v4")
+
+import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
@@ -24,7 +28,7 @@ workflow(
         id = "generate",
         runsOn = RunnerType.UbuntuLatest,
     ) {
-        uses(action = CheckoutV4())
+        uses(action = Checkout())
         run(
             name = "Configure git",
             command = """
