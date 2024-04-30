@@ -36,7 +36,7 @@ workflow(
         run(name = "Run generation logic") {
             removeMetadataFiles()
             generateMetadataFiles()
-            commitChanges()
+            commitChanges(github.sha)
         }
         run(
             name = "Push new commit",
@@ -63,12 +63,12 @@ fun generateMetadataFiles() {
         }
 }
 
-fun commitChanges() {
+fun commitChanges(sha: String) {
     Git.open(File(".")).apply {
         add().addFilepattern("typings/").call()
 
         if (status().call().hasUncommittedChanges()) {
-            commit().setMessage("Update metadata").call()
+            commit().setMessage("Update metadata for commit $sha").call()
         }
     }
 }
