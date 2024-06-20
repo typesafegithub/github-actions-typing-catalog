@@ -4,7 +4,7 @@
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:2.7.5")
 @file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:6.8.0.202311291450-r")
 
-@file:Repository("https://github-workflows-kt-bindings.colman.com.br/binding/")
+@file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
