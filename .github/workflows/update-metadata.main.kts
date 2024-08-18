@@ -12,9 +12,9 @@ import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicSte
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.domain.triggers.Push
-import org.snakeyaml.engine.v2.api.Dump
-import org.snakeyaml.engine.v2.api.DumpSettings
-import org.snakeyaml.engine.v2.common.ScalarStyle
+import it.krzeminski.snakeyaml.engine.kmp.api.Dump
+import it.krzeminski.snakeyaml.engine.kmp.api.DumpSettings
+import it.krzeminski.snakeyaml.engine.kmp.common.ScalarStyle
 import java.io.File
 import org.eclipse.jgit.api.Git
 
