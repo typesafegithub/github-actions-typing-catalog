@@ -12,7 +12,6 @@ import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicSte
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.domain.triggers.Push
-import io.github.typesafegithub.workflows.yaml.writeToFile
 import org.snakeyaml.engine.v2.api.Dump
 import org.snakeyaml.engine.v2.api.DumpSettings
 import org.snakeyaml.engine.v2.common.ScalarStyle
@@ -21,7 +20,7 @@ import org.eclipse.jgit.api.Git
 
 workflow(
     name = "Update metadata",
-    sourceFile = __FILE__.toPath(),
+    sourceFile = __FILE__,
     on = listOf(Push(branches = listOf("main"))),
 ) {
     job(
@@ -47,7 +46,7 @@ workflow(
             command = "git push",
         )
     }
-}.writeToFile()
+}
 
 fun removeMetadataFiles() {
     File("typings").walk()
