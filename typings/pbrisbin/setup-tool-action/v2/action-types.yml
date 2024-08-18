@@ -1,0 +1,133 @@
+# See https://github.com/typesafegithub/github-actions-typing/
+inputs:
+  name:
+    type: string
+  
+  version:
+    type: string
+  
+  url:
+    type: string
+  
+  subdir:
+    type: string
+  
+  os:
+    type: string
+  
+  arch:
+    type: string
+  
+  ext:
+    type: string
+  
+  no-extract:
+    type: boolean
+  
+  url-darwin:
+    type: string
+  
+  url-linux:
+    type: string
+  
+  url-win32:
+    type: string
+  
+  url-x64:
+    type: string
+  
+  url-darwin-x64:
+    type: string
+  
+  url-linux-x64:
+    type: string
+  
+  url-win32-x64:
+    type: string
+  
+  subdir-darwin:
+    type: string
+  
+  subdir-linux:
+    type: string
+  
+  subdir-win32:
+    type: string
+  
+  subdir-x64:
+    type: string
+  
+  subdir-darwin-x64:
+    type: string
+  
+  subdir-linux-x64:
+    type: string
+  
+  subdir-win32-x64:
+    type: string
+  
+  os-darwin:
+    type: string
+  
+  os-linux:
+    type: string
+  
+  os-win32:
+    type: string
+  
+  os-x64:
+    type: string
+  
+  os-darwin-x64:
+    type: string
+  
+  os-linux-x64:
+    type: string
+  
+  os-win32-x64:
+    type: string
+  
+  arch-darwin:
+    type: string
+  
+  arch-linux:
+    type: string
+  
+  arch-win32:
+    type: string
+  
+  arch-x64:
+    type: string
+  
+  arch-darwin-x64:
+    type: string
+  
+  arch-linux-x64:
+    type: string
+  
+  arch-win32-x64:
+    type: string
+  
+  ext-darwin:
+    type: string
+  
+  ext-linux:
+    type: string
+  
+  ext-win32:
+    type: string
+  
+  ext-x64:
+    type: string
+  
+  ext-darwin-x64:
+    type: string
+  
+  ext-linux-x64:
+    type: string
+  
+  ext-win32-x64:
+    type: string
+  
+  github-token:
+    type: string
