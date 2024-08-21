@@ -9,3 +9,7 @@ inputs:
     separator: ','
     list-item:
       type: string
+
+outputs:
+  failed-wrapper:
+    type: string
