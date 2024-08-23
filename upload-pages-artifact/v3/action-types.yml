@@ -1,0 +1,10 @@
+inputs:
+  name:
+    type: string
+  path:
+    type: string
+  retention-days:
+    type: integer
+outputs:
+  artifact_id:
+    type: string
