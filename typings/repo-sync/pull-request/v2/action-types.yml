@@ -35,11 +35,12 @@ inputs:
     type: string
   debug:
     type: boolean
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   pr_url:
     type: string
   pr_number:
-    type: string
+    type: integer
+  pr_created:
+    type: boolean
   has_changed_files:
-    type: string
+    type: boolean
