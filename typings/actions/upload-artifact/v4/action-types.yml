@@ -31,4 +31,8 @@ inputs:
     type: boolean
 outputs:
   artifact-id:
+    type: integer
+  artifact-url:
+    type: string
+  artifact-digest:
     type: string

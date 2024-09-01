@@ -44,7 +44,10 @@ inputs:
     type: boolean
   artifact-retention-days:
     type: integer
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   build-scan-url:
+    type: string
+  dependency-graph-file:
+    type: string
+  gradle-version:
     type: string

@@ -19,7 +19,6 @@ inputs:
     allowed-values:
       - default
       - none
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   ruby-prefix:
     type: string

@@ -13,3 +13,15 @@ inputs:
     separator: "\n"
     list-item:
       type: string
+
+outputs:
+  new-labels:
+    type: list
+    separator: ","
+    list-item:
+      type: string
+  all-labels:
+    type: list
+    separator: ","
+    list-item:
+      type: string

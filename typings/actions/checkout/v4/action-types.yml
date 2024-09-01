@@ -38,3 +38,9 @@ inputs:
     type: boolean
   fetch-tags:
     type: boolean
+
+outputs:
+  ref:
+    type: string
+  commit:
+    type: string
