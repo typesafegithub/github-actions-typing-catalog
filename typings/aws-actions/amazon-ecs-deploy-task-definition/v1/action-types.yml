@@ -22,7 +22,6 @@ inputs:
     type: boolean
   desired-count:
     type: integer
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   task-definition-arn:
     type: string

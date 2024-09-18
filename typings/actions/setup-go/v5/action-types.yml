@@ -17,9 +17,8 @@ inputs:
     allowed-values:
     - x86
     - x64
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   go-version:
     type: string
   cache-hit:
-    type: string
+    type: boolean

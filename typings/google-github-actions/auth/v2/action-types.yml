@@ -49,7 +49,6 @@ inputs:
     type: string
   auth_token:
     type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   project_id:
     type: string

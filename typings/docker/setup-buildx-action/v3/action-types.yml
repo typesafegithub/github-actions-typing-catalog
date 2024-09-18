@@ -32,14 +32,16 @@ inputs:
     type: boolean
   cache-binary:
     type: boolean
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   name:
     type: string
   driver:
     type: string
   platforms:
-    type: string
+    type: list
+    separator: ","
+    list-item:
+      type: string
   nodes:
     type: string
   endpoint:
@@ -47,4 +49,7 @@ outputs:
   status:
     type: string
   flags:
-    type: string
+    type: list
+    separator: " "
+    list-item:
+      type: string
