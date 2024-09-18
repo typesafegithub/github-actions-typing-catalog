@@ -29,15 +29,20 @@ jobs:
     - id: 'step-0'
       uses: 'actions/checkout@v4'
     - id: 'step-1'
+      uses: 'actions/setup-java@v4'
+      with:
+        java-version: '17'
+        distribution: 'zulu'
+    - id: 'step-2'
       name: 'Configure git'
       run: |-
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config user.name "github-actions[bot]"
-    - id: 'step-2'
+    - id: 'step-3'
       name: 'Run generation logic'
       env:
         GHWKT_GITHUB_CONTEXT_JSON: '${{ toJSON(github) }}'
-      run: 'GHWKT_RUN_STEP=''generate:step-2'' ''.github/workflows/update-metadata.main.kts'''
-    - id: 'step-3'
+      run: 'GHWKT_RUN_STEP=''generate:step-3'' ''.github/workflows/update-metadata.main.kts'''
+    - id: 'step-4'
       name: 'Push new commit'
       run: 'git push'

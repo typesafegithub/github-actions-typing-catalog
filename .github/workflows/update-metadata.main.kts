@@ -6,8 +6,10 @@
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
+@file:DependsOn("actions:setup-java:v4")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
+import io.github.typesafegithub.workflows.actions.actions.SetupJava
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
@@ -28,6 +30,10 @@ workflow(
         runsOn = RunnerType.UbuntuLatest,
     ) {
         uses(action = Checkout())
+        uses(action = SetupJava(
+            distribution = SetupJava.Distribution.Zulu,
+            javaVersion = "17",
+        ))
         run(
             name = "Configure git",
             command = """
