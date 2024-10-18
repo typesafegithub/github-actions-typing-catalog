@@ -18,10 +18,9 @@ inputs:
     type: string
   repo:
     type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   id:
-    type: string
+    type: integer
   html_url:
     type: string
   upload_url:

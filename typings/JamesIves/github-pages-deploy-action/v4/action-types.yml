@@ -35,7 +35,10 @@ inputs:
     type: boolean
   silent:
     type: boolean
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   deployment-status:
-    type: string
+    type: enum
+    allowed-values:
+      - success
+      - failed
+      - skipped

@@ -48,3 +48,5 @@ inputs:
 outputs:
   codeql-path:
     type: string
+  codeql-version:
+    type: string

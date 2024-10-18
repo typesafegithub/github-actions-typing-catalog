@@ -26,7 +26,6 @@ inputs:
     separator: ','
     list-item:
       type: integer
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   result:
     type: string

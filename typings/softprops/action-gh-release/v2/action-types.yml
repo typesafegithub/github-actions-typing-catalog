@@ -34,14 +34,15 @@ inputs:
   make_latest:
     type: enum
     allowed-values:
-    - true
-    - false
+    - 'true'
+    - 'false'
     - legacy
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   url:
     type: string
   id:
-    type: string
+    type: integer
   upload_url:
+    type: string
+  assets:
     type: string
