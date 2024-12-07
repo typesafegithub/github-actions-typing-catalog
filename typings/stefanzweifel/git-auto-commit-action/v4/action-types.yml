@@ -34,9 +34,8 @@ inputs:
     type: boolean
   create_branch:
     type: boolean
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   changes_detected:
-    type: string
+    type: boolean
   commit_hash:
     type: string

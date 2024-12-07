@@ -69,3 +69,7 @@ inputs:
 outputs:
   build-scan-url:
     type: string
+  dependency-graph-file:
+    type: string
+  gradle-version:
+    type: string

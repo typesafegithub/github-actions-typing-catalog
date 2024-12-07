@@ -105,7 +105,6 @@ inputs:
     type: string
   github-token:
     type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   imageid:
     type: string

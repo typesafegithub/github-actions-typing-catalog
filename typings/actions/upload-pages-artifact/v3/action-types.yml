@@ -7,4 +7,4 @@ inputs:
     type: integer
 outputs:
   artifact_id:
-    type: string
+    type: integer

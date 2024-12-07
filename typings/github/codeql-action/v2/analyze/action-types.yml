@@ -46,5 +46,7 @@ inputs:
 outputs:
   db-locations:
     type: string
+  sarif-output:
+    type: string
   sarif-id:
     type: string

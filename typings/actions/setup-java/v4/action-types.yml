@@ -2,7 +2,7 @@
 inputs:
   java-version:
     type: string
-  distribution:
+  distribution: &distribution
     type: enum
     allowed-values:
     - adopt
@@ -57,13 +57,11 @@ inputs:
     type: string
   cache-dependency-path:
     type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
-  distribution:
-    type: string
+  distribution: *distribution
   version:
     type: string
   path:
     type: string
   cache-hit:
-    type: string
+    type: boolean
