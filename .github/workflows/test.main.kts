@@ -118,6 +118,7 @@ private fun checkInputAndOutputNames() {
 }
 
 private fun loadTypings(path: String): Map<String, Any> =
+    @Suppress("UNCHECKED_CAST")
     Load().loadOne(File(path).readText()) as Map<String, Any>
 
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
