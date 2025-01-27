@@ -113,7 +113,7 @@ private fun checkInputAndOutputNames() {
 
     for (action in actions) {
         println()
-        println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}:")
+        println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}")
         val typings = loadTypings(path = action.pathToTypings)
         val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
         val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
