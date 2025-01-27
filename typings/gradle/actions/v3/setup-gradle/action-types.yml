@@ -83,7 +83,7 @@ inputs:
   develocity-capture-file-fingerprints:
     type: boolean
   develocity-enforce-url:
-    type: string
+    type: boolean
   develocity-plugin-version:
     type: string
   develocity-ccud-plugin-version:
