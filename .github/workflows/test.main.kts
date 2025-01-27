@@ -6,8 +6,8 @@
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
+@file:Suppress("UNCHECKED_CAST")
 
-import com.sun.org.apache.bcel.internal.util.Args.require
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -113,9 +113,7 @@ private fun checkInputAndOutputNames() {
     for (action in actions) {
         println("➡\uFE0F For ${action.owner}/${listOfNotNull(action.name, action.path).joinToString("/")}@${action.version}:")
         val typings = loadTypings(path = action.pathToTypings)
-        @Suppress("UNCHECKED_CAST")
         val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
-        @Suppress("UNCHECKED_CAST")
         val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
         val manifest = fetchManifest(action)
 
@@ -125,9 +123,7 @@ private fun checkInputAndOutputNames() {
             continue
         }
 
-        @Suppress("UNCHECKED_CAST")
         val manifestInputs = if ("inputs" in manifest) (manifest["inputs"] as Map<String, Any>).keys else emptySet()
-        @Suppress("UNCHECKED_CAST")
         val manifestOutputs = if ("outputs" in manifest) (manifest["outputs"] as Map<String, Any>).keys else emptySet()
 
         if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
@@ -151,13 +147,11 @@ private fun checkInputAndOutputNames() {
 }
 
 private fun loadTypings(path: String): Map<String, Any> =
-    @Suppress("UNCHECKED_CAST")
     Load().loadOne(File(path).readText()) as Map<String, Any>
 
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
     val list = listOf(action.actionYmlUrl, action.actionYamlUrl)
 
-    @Suppress("UNCHECKED_CAST")
     return list
         .firstNotNullOfOrNull { url ->
             try {
