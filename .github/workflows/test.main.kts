@@ -7,6 +7,7 @@
 @file:DependsOn("actions:checkout:v4")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
 
+import com.sun.org.apache.bcel.internal.util.Args.require
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -18,6 +19,7 @@ import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.nio.file.Files
+import java.util.Collections.emptySet
 import kotlin.io.path.Path
 import kotlin.io.path.name
 
@@ -111,9 +113,35 @@ private fun checkInputAndOutputNames() {
     for (action in actions) {
         println("➡\uFE0F For ${action.owner}/${listOfNotNull(action.name, action.path).joinToString("/")}@${action.version}:")
         val typings = loadTypings(path = action.pathToTypings)
-        println("Typings: $typings")
+        val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
+        val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
         val manifest = fetchManifest(action)
-        println("Manifest: $manifest")
+
+        if (manifest == null) {
+            println("\uD83D\uDD34 No manifest found!")
+            shouldFail = true
+            continue
+        }
+
+        val manifestInputs = if ("inputs" in manifest) (manifest["inputs"] as Map<String, Any>).keys else emptySet()
+        val manifestOutputs = if ("outputs" in manifest) (manifest["outputs"] as Map<String, Any>).keys else emptySet()
+
+        if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
+            println("\uD83D\uDD34 Something is wrong with the typings!")
+            println("Typings inputs: $typingsInputs")
+            println("Manifest inputs: $manifestInputs")
+            println("Extra inputs in typings: ${typingsInputs - manifestInputs}")
+            println("Extra inputs in manifest: ${manifestInputs - typingsInputs}")
+            println("Typings outputs: $typingsOutputs")
+            println("Manifest outputs: $manifestOutputs")
+            println("Extra outputs in typings: ${typingsOutputs - manifestOutputs}")
+            println("Extra outputs in manifest: ${manifestOutputs - typingsOutputs}")
+            shouldFail = true
+        }
+    }
+
+    require(shouldFail == false) {
+        "This is the end of processing, and something doesn't match - see the logs!"
     }
 }
 
@@ -145,5 +173,3 @@ private val ActionCoords.actionYamlUrl: String get() = "https://raw.githubuserco
  * action lives, starting with a slash.
  */
 private val ActionCoords.subName: String get() = path?.let { "/$path" } ?: ""
-
-checkInputAndOutputNames()
