@@ -4,12 +4,17 @@
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
+@file:OptIn(ExperimentalKotlinLogicStep::class)
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
+import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.workflow
+import java.nio.file.Files
+import kotlin.io.path.Path
+import kotlin.io.path.name
 
 workflow(
     name = "Test",
@@ -36,6 +41,18 @@ workflow(
         )
     }
 
+    job(
+        id = "check_inputs_and_outputs",
+        name = "Check inputs and outputs against action manifests",
+        runsOn = UbuntuLatest,
+    ) {
+        uses(action = Checkout())
+        run(name = "Check for all actions") {
+            Files.walk(Path("."))
+                .filter { it.name in setOf("action-types.yml", "action-types.yaml") }
+                .forEach { println("TODO: check for $it") }
+        }
+    }
 
     job(
         id = "workflows_consistency_check",
