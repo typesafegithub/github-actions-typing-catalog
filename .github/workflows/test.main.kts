@@ -1,6 +1,7 @@
 #!/usr/bin/env kotlin
 @file:Repository("https://repo.maven.apache.org/maven2/")
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.2.0")
+@file:DependsOn("it.krzeminski:snakeyaml-engine-kmp:3.1.0")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
@@ -12,6 +13,8 @@ import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.workflow
+import it.krzeminski.snakeyaml.engine.kmp.api.Load
+import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.io.path.name
@@ -48,9 +51,7 @@ workflow(
     ) {
         uses(action = Checkout())
         run(name = "Check for all actions") {
-            Files.walk(Path("."))
-                .filter { it.name in setOf("action-types.yml", "action-types.yaml") }
-                .forEach { println("TODO: check for $it") }
+            checkInputAndOutputNames()
         }
     }
 
@@ -78,4 +79,33 @@ workflow(
             command = "git diff --exit-code .",
         )
     }
+}
+
+private data class ActionCoords(
+    val owner: String,
+    val name: String,
+    val version: String,
+    val path: String? = null,
+    val pathToTypings: String,
+)
+
+private fun checkInputAndOutputNames() {
+    Files.walk(Path("typings"))
+        .filter { it.name in setOf("action-types.yml", "action-types.yaml") }
+        .map {
+            val (_, owner, name, version, pathAndYaml) = it.toString().split("/", limit = 5)
+            val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
+            ActionCoords(
+                owner = owner,
+                name = name,
+                version = version,
+                path = path,
+                pathToTypings = it.toString(),
+            )
+        }
+        .forEach {
+            println("➡\uFE0F For ${it.owner}/${listOfNotNull(it.name, it.path).joinToString("/")}@${it.version}:")
+            val typings = Load().loadOne(File(it.pathToTypings).readText())
+            println("Typings: $typings")
+        }
 }
