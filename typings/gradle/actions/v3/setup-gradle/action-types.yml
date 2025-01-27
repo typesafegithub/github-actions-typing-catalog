@@ -66,6 +66,37 @@ inputs:
     type: string
   validate-wrappers:
     type: boolean
+  build-scan-terms-of-use-url:
+    type: string
+  build-scan-terms-of-use-agree:
+    type: string
+  develocity-access-key:
+    type: string
+  develocity-token-expiry:
+    type: integer
+  develocity-injection-enabled:
+    type: boolean
+  develocity-url:
+    type: string
+  develocity-allow-untrusted-server:
+    type: boolean
+  develocity-capture-file-fingerprints:
+    type: boolean
+  develocity-enforce-url:
+    type: string
+  develocity-plugin-version:
+    type: string
+  develocity-ccud-plugin-version:
+    type: string
+  gradle-plugin-repository-url:
+    type: string
+  gradle-plugin-repository-username:
+    type: string
+  gradle-plugin-repository-password:
+    type: string
+  github-token:
+    type: string
+
 outputs:
   build-scan-url:
     type: string
