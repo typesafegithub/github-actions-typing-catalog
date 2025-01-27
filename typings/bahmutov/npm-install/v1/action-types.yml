@@ -8,3 +8,5 @@ inputs:
     type: boolean
   install-command:
     type: string
+  cache-key-prefix:
+    type: string

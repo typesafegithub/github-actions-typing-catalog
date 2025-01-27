@@ -14,6 +14,9 @@ inputs:
     allowed-values:
     - private
     - public
+  http-proxy:
+    type: string
+
 outputs:
   registry:
     type: string
