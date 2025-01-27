@@ -21,6 +21,9 @@ inputs:
     type: string
   cache:
     type: boolean
+  cache-dependency-path:
+    type: string
+
 outputs:
   cache-hit:
     type: boolean

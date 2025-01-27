@@ -38,6 +38,10 @@ inputs:
     type: boolean
   fetch-tags:
     type: boolean
+  ssh-user:
+    type: string
+  filter:
+    type: string
 
 outputs:
   ref:

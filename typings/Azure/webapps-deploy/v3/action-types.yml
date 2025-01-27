@@ -17,6 +17,22 @@ inputs:
     type: string
   startup-command:
     type: string
+  resource-group-name:
+    type: string
+  type:
+    type: enum
+    allowed-values:
+      - JAR
+      - WAR
+      - EAR
+      - ZIP
+      - Static
+  target-path:
+    type: string
+  clean:
+    type: boolean
+  restart:
+    type: boolean
 outputs:
   webapp-url:
     type: string

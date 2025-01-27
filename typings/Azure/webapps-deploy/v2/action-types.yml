@@ -17,6 +17,9 @@ inputs:
     type: string
   startup-command:
     type: string
+  resource-group-name:
+    type: string
+
 outputs:
   webapp-url:
     type: string
