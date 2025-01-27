@@ -45,3 +45,7 @@ inputs:
       - pkg
       - pubsub-emulator
       - skaffold
+
+outputs:
+  version:
+    type: string

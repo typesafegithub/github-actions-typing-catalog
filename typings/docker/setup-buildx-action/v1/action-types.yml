@@ -21,7 +21,6 @@ inputs:
     type: string
   config-inline:
     type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   name:
     type: string
@@ -32,6 +31,12 @@ outputs:
   status:
     type: string
   flags:
-    type: string
+    type: list
+    separator: " "
+    list-item:
+      type: string
   platforms:
-    type: string
+    type: list
+    separator: ","
+    list-item:
+      type: string

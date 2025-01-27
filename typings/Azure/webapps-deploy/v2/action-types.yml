@@ -17,7 +17,6 @@ inputs:
     type: string
   startup-command:
     type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   webapp-url:
     type: string

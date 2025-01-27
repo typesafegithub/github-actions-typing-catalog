@@ -44,17 +44,16 @@ inputs:
     type: string
   github_token:
     type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   committed:
-    type: string
+    type: boolean
   commit_long_sha:
     type: string
   commit_sha:
     type: string
   pushed:
-    type: string
+    type: boolean
   tagged:
-    type: string
+    type: boolean
   tag_pushed:
-    type: string
+    type: boolean

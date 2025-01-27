@@ -55,13 +55,16 @@ inputs:
     type: string
   draft:
     type: boolean
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   pull-request-number:
-    type: string
+    type: integer
   pull-request-url:
     type: string
   pull-request-operation:
-    type: string
+    type: enum
+    allowed-values:
+      - created
+      - updated
+      - closed
   pull-request-head-sha:
     type: string

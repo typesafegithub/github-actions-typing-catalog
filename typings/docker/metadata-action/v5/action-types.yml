@@ -41,3 +41,23 @@ inputs:
     separator: '\n'
     list-item:
       type: string
+
+outputs:
+  version:
+    type: string
+  tags:
+    type: string
+  labels:
+    type: string
+  annotations:
+    type: string
+  json:
+    type: string
+  bake-file-tags:
+    type: string
+  bake-file-labels:
+    type: string
+  bake-file-annotations:
+    type: string
+  bake-file:
+    type: string

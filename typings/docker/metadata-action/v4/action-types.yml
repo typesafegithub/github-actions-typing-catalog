@@ -31,3 +31,15 @@ inputs:
     type: string
   bake-target:
     type: string
+
+outputs:
+  version:
+    type: string
+  tags:
+    type: string
+  labels:
+    type: string
+  bake-file:
+    type: string
+  json:
+    type: string

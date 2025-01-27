@@ -20,7 +20,6 @@ inputs:
     separator: ','
     list-item:
       type: string
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   issue-number:
-    type: string
+    type: integer

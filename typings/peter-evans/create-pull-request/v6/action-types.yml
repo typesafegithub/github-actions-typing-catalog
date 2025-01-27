@@ -65,6 +65,12 @@ outputs:
   pull-request-url:
     type: integer
   pull-request-operation:
-    type: string
+    type: enum
+    allowed-values:
+      - created
+      - updated
+      - closed
   pull-request-head-sha:
+    type: string
+  pull-request-branch:
     type: string

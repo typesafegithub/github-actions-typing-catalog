@@ -23,7 +23,6 @@ inputs:
     - arm64
   dry-run:
     type: boolean
-# Please check those outputs's description and set a proper type. 'string' is just set by default
 outputs:
   CACHE-PATH:
     type: string
@@ -34,4 +33,8 @@ outputs:
   VERSION:
     type: string
   ARCHITECTURE:
+    type: string
+  PUB-CACHE-KEY:
+    type: string
+  PUB-CACHE-PATH:
     type: string
