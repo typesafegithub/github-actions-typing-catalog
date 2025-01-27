@@ -132,6 +132,36 @@ inputs:
   github-token:
     type: string
 
+  url-darwin-arm64:
+    type: string
+
+  subdir-arm64:
+    type: string
+
+  subdir-darwin-arm64:
+    type: string
+
+  os-arm64:
+    type: string
+
+  os-darwin-arm64:
+    type: string
+
+  arch-arm64:
+    type: string
+
+  arch-darwin-arm64:
+    type: string
+
+  ext-arm64:
+    type: string
+
+  ext-darwin-arm64:
+    type string:
+
+  github-token-for-latest:
+    type: string
+
 outputs:
   directory:
     type: string
