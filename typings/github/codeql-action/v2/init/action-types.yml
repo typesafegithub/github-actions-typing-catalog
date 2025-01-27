@@ -45,6 +45,17 @@ inputs:
     type: string
   trap-caching:
     type: boolean
+  build-mode:
+    type: enum
+    allowed-values:
+      - none
+      - autobuild
+      - manual
+  config:
+    type: string
+  dependency-caching:
+    type: boolean
+
 outputs:
   codeql-path:
     type: string

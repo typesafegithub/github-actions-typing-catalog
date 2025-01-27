@@ -57,6 +57,9 @@ inputs:
     type: string
   cache-dependency-path:
     type: string
+  java-version-file:
+    type: string
+
 outputs:
   distribution: *distribution
   version:

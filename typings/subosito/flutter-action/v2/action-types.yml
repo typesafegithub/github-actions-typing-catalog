@@ -23,6 +23,13 @@ inputs:
     - arm64
   dry-run:
     type: boolean
+  flutter-version-file:
+    type: string
+  pub-cache-key:
+    type: string
+  pub-cache-path:
+    type: string
+
 outputs:
   CACHE-PATH:
     type: string

@@ -14,3 +14,9 @@ inputs:
     type: string
   commit-message:
     type: string
+  skipCommit:
+    type: boolean
+  commitMessage:
+    type: string
+  githubToken:
+    type: string

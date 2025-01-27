@@ -55,6 +55,9 @@ inputs:
     type: string
   mvn-toolchain-vendor:
     type: string
+  java-version-file:
+    type: string
+
 outputs:
   distribution: *distribution
   version:
