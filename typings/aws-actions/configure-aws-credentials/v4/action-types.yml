@@ -41,6 +41,11 @@ inputs:
     type: integer
   special-characters-workaround:
     type: boolean
+  unset-current-credentials:
+    type: boolean
+  disable-retry:
+    type: boolean
+
 outputs:
   aws-account-id:
     type: string

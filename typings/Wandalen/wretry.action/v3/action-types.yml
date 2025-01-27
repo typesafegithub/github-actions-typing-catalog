@@ -30,6 +30,9 @@ inputs:
   github_token:
     type: string
 
+  pre_retry_command:
+    type: string
+
 outputs:
   outputs:
     type: string

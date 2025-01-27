@@ -19,3 +19,5 @@ inputs:
     name: RetentionPeriod
     named-values:
       Default: 0
+  include-hidden-files:
+    type: boolean

@@ -32,6 +32,11 @@ inputs:
     type: boolean
   cache-binary:
     type: boolean
+  buildkitd-config:
+    type: string
+  buildkitd-config-inline:
+    type: string
+
 outputs:
   name:
     type: string

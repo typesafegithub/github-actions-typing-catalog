@@ -37,6 +37,9 @@ inputs:
     - "true"
     - "false"
     - legacy
+  preserve_order:
+    type: boolean
+
 outputs:
   url:
     type: string

@@ -88,3 +88,22 @@ inputs:
     type: string
   swift:
     type: boolean
+  full_report:
+    type: string
+  gcov_executable:
+    type: string
+  network_filter:
+    type: string
+  network_prefix:
+    type: string
+  swift_project:
+    type: string
+  upstream_proxy:
+    type: string
+  working-directory:
+    type: string
+  xtra_args:
+    type: list
+    separator: ' '
+    list-item:
+      type: string

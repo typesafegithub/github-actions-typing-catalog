@@ -24,6 +24,9 @@ inputs:
     type: string
   tag_format:
     type: string
+  repository_url:
+    type: string
+
 outputs:
   new_release_published:
     type: boolean

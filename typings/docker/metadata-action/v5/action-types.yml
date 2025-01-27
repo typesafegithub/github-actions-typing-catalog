@@ -41,6 +41,8 @@ inputs:
     separator: '\n'
     list-item:
       type: string
+  github-token:
+    type: string
 
 outputs:
   version:

@@ -35,6 +35,9 @@ inputs:
     type: string
   debug:
     type: boolean
+  destination_repository:
+    type: string
+
 outputs:
   pr_url:
     type: string

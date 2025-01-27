@@ -29,6 +29,8 @@ inputs:
       BestCompression: 9
   overwrite:
     type: boolean
+  include-hidden-files:
+    type: boolean
 outputs:
   artifact-id:
     type: integer

@@ -47,8 +47,9 @@ inputs:
     type: boolean
   universe:
     type: string
-  auth_token:
+  request_reason:
     type: string
+
 outputs:
   project_id:
     type: string

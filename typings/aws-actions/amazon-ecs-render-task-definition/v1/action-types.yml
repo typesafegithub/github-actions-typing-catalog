@@ -28,6 +28,20 @@ inputs:
     separator: "\n"
     list-item:
       type: string
+  task-definition-arn:
+    type: string
+  task-definition-family:
+    type: string
+  task-definition-revision:
+    type: string
+  command:
+    type: string
+  secrets:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
+
 outputs:
   task-definition:
     type: string

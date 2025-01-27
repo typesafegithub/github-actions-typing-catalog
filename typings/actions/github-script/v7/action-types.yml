@@ -26,6 +26,9 @@ inputs:
     separator: ','
     list-item:
       type: integer
+  base-url:
+    type: string
+
 outputs:
   result:
     type: string

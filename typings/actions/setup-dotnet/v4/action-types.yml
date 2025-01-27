@@ -21,6 +21,12 @@ inputs:
     type: string
   cache:
     type: boolean
+  cache-dependency-path:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
+
 outputs:
   cache-hit:
     type: boolean

@@ -44,6 +44,9 @@ inputs:
     type: boolean
   artifact-retention-days:
     type: integer
+  github-token:
+    type: string
+
 outputs:
   build-scan-url:
     type: string

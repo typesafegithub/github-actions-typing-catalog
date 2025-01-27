@@ -94,6 +94,9 @@ inputs:
     type: string
   gradle-plugin-repository-password:
     type: string
+  github-token:
+    type: string
+
 outputs:
   build-scan-url:
     type: string
