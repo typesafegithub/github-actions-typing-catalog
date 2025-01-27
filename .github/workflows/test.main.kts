@@ -112,7 +112,8 @@ private fun checkInputAndOutputNames() {
     var shouldFail = false
 
     for (action in actions) {
-        println("➡\uFE0F For ${action.owner}/${listOfNotNull(action.name, action.path).joinToString("/")}@${action.version}:")
+        println()
+        println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}")
         val typings = loadTypings(path = action.pathToTypings)
         val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
         val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
@@ -129,14 +130,18 @@ private fun checkInputAndOutputNames() {
 
         if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
             println("\uD83D\uDD34 Something is wrong with the typings!")
-            println("Typings inputs: $typingsInputs")
-            println("Manifest inputs: $manifestInputs")
-            println("Extra inputs in typings: ${typingsInputs - manifestInputs}")
-            println("Extra inputs in manifest: ${manifestInputs - typingsInputs}")
-            println("Typings outputs: $typingsOutputs")
-            println("Manifest outputs: $manifestOutputs")
-            println("Extra outputs in typings: ${typingsOutputs - manifestOutputs}")
-            println("Extra outputs in manifest: ${manifestOutputs - typingsOutputs}")
+            (typingsInputs - manifestInputs).let {
+                if (it.isNotEmpty()) { println("Extra inputs in typings: $it") }
+            }
+            (manifestInputs - typingsInputs).let {
+                if (it.isNotEmpty()) { println("Extra inputs in manifest: $it") }
+            }
+            (typingsOutputs - manifestOutputs).let {
+                if (it.isNotEmpty()) { println("Extra outputs in typings: $it") }
+            }
+            (manifestOutputs - typingsOutputs).let {
+                if (it.isNotEmpty()) { println("Extra outputs in manifest: $it") }
+            }
             shouldFail = true
             continue
         }
