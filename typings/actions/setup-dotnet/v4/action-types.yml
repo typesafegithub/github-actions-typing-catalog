@@ -22,7 +22,10 @@ inputs:
   cache:
     type: boolean
   cache-dependency-path:
-    type: string
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
 
 outputs:
   cache-hit:
