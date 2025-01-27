@@ -113,7 +113,9 @@ private fun checkInputAndOutputNames() {
     for (action in actions) {
         println("➡\uFE0F For ${action.owner}/${listOfNotNull(action.name, action.path).joinToString("/")}@${action.version}:")
         val typings = loadTypings(path = action.pathToTypings)
+        @Suppress("UNCHECKED_CAST")
         val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
+        @Suppress("UNCHECKED_CAST")
         val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
         val manifest = fetchManifest(action)
 
@@ -123,7 +125,9 @@ private fun checkInputAndOutputNames() {
             continue
         }
 
+        @Suppress("UNCHECKED_CAST")
         val manifestInputs = if ("inputs" in manifest) (manifest["inputs"] as Map<String, Any>).keys else emptySet()
+        @Suppress("UNCHECKED_CAST")
         val manifestOutputs = if ("outputs" in manifest) (manifest["outputs"] as Map<String, Any>).keys else emptySet()
 
         if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
