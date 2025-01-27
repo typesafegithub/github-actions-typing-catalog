@@ -15,6 +15,8 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.dsl.workflow
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
 import java.io.File
+import java.io.IOException
+import java.net.URI
 import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.io.path.name
@@ -90,7 +92,7 @@ private data class ActionCoords(
 )
 
 private fun checkInputAndOutputNames() {
-    Files.walk(Path("typings"))
+    val actions = Files.walk(Path("typings"))
         .filter { it.name in setOf("action-types.yml", "action-types.yaml") }
         .map {
             val (_, owner, name, version, pathAndYaml) = it.toString().split("/", limit = 5)
@@ -103,9 +105,43 @@ private fun checkInputAndOutputNames() {
                 pathToTypings = it.toString(),
             )
         }
-        .forEach {
-            println("➡\uFE0F For ${it.owner}/${listOfNotNull(it.name, it.path).joinToString("/")}@${it.version}:")
-            val typings = Load().loadOne(File(it.pathToTypings).readText())
-            println("Typings: $typings")
-        }
+
+    var shouldFail = false
+
+    for (action in actions) {
+        println("➡\uFE0F For ${action.owner}/${listOfNotNull(action.name, action.path).joinToString("/")}@${action.version}:")
+        val typings = loadTypings(path = action.pathToTypings)
+        println("Typings: $typings")
+        val manifest = fetchManifest(action)
+        println("Manifest: $manifest")
+    }
 }
+
+private fun loadTypings(path: String): Map<String, Any> =
+    Load().loadOne(File(path).readText()) as Map<String, Any>
+
+private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
+    val list = listOf(action.actionYmlUrl, action.actionYamlUrl)
+
+    return list
+        .firstNotNullOfOrNull { url ->
+            try {
+                URI(url).toURL().readText()
+            } catch (e: IOException) {
+                null
+            }
+        }?.let { Load().loadOne(string = it) } as Map<String, Any>?
+}
+
+private val ActionCoords.actionYmlUrl: String get() = "https://raw.githubusercontent.com/$owner/$name/$version$subName/action.yml"
+
+private val ActionCoords.actionYamlUrl: String get() = "https://raw.githubusercontent.com/$owner/$name/$version$subName/action.yaml"
+
+/**
+ * For most actions, it's empty.
+ * For actions that aren't executed from the root of the repo, it returns the path relative to the repo root where the
+ * action lives, starting with a slash.
+ */
+private val ActionCoords.subName: String get() = path?.let { "/$path" } ?: ""
+
+checkInputAndOutputNames()
