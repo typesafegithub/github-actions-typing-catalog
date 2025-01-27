@@ -103,4 +103,7 @@ inputs:
   working-directory:
     type: string
   xtra_args:
-    type: string
+    type: list
+    separator: ' '
+    list-item:
+      type: string
