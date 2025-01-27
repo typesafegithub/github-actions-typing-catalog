@@ -142,6 +142,7 @@ private fun checkInputAndOutputNames() {
             println("Extra outputs in manifest: ${manifestOutputs - typingsOutputs}")
             shouldFail = true
         }
+        println("\uD83D\uDFE2 OK!")
     }
 
     require(shouldFail == false) {
