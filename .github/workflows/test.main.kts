@@ -123,6 +123,7 @@ private fun loadTypings(path: String): Map<String, Any> =
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
     val list = listOf(action.actionYmlUrl, action.actionYamlUrl)
 
+    @Suppress("UNCHECKED_CAST")
     return list
         .firstNotNullOfOrNull { url ->
             try {
