@@ -21,6 +21,7 @@ import java.net.URI
 import java.nio.file.Files
 import java.util.Collections.emptySet
 import kotlin.io.path.Path
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.name
 
 workflow(
@@ -97,14 +98,14 @@ private fun checkInputAndOutputNames() {
     val actions = Files.walk(Path("typings"))
         .filter { it.name in setOf("action-types.yml", "action-types.yaml") }
         .map {
-            val (_, owner, name, version, pathAndYaml) = it.toString().split("/", limit = 5)
+            val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
             val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
             ActionCoords(
                 owner = owner,
                 name = name,
                 version = version,
                 path = path,
-                pathToTypings = it.toString(),
+                pathToTypings = it.invariantSeparatorsPathString,
             )
         }
 
