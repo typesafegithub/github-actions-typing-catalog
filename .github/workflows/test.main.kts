@@ -138,7 +138,9 @@ private fun checkInputAndOutputNames() {
             println("Extra outputs in typings: ${typingsOutputs - manifestOutputs}")
             println("Extra outputs in manifest: ${manifestOutputs - typingsOutputs}")
             shouldFail = true
+            continue
         }
+
         println("\uD83D\uDFE2 OK!")
     }
 
