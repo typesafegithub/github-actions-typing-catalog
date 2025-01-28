@@ -157,7 +157,7 @@ inputs:
     type: string
 
   ext-darwin-arm64:
-    type string:
+    type: string
 
   github-token-for-latest:
     type: string
