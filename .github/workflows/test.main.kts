@@ -95,8 +95,15 @@ private data class ActionCoords(
 )
 
 private fun checkInputAndOutputNames() {
+    val actionsWithYamlExtension = Files.walk(Path("typings"))
+        .filter { it.name == "action-types.yaml" }
+        .toList()
+    check(actionsWithYamlExtension.isEmpty()) {
+        "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
+    }
+
     val actions = Files.walk(Path("typings"))
-        .filter { it.name in setOf("action-types.yml", "action-types.yaml") }
+        .filter { it.name == "action-types.yml" }
         .map {
             val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
             val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
