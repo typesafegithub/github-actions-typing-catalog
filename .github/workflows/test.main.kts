@@ -103,7 +103,7 @@ private fun checkInputAndOutputNames() {
     }
 
     val actions = Files.walk(Path("typings"))
-        .filter { it.name == "action-types.yaml" }
+        .filter { it.name == "action-types.yml" }
         .map {
             val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
             val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
