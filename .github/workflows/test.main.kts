@@ -107,7 +107,7 @@ private fun checkInputAndOutputNames() {
         "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
     }
 
-    val actions = Files.walk(Path("typings"))
+    val actions = Files.walk(Path("typings")).toList()
         .filter { it.name == "action-types.yml" }
         .map {
             val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
