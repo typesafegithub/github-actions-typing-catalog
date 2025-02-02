@@ -128,7 +128,7 @@ private fun checkInputAndOutputNames() {
         println()
         println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}")
 
-        if (notValidatedActions.none { predicate -> predicate(action) }) {
+        if (notValidatedActions.any { predicate -> predicate(action) }) {
             println("Skipping...")
             continue
         }
