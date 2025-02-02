@@ -120,7 +120,7 @@ private fun checkInputAndOutputNames() {
                 pathToTypings = it.invariantSeparatorsPathString,
             )
         }
-        .filter { notValidatedActions.none { action -> action(it) } }
+        .filter { action -> notValidatedActions.none { predicate -> predicate(action) } }
 
     var shouldFail = false
 
