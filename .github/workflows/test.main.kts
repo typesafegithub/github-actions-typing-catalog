@@ -95,6 +95,12 @@ private data class ActionCoords(
 )
 
 private fun checkInputAndOutputNames() {
+    val notValidatedActions: List<(ActionCoords) -> Boolean> = listOf(
+        // Doesn't have a major version branch/tag, and we keep the typings by the major version
+        { it.owner == "DamianReeves" && it.name == "write-file-action" },
+    )
+
+
     val actionsWithYamlExtension = Files.walk(Path("typings"))
         .filter { it.name == "action-types.yaml" }
         .toList()
@@ -121,6 +127,12 @@ private fun checkInputAndOutputNames() {
     for (action in actions) {
         println()
         println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}")
+
+        if (notValidatedActions.any { predicate -> predicate(action) }) {
+            println("Skipping...")
+            continue
+        }
+
         val typings = loadTypings(path = action.pathToTypings)
         val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
         val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
