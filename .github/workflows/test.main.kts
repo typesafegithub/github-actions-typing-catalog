@@ -94,6 +94,11 @@ private data class ActionCoords(
     val pathToTypings: String,
 )
 
+private val notValidatedActions: List<(ActionCoords) -> Boolean> = listOf(
+    // Doesn't have a major version branch/tag, and we keep the typings by the major version
+    { it.owner == "DamianReeves" && it.name == "write-file-action" },
+)
+
 private fun checkInputAndOutputNames() {
     val actionsWithYamlExtension = Files.walk(Path("typings"))
         .filter { it.name == "action-types.yaml" }
@@ -115,6 +120,7 @@ private fun checkInputAndOutputNames() {
                 pathToTypings = it.invariantSeparatorsPathString,
             )
         }
+        .filter { notValidatedActions.none { action -> action(it) } }
 
     var shouldFail = false
 
