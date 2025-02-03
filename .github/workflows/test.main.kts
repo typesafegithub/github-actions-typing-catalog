@@ -11,8 +11,10 @@
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
+import io.github.typesafegithub.workflows.domain.triggers.Cron
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
+import io.github.typesafegithub.workflows.domain.triggers.Schedule
 import io.github.typesafegithub.workflows.dsl.workflow
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
 import java.io.File
@@ -29,6 +31,7 @@ workflow(
     on = listOf(
         Push(branches = listOf("main")),
         PullRequest(),
+        Schedule(triggers = listOf(Cron(hour = "6", minute = "0"))),
     ),
     sourceFile = __FILE__,
 ) {
