@@ -62,13 +62,13 @@ workflow(
     }
 
     job(
-        id = "check_inputs_and_outputs",
-        name = "Check inputs and outputs against action manifests",
+        id = "validate_typings",
+        name = "Validate typings",
         runsOn = UbuntuLatest,
     ) {
         uses(action = Checkout())
         run(name = "Check for all actions") {
-            checkInputAndOutputNames()
+            validateTypings()
         }
     }
 
@@ -106,7 +106,7 @@ private data class ActionCoords(
     val pathToTypings: String,
 )
 
-private fun checkInputAndOutputNames() {
+private fun validateTypings() {
     val typingsSchema = JsonSchema.fromDefinition(
         URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
                 "refs/heads/schema-latest/github-actions-typing.schema.json"
