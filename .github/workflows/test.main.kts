@@ -9,7 +9,9 @@
 @file:OptIn(ExperimentalKotlinLogicStep::class)
 @file:Suppress("UNCHECKED_CAST")
 
+import io.github.optimumcode.json.schema.ErrorCollector
 import io.github.optimumcode.json.schema.JsonSchema
+import io.github.optimumcode.json.schema.ValidationError
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -105,6 +107,11 @@ private data class ActionCoords(
 )
 
 private fun checkInputAndOutputNames() {
+    val typingsSchema = JsonSchema.fromDefinition(
+        URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
+                "refs/heads/schema-latest/github-actions-typing.schema.json"
+        ).toURL().readText())
+
     val notValidatedActions: List<(ActionCoords) -> Boolean> = listOf(
         // Doesn't have a major version branch/tag, and we keep the typings by the major version
         { it.owner == "DamianReeves" && it.name == "write-file-action" },
@@ -145,8 +152,10 @@ private fun checkInputAndOutputNames() {
 
         val typings = loadTypings(path = action.pathToTypings)
 
-        if (!areTypingsCompliantWithSchema(typings)) {
+        val schemaComplianceErrors = typingsSchema.checkForSchemaComplianceErrors(typings)
+        if (schemaComplianceErrors != null) {
             println("\uD83D\uDD34 Typings aren't compliant with the schema!")
+            println(schemaComplianceErrors)
             shouldFail = true
             continue
         }
@@ -206,15 +215,18 @@ private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
         }?.let { Load().loadOne(string = it) } as Map<String, Any>?
 }
 
-private val schema = JsonSchema.fromDefinition(
-    URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
-            "refs/heads/schema-latest/github-actions-typing.schema.json"
-    ).toURL().readText())
-
-private fun areTypingsCompliantWithSchema(typings: Map<String, Any>): Boolean =
-    schema.validate(typings.toJsonElement()) {
-        // TODO?
-    }
+private fun JsonSchema.checkForSchemaComplianceErrors(typings: Map<String, Any>): String? {
+    var errorMessage: String? = null
+    this.validate(typings.toJsonElement(), object : ErrorCollector {
+        override fun onError(error: ValidationError) {
+            errorMessage = buildString {
+                appendLine("Error message: ${error.message}")
+                appendLine("Object path: ${error.objectPath}")
+            }
+        }
+    })
+    return errorMessage
+}
 
 // work-around for https://github.com/OptimumCode/json-schema-validator/issues/194 (direct support for Kotlin classes)
 // or https://github.com/OptimumCode/json-schema-validator/issues/195 (direct support for snakeyaml Node)
