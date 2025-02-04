@@ -2,12 +2,16 @@
 @file:Repository("https://repo.maven.apache.org/maven2/")
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.2.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp:3.1.0")
+@file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.3.1")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
 @file:Suppress("UNCHECKED_CAST")
 
+import io.github.optimumcode.json.schema.ErrorCollector
+import io.github.optimumcode.json.schema.JsonSchema
+import io.github.optimumcode.json.schema.ValidationError
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -17,6 +21,11 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.Schedule
 import io.github.typesafegithub.workflows.dsl.workflow
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import java.io.File
 import java.io.IOException
 import java.net.URI
@@ -53,13 +62,13 @@ workflow(
     }
 
     job(
-        id = "check_inputs_and_outputs",
-        name = "Check inputs and outputs against action manifests",
+        id = "validate_typings",
+        name = "Validate typings",
         runsOn = UbuntuLatest,
     ) {
         uses(action = Checkout())
         run(name = "Check for all actions") {
-            checkInputAndOutputNames()
+            validateTypings()
         }
     }
 
@@ -97,7 +106,12 @@ private data class ActionCoords(
     val pathToTypings: String,
 )
 
-private fun checkInputAndOutputNames() {
+private fun validateTypings() {
+    val typingsSchema = JsonSchema.fromDefinition(
+        URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
+                "refs/heads/schema-latest/github-actions-typing.schema.json"
+        ).toURL().readText())
+
     val notValidatedActions: List<(ActionCoords) -> Boolean> = listOf(
         // Doesn't have a major version branch/tag, and we keep the typings by the major version
         { it.owner == "DamianReeves" && it.name == "write-file-action" },
@@ -137,6 +151,15 @@ private fun checkInputAndOutputNames() {
         }
 
         val typings = loadTypings(path = action.pathToTypings)
+
+        val schemaComplianceErrors = typingsSchema.checkForSchemaComplianceErrors(typings)
+        if (schemaComplianceErrors != null) {
+            println("\uD83D\uDD34 Typings aren't compliant with the schema!")
+            println(schemaComplianceErrors)
+            shouldFail = true
+            continue
+        }
+
         val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
         val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
         val manifest = fetchManifest(action)
@@ -190,6 +213,34 @@ private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
                 null
             }
         }?.let { Load().loadOne(string = it) } as Map<String, Any>?
+}
+
+private fun JsonSchema.checkForSchemaComplianceErrors(typings: Map<String, Any>): String? {
+    var errorMessage: String? = null
+    this.validate(typings.toJsonElement(), object : ErrorCollector {
+        override fun onError(error: ValidationError) {
+            errorMessage = buildString {
+                appendLine("Error message: ${error.message}")
+                appendLine("Object path: ${error.objectPath}")
+            }
+        }
+    })
+    return errorMessage
+}
+
+// work-around for https://github.com/OptimumCode/json-schema-validator/issues/194 (direct support for Kotlin classes)
+// or https://github.com/OptimumCode/json-schema-validator/issues/195 (direct support for snakeyaml Node)
+// or https://github.com/OptimumCode/json-schema-validator/issues/190 (direct support for kaml YamlNode)
+private fun Any?.toJsonElement(): JsonElement {
+    return when (this) {
+        is Map<*, *> -> JsonObject(entries.associate { (key, value) -> "$key" to value.toJsonElement() })
+        is List<*> -> JsonArray(map { it.toJsonElement() })
+        is Boolean -> JsonPrimitive(this)
+        is Number -> JsonPrimitive(this)
+        is String -> JsonPrimitive(this)
+        null -> JsonNull
+        else -> error("Unexpected type: ${this::class.qualifiedName}")
+    }
 }
 
 private val ActionCoords.actionYmlUrl: String get() = "https://raw.githubusercontent.com/$owner/$name/$version$subName/action.yml"
