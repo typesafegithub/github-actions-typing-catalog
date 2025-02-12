@@ -1,7 +1,7 @@
 #!/usr/bin/env kotlin
 @file:Repository("https://repo.maven.apache.org/maven2/")
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.2.0")
-@file:DependsOn("it.krzeminski:snakeyaml-engine-kmp:3.1.0")
+@file:DependsOn("it.krzeminski:snakeyaml-engine-kmp:3.1.1")
 @file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.4.0")
 
 @file:Repository("https://bindings.krzeminski.it")
