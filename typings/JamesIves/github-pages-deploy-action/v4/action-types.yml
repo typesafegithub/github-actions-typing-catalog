@@ -35,6 +35,8 @@ inputs:
     type: boolean
   silent:
     type: boolean
+  attempt-limit:
+    type: integer
 outputs:
   deployment-status:
     type: enum
