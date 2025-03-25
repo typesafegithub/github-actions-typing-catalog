@@ -29,6 +29,8 @@ inputs:
     type: string
   pub-cache-path:
     type: string
+  git-source:
+    type: string
 
 outputs:
   CACHE-PATH:
@@ -44,4 +46,6 @@ outputs:
   PUB-CACHE-KEY:
     type: string
   PUB-CACHE-PATH:
+    type: string
+  GIT_SOURCE:
     type: string
