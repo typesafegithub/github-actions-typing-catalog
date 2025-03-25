@@ -29,6 +29,8 @@ inputs:
     type: boolean
   allow-prereleases:
     type: boolean
+  freethreaded:
+    type: boolean
 outputs:
   python-version:
     type: string
