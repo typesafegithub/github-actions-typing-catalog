@@ -1,6 +1,6 @@
 #!/usr/bin/env kotlin
 @file:Repository("https://repo1.maven.org/maven2/")
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.2.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.3.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:3.1.1")
 @file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:7.2.0.202503040940-r")
 
