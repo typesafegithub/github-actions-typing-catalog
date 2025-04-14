@@ -28,6 +28,10 @@ inputs:
     separator: "\n"
     list-item:
       type: string
+  mirror:
+    type: string
+  mirror-token:
+    type: string
 outputs:
   cache-hit:
     type: boolean
