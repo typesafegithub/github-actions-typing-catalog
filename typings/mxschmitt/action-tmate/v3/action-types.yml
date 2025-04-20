@@ -29,3 +29,6 @@ inputs:
 
   github-token:
     type: string
+
+  msys2-location:
+    type: string
