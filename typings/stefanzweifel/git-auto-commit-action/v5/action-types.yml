@@ -36,9 +36,13 @@ inputs:
     type: boolean
   internal_git_binary:
     type: string
+  create_git_tag_only:
+    type: boolean
 
 outputs:
   changes_detected:
     type: boolean
   commit_hash:
     type: string
+  create_git_tag_only:
+    type: boolean
