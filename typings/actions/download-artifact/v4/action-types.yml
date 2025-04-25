@@ -2,6 +2,11 @@
 inputs:
   name:
     type: string
+  artifact-ids:
+    type: list
+    separator: ','
+    list-item:
+      type: string
   path:
     type: string
   pattern:
