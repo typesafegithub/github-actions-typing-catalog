@@ -32,3 +32,13 @@ inputs:
 
   msys2-location:
     type: string
+
+outputs:
+  ssh-command:
+    type: string
+
+  ssh-address:
+    type: string
+
+  web-url:
+    type: string
