@@ -19,6 +19,7 @@ import io.github.typesafegithub.workflows.domain.triggers.Cron
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.Schedule
+import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
 import kotlinx.serialization.json.JsonArray
@@ -30,6 +31,7 @@ import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.Collections.emptySet
 import kotlin.io.path.Path
 import kotlin.io.path.invariantSeparatorsPathString
@@ -67,7 +69,20 @@ workflow(
         runsOn = UbuntuLatest,
     ) {
         uses(action = Checkout())
-        run(name = "Check for all actions") {
+        run(
+            name = "Determine changed typings in pull requests",
+            command = """
+                if [ -n "${expr { github.base_ref }}" ]; then
+                    git fetch origin ${expr { github.base_ref }}
+                    {
+                        echo 'changed_typings<<EOF'
+                        git diff --name-only --diff-filter d --no-renames origin/${expr { github.base_ref }} ${expr { github.sha }} -- typings/**/action-types.yml typings/**/action-types.yaml
+                        echo EOF
+                    } >> "${'$'}GITHUB_ENV"
+                fi
+            """.trimIndent()
+        )
+        run(name = "Check for actions") {
             validateTypings()
         }
     }
@@ -117,17 +132,28 @@ private fun validateTypings() {
         { it.owner == "DamianReeves" && it.name == "write-file-action" },
     )
 
+    val actions = System.getenv("changed_typings").let {
+        if (it == null) {
+            val actionsWithYamlExtension = Files.walk(Path("typings"))
+                .filter { it.name == "action-types.yaml" }
+                .toList()
+            check(actionsWithYamlExtension.isEmpty()) {
+                "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
+            }
 
-    val actionsWithYamlExtension = Files.walk(Path("typings"))
-        .filter { it.name == "action-types.yaml" }
-        .toList()
-    check(actionsWithYamlExtension.isEmpty()) {
-        "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
-    }
+            Files.walk(Path("typings")).filter { it.name == "action-types.yml" }
+        } else {
+            val typings = it
+                .lines()
+                .filterNot { it.isBlank() }
+                .groupBy { it.endsWith("action-types.yml") }
 
-    val actions = Files.walk(Path("typings"))
-        .filter { it.name == "action-types.yml" }
-        .map {
+            check(typings[false].isNullOrEmpty()) {
+                "Some files have .yaml extension, and we'd like to use only .yml here: ${typings[false]}"
+            }
+
+            (typings[true]?.map(::Path) ?: emptyList<Path>()).stream()
+        }.map {
             val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
             val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
             ActionCoords(
@@ -138,6 +164,7 @@ private fun validateTypings() {
                 pathToTypings = it.invariantSeparatorsPathString,
             )
         }
+    }
 
     var shouldFail = false
 
