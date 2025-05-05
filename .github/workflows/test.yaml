@@ -48,21 +48,11 @@ jobs:
     - id: 'step-0'
       uses: 'actions/checkout@v4'
     - id: 'step-1'
-      name: 'Determine changed typings in pull requests'
-      run: |-
-        if [ -n "${{ github.base_ref }}" ]; then
-            git fetch origin ${{ github.base_ref }}
-            {
-                echo 'changed_typings<<EOF'
-                git diff --name-only --diff-filter d --no-renames origin/${{ github.base_ref }} ${{ github.sha }} -- typings/**/action-types.yml typings/**/action-types.yaml
-                echo EOF
-            } >> "$GITHUB_ENV"
-        fi
-    - id: 'step-2'
       name: 'Check for actions'
       env:
+        base_ref: '${{ github.base_ref }}'
         GHWKT_GITHUB_CONTEXT_JSON: '${{ toJSON(github) }}'
-      run: 'GHWKT_RUN_STEP=''test.yaml:validate_typings:step-2'' ''.github/workflows/test.main.kts'''
+      run: 'GHWKT_RUN_STEP=''test.yaml:validate_typings:step-1'' ''.github/workflows/test.main.kts'''
   workflows_consistency_check:
     name: 'Run consistency check on all GitHub workflows'
     runs-on: 'ubuntu-latest'
