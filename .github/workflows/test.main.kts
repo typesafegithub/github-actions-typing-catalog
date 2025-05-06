@@ -81,6 +81,8 @@ workflow(
         uses(action = Checkout())
         run(
             name = "Check for actions",
+            // TODO: replace this workaround once base_ref can be accessed natively:
+            // https://github.com/typesafegithub/github-workflows-kt/issues/1946
             env = mapOf("base_ref" to expr { github.base_ref })
         ) {
             validateTypings(github.sha, System.getenv("base_ref").ifEmpty { null })
