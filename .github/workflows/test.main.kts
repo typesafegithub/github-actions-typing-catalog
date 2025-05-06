@@ -39,6 +39,7 @@ import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.Collections.emptySet
 import java.util.stream.Stream
 import kotlin.io.path.Path
@@ -132,72 +133,7 @@ private fun validateTypings(sha: String, baseRef: String?) {
     )
 
     println()
-    val actions = baseRef.let { baseRef ->
-        if (baseRef == null) {
-            println("Validating all typings")
-
-            val actionsWithYamlExtension = Files.walk(Path("typings"))
-                .filter { it.name == "action-types.yaml" }
-                .toList()
-            check(actionsWithYamlExtension.isEmpty()) {
-                "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
-            }
-
-            Files.walk(Path("typings")).filter { it.name == "action-types.yml" }
-        } else {
-            println("Only validating changed typings")
-
-            val typings = try {
-                KGit.open(File(".")).use { git ->
-                    git.fetch {
-                        setRefSpecs("refs/heads/$baseRef:refs/heads/$baseRef")
-                        setDepth(1)
-                    }
-                    git.diff {
-                        setShowNameAndStatusOnly(true)
-                        git.repository.newObjectReader().use { objectReader ->
-                            setOldTree(CanonicalTreeParser().apply {
-                                reset(objectReader, git.repository.resolve("refs/heads/$baseRef^{tree}"))
-                            })
-                            setNewTree(CanonicalTreeParser().apply {
-                                reset(objectReader, git.repository.resolve("$sha^{tree}"))
-                            })
-                        }
-                        setPathFilter(
-                            AndTreeFilter.create(
-                                PathFilter.create("typings/"),
-                                OrTreeFilter.create(
-                                    PathSuffixFilter.create("/action-types.yml"),
-                                    PathSuffixFilter.create("/action-types.yaml"),
-                                ),
-                            )
-                        )
-                    }
-                        .filter { it.changeType != DELETE }
-                        .map { Path(it.newPath) }
-                        .groupBy { it.extension == "yml" }
-                }
-            } finally {
-                KGit.shutdown()
-            }
-
-            check(typings[false].isNullOrEmpty()) {
-                "Some files have .yaml extension, and we'd like to use only .yml here: ${typings[false]}"
-            }
-
-            typings[true]?.stream() ?: Stream.of()
-        }.map {
-            val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
-            val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
-            ActionCoords(
-                owner = owner,
-                name = name,
-                version = version,
-                path = path,
-                pathToTypings = it.invariantSeparatorsPathString,
-            )
-        }
-    }
+    val actions = listActionsToValidate(sha = sha, baseRef = baseRef)
 
     var shouldFail = false
 
@@ -257,6 +193,80 @@ private fun validateTypings(sha: String, baseRef: String?) {
     require(shouldFail == false) {
         "This is the end of processing, and something doesn't match - see the logs!"
     }
+}
+
+private fun listActionsToValidate(sha: String, baseRef: String?): Stream<ActionCoords> =
+    baseRef.let { baseRef ->
+        if (baseRef == null) {
+            println("Validating all typings")
+            listAllActionManifestFilesInRepo()
+        } else {
+            println("Only validating changed typings")
+            listAffectedActionManifestFiles(sha = sha, baseRef = baseRef)
+        }.map {
+            val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
+            val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
+            ActionCoords(
+                owner = owner,
+                name = name,
+                version = version,
+                path = path,
+                pathToTypings = it.invariantSeparatorsPathString,
+            )
+        }
+    }
+
+private fun listAllActionManifestFilesInRepo(): Stream<Path> {
+    val actionsWithYamlExtension = Files.walk(Path("typings"))
+        .filter { it.name == "action-types.yaml" }
+        .toList()
+    check(actionsWithYamlExtension.isEmpty()) {
+        "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
+    }
+
+    return Files.walk(Path("typings")).filter { it.name == "action-types.yml" }
+}
+
+private fun listAffectedActionManifestFiles(sha: String, baseRef: String?): Stream<Path> {
+    val typings = try {
+        KGit.open(File(".")).use { git ->
+            git.fetch {
+                setRefSpecs("refs/heads/$baseRef:refs/heads/$baseRef")
+                setDepth(1)
+            }
+            git.diff {
+                setShowNameAndStatusOnly(true)
+                git.repository.newObjectReader().use { objectReader ->
+                    setOldTree(CanonicalTreeParser().apply {
+                        reset(objectReader, git.repository.resolve("refs/heads/$baseRef^{tree}"))
+                    })
+                    setNewTree(CanonicalTreeParser().apply {
+                        reset(objectReader, git.repository.resolve("$sha^{tree}"))
+                    })
+                }
+                setPathFilter(
+                    AndTreeFilter.create(
+                        PathFilter.create("typings/"),
+                        OrTreeFilter.create(
+                            PathSuffixFilter.create("/action-types.yml"),
+                            PathSuffixFilter.create("/action-types.yaml"),
+                        ),
+                    )
+                )
+            }
+                .filter { it.changeType != DELETE }
+                .map { Path(it.newPath) }
+                .groupBy { it.extension == "yml" }
+        }
+    } finally {
+        KGit.shutdown()
+    }
+
+    check(typings[false].isNullOrEmpty()) {
+        "Some files have .yaml extension, and we'd like to use only .yml here: ${typings[false]}"
+    }
+
+    return typings[true]?.stream() ?: Stream.of()
 }
 
 private fun loadTypings(path: String): Map<String, Any> =
