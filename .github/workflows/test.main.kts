@@ -81,7 +81,7 @@ workflow(
         run(
             name = "Check for actions",
         ) {
-            validateTypings(github.sha, github.base_ref)
+            validateTypings(github.sha, github.base_ref?.ifEmpty { null })
         }
     }
 
