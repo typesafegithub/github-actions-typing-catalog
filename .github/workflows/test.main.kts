@@ -225,7 +225,7 @@ private fun listAllActionManifestFilesInRepo(): Stream<Path> {
     return Files.walk(Path("typings")).filter { it.name == "action-types.yml" }
 }
 
-private fun listAffectedActionManifestFiles(sha: String, baseRef: String?): Stream<Path> {
+private fun listAffectedActionManifestFiles(sha: String, baseRef: String): Stream<Path> {
     val typings = try {
         KGit.open(File(".")).use { git ->
             git.fetch {
