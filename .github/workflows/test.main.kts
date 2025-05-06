@@ -3,12 +3,14 @@
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.3.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp:3.1.1")
 @file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.5.1")
+@file:DependsOn("com.github.sya-ri:kgit:1.1.0")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
 @file:Suppress("UNCHECKED_CAST")
 
+import com.github.syari.kgit.KGit
 import io.github.optimumcode.json.schema.ErrorCollector
 import io.github.optimumcode.json.schema.JsonSchema
 import io.github.optimumcode.json.schema.ValidationError
@@ -19,6 +21,7 @@ import io.github.typesafegithub.workflows.domain.triggers.Cron
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.Schedule
+import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
 import kotlinx.serialization.json.JsonArray
@@ -26,12 +29,21 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import org.eclipse.jgit.diff.DiffEntry.ChangeType.DELETE
+import org.eclipse.jgit.treewalk.CanonicalTreeParser
+import org.eclipse.jgit.treewalk.filter.AndTreeFilter
+import org.eclipse.jgit.treewalk.filter.OrTreeFilter
+import org.eclipse.jgit.treewalk.filter.PathFilter
+import org.eclipse.jgit.treewalk.filter.PathSuffixFilter
 import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.Collections.emptySet
+import java.util.stream.Stream
 import kotlin.io.path.Path
+import kotlin.io.path.extension
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.name
 
@@ -67,8 +79,13 @@ workflow(
         runsOn = UbuntuLatest,
     ) {
         uses(action = Checkout())
-        run(name = "Check for all actions") {
-            validateTypings()
+        run(
+            name = "Check for actions",
+            // TODO: replace this workaround once base_ref can be accessed natively:
+            // https://github.com/typesafegithub/github-workflows-kt/issues/1946
+            env = mapOf("base_ref" to expr { github.base_ref })
+        ) {
+            validateTypings(github.sha, System.getenv("base_ref").ifEmpty { null })
         }
     }
 
@@ -106,7 +123,7 @@ private data class ActionCoords(
     val pathToTypings: String,
 )
 
-private fun validateTypings() {
+private fun validateTypings(sha: String, baseRef: String?) {
     val typingsSchema = JsonSchema.fromDefinition(
         URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
                 "refs/heads/schema-latest/github-actions-typing.schema.json"
@@ -117,27 +134,8 @@ private fun validateTypings() {
         { it.owner == "DamianReeves" && it.name == "write-file-action" },
     )
 
-
-    val actionsWithYamlExtension = Files.walk(Path("typings"))
-        .filter { it.name == "action-types.yaml" }
-        .toList()
-    check(actionsWithYamlExtension.isEmpty()) {
-        "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
-    }
-
-    val actions = Files.walk(Path("typings"))
-        .filter { it.name == "action-types.yml" }
-        .map {
-            val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
-            val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
-            ActionCoords(
-                owner = owner,
-                name = name,
-                version = version,
-                path = path,
-                pathToTypings = it.invariantSeparatorsPathString,
-            )
-        }
+    println()
+    val actions = listActionsToValidate(sha = sha, baseRef = baseRef)
 
     var shouldFail = false
 
@@ -197,6 +195,80 @@ private fun validateTypings() {
     require(shouldFail == false) {
         "This is the end of processing, and something doesn't match - see the logs!"
     }
+}
+
+private fun listActionsToValidate(sha: String, baseRef: String?): Stream<ActionCoords> =
+    baseRef.let { baseRef ->
+        if (baseRef == null) {
+            println("Validating all typings")
+            listAllActionManifestFilesInRepo()
+        } else {
+            println("Only validating changed typings")
+            listAffectedActionManifestFiles(sha = sha, baseRef = baseRef)
+        }.map {
+            val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
+            val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
+            ActionCoords(
+                owner = owner,
+                name = name,
+                version = version,
+                path = path,
+                pathToTypings = it.invariantSeparatorsPathString,
+            )
+        }
+    }
+
+private fun listAllActionManifestFilesInRepo(): Stream<Path> {
+    val actionsWithYamlExtension = Files.walk(Path("typings"))
+        .filter { it.name == "action-types.yaml" }
+        .toList()
+    check(actionsWithYamlExtension.isEmpty()) {
+        "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
+    }
+
+    return Files.walk(Path("typings")).filter { it.name == "action-types.yml" }
+}
+
+private fun listAffectedActionManifestFiles(sha: String, baseRef: String?): Stream<Path> {
+    val typings = try {
+        KGit.open(File(".")).use { git ->
+            git.fetch {
+                setRefSpecs("refs/heads/$baseRef:refs/heads/$baseRef")
+                setDepth(1)
+            }
+            git.diff {
+                setShowNameAndStatusOnly(true)
+                git.repository.newObjectReader().use { objectReader ->
+                    setOldTree(CanonicalTreeParser().apply {
+                        reset(objectReader, git.repository.resolve("refs/heads/$baseRef^{tree}"))
+                    })
+                    setNewTree(CanonicalTreeParser().apply {
+                        reset(objectReader, git.repository.resolve("$sha^{tree}"))
+                    })
+                }
+                setPathFilter(
+                    AndTreeFilter.create(
+                        PathFilter.create("typings/"),
+                        OrTreeFilter.create(
+                            PathSuffixFilter.create("/action-types.yml"),
+                            PathSuffixFilter.create("/action-types.yaml"),
+                        ),
+                    )
+                )
+            }
+                .filter { it.changeType != DELETE }
+                .map { Path(it.newPath) }
+                .groupBy { it.extension == "yml" }
+        }
+    } finally {
+        KGit.shutdown()
+    }
+
+    check(typings[false].isNullOrEmpty()) {
+        "Some files have .yaml extension, and we'd like to use only .yml here: ${typings[false]}"
+    }
+
+    return typings[true]?.stream() ?: Stream.of()
 }
 
 private fun loadTypings(path: String): Map<String, Any> =
