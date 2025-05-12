@@ -16,6 +16,11 @@ inputs:
       type: string
   disable_sort:
     type: boolean
+  sort_order:
+    type: enum
+    allowed-values:
+      - asc
+      - desc
   filter_comments:
     type: list
     separator: ','
