@@ -21,6 +21,8 @@ inputs:
     allowed-values:
       - asc
       - desc
+  reverse_order:
+    type: boolean
   filter_comments:
     type: list
     separator: ','
