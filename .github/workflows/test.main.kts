@@ -47,6 +47,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.name
+import kotlin.io.path.readText
 
 workflow(
     name = "Test",
@@ -146,12 +147,16 @@ private fun validateTypings(sha: String, baseRef: String?) {
             continue
         }
 
-        if (!(Path("typings") / action.owner.lowercase() / action.name.lowercase()).exists()) {
+        println("Checking if ${Path(action.pathToTypings.lowercase())} exists")
+        if (!Path(action.pathToTypings.lowercase()).exists()) {
             // See https://github.com/typesafegithub/github-workflows-kt/issues/2025
             // TODO: enforce only lower-case owner and name once the bindings server is adjusted
             println("\uD83D\uDD34 There's no corresponding typings using lower-case owner and name!")
             shouldFail = true
             continue
+        } else {
+            println("Exists!")
+            println(Path(action.pathToTypings.lowercase()).readText())
         }
 
         val typings = loadTypings(path = action.pathToTypings)
