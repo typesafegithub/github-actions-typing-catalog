@@ -127,7 +127,7 @@ private fun validateTypings(sha: String, baseRef: String?) {
 
     val notValidatedActions: List<(ActionCoords) -> Boolean> = listOf(
         // Doesn't have a major version branch/tag, and we keep the typings by the major version
-        { it.owner == "DamianReeves" && it.name == "write-file-action" },
+        { it.owner == "damianreeves" && it.name == "write-file-action" },
     )
 
     println()
