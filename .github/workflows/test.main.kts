@@ -42,6 +42,8 @@ import java.nio.file.Path
 import java.util.Collections.emptySet
 import java.util.stream.Stream
 import kotlin.io.path.Path
+import kotlin.io.path.div
+import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.name
@@ -141,6 +143,14 @@ private fun validateTypings(sha: String, baseRef: String?) {
 
         if (notValidatedActions.any { predicate -> predicate(action) }) {
             println("Skipping...")
+            continue
+        }
+
+        if (!(Path("typings") / action.owner.lowercase() / action.name.lowercase()).exists()) {
+            // See https://github.com/typesafegithub/github-workflows-kt/issues/2025
+            // TODO: enforce only lower-case owner and name once the bindings server is adjusted
+            println("\uD83D\uDD34 There's no corresponding typings using lower-case owner and name!")
+            shouldFail = true
             continue
         }
 
