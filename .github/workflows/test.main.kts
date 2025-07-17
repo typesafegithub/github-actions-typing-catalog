@@ -127,7 +127,7 @@ private fun validateTypings(sha: String, baseRef: String?) {
 
     val notValidatedActions: List<(ActionCoords) -> Boolean> = listOf(
         // Doesn't have a major version branch/tag, and we keep the typings by the major version
-        { it.owner == "damianreeves" && it.name == "write-file-action" },
+        { it.owner == "DamianReeves" && it.name == "write-file-action" },
     )
 
     println()
@@ -138,13 +138,6 @@ private fun validateTypings(sha: String, baseRef: String?) {
     for (action in actions) {
         println()
         println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}")
-
-        if (action.pathToTypings != action.pathToTypings.lowercase()) {
-            println("\uD83D\uDD34 Action's owner and name should be lowercase, " +
-                    "to enable the bindings server to load them in a case-insensitive manner!")
-            shouldFail = true
-            continue
-        }
 
         if (notValidatedActions.any { predicate -> predicate(action) }) {
             println("Skipping...")
@@ -206,9 +199,8 @@ private fun listActionsToValidate(sha: String, baseRef: String?): Stream<ActionC
             println("Validating all typings")
             listAllActionManifestFilesInRepo()
         } else {
-            // TODO revert - temporarily
-            println("Validating all typings")
-            listAllActionManifestFilesInRepo()
+            println("Only validating changed typings")
+            listAffectedActionManifestFiles(sha = sha, baseRef = baseRef)
         }.map {
             val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
             val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
