@@ -214,8 +214,8 @@ private fun listActionsToValidate(sha: String, baseRef: String?): Stream<ActionC
             println("Validating all typings")
             listAllActionManifestFilesInRepo()
         } else {
-            println("Only validating changed typings")
-            listAffectedActionManifestFiles(sha = sha, baseRef = baseRef)
+            println("Validating all typings")
+            listAllActionManifestFilesInRepo()
         }.map {
             val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
             val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
