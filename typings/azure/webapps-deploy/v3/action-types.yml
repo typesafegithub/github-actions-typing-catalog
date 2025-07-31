@@ -33,6 +33,8 @@ inputs:
     type: boolean
   restart:
     type: boolean
+  sitecontainers-config:
+    type: string
 outputs:
   webapp-url:
     type: string
