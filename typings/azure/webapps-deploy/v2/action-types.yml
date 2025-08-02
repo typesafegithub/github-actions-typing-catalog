@@ -19,6 +19,8 @@ inputs:
     type: string
   resource-group-name:
     type: string
+  sitecontainers-config:
+    type: string
 
 outputs:
   webapp-url:
