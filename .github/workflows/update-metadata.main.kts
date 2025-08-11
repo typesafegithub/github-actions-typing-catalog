@@ -5,7 +5,7 @@
 @file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:7.3.0.202506031305-r")
 
 @file:Repository("https://bindings.krzeminski.it")
-@file:DependsOn("actions:checkout:v4")
+@file:DependsOn("actions:checkout:v5")
 @file:DependsOn("actions:setup-java:v4")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
