@@ -45,6 +45,8 @@ inputs:
       - pkg
       - pubsub-emulator
       - skaffold
+  skip_tool_cache:
+    type: boolean
 
 outputs:
   version:
