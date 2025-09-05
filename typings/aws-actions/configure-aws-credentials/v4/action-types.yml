@@ -45,6 +45,10 @@ inputs:
     type: boolean
   disable-retry:
     type: boolean
+  output-env-credentials:
+    type: boolean
+  use-existing-credentials:
+    type: boolean
 
 outputs:
   aws-account-id:
@@ -54,4 +58,6 @@ outputs:
   aws-secret-access-key:
     type: string
   aws-session-token:
+    type: string
+  aws-expiration:
     type: string
