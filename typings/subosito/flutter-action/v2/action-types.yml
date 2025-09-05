@@ -49,3 +49,7 @@ outputs:
     type: string
   GIT_SOURCE:
     type: string
+  CACHE-HIT:
+    type: boolean
+  PUB-CACHE-HIT:
+    type: boolean
