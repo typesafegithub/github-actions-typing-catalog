@@ -31,6 +31,8 @@ inputs:
     type: boolean
   freethreaded:
     type: boolean
+  pip-version:
+    type: string
 outputs:
   python-version:
     type: string
