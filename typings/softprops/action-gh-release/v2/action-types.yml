@@ -39,6 +39,8 @@ inputs:
     - legacy
   preserve_order:
     type: boolean
+  overwrite_files:
+    type: boolean
 
 outputs:
   url:
