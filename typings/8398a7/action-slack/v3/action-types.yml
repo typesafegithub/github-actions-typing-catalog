@@ -46,3 +46,9 @@ inputs:
     type: string
   github_base_url:
     type: string
+  success_message:
+    type: string
+  cancelled_message:
+    type: string
+  failure_message:
+    type: string
