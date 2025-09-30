@@ -10,3 +10,5 @@ inputs:
     type: boolean
   logout:
     type: boolean
+  registry-auth:
+    type: string
