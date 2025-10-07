@@ -41,6 +41,8 @@ inputs:
     type: boolean
   overwrite_files:
     type: boolean
+  working_directory:
+    type: string
 
 outputs:
   url:
