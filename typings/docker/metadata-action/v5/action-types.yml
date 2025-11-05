@@ -63,3 +63,8 @@ outputs:
     type: string
   bake-file:
     type: string
+  tag-names:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
