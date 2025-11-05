@@ -15,11 +15,6 @@ inputs:
     separator: '\n'
     list-item:
       type: string
-  tag-names:
-    type: list
-    separator: '\n'
-    list-item:
-      type: string
   flavor:
     type: list
     separator: '\n'
@@ -68,3 +63,8 @@ outputs:
     type: string
   bake-file:
     type: string
+  tag-names:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
