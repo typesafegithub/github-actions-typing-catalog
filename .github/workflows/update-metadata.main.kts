@@ -86,9 +86,9 @@ fun writeToMetadataFile(actionRootDir: File, versionsWithTypings: List<String>) 
     val structureToDump = mapOf(
         "versionsWithTypings" to versionsWithTypings
     )
-    val dumpSettings = DumpSettings.builder()
-        .setDefaultScalarStyle(ScalarStyle.DOUBLE_QUOTED)
-        .build()
+    val dumpSettings = DumpSettings(
+        defaultScalarStyle = ScalarStyle.DOUBLE_QUOTED,
+    )
     val dump = Dump(dumpSettings)
     val yamlAsString = dump.dumpToString(structureToDump)
     actionRootDir.resolve("metadata.yml").writeText(yamlAsString)
