@@ -1,6 +1,6 @@
 #!/usr/bin/env kotlin
 @file:Repository("https://repo1.maven.org/maven2/")
-@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.5.0")
+@file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.6.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:4.0.1")
 @file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:7.4.0.202509020913-r")
 
@@ -86,9 +86,9 @@ fun writeToMetadataFile(actionRootDir: File, versionsWithTypings: List<String>) 
     val structureToDump = mapOf(
         "versionsWithTypings" to versionsWithTypings
     )
-    val dumpSettings = DumpSettings.builder()
-        .setDefaultScalarStyle(ScalarStyle.DOUBLE_QUOTED)
-        .build()
+    val dumpSettings = DumpSettings(
+        defaultScalarStyle = ScalarStyle.DOUBLE_QUOTED,
+    )
     val dump = Dump(dumpSettings)
     val yamlAsString = dump.dumpToString(structureToDump)
     actionRootDir.resolve("metadata.yml").writeText(yamlAsString)
