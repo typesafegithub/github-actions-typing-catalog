@@ -2,7 +2,7 @@
 @file:Repository("https://repo.maven.apache.org/maven2/")
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.6.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:4.0.1")
-@file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.5.2")
+@file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.5.3")
 @file:DependsOn("com.github.sya-ri:kgit:1.1.0")
 
 @file:Repository("https://bindings.krzeminski.it")
