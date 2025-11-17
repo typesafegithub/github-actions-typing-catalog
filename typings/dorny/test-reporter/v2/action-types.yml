@@ -66,6 +66,16 @@ inputs:
   token:
     type: string
 
+  report-title:
+    type: string
+
+  collapsed:
+    type: enum
+    allowed-values:
+      - never
+      - always
+      - auto
+
 outputs:
   conclusion:
     type: enum
