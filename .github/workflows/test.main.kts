@@ -6,7 +6,7 @@
 @file:DependsOn("com.github.sya-ri:kgit:1.1.0")
 
 @file:Repository("https://bindings.krzeminski.it")
-@file:DependsOn("actions:checkout:v5")
+@file:DependsOn("actions:checkout:v6")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
 @file:Suppress("UNCHECKED_CAST")
 
