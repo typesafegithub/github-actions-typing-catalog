@@ -307,6 +307,19 @@ inputs:
     allowed-values:
       - "write"
 
+  permission-custom-properties-for-organizations:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+
+  permission-enterprise-custom-properties-for-organizations:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+      - "admin"
+
 outputs:
   token:
     type: string
