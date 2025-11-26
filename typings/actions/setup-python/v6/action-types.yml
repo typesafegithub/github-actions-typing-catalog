@@ -33,6 +33,11 @@ inputs:
     type: boolean
   pip-version:
     type: string
+  pip-install:
+    type: list
+    separator: " "
+    list-item:
+      type: string
 outputs:
   python-version:
     type: string
