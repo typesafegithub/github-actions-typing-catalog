@@ -22,6 +22,8 @@ import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.Schedule
 import io.github.typesafegithub.workflows.dsl.workflow
+import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
+import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
@@ -52,6 +54,9 @@ workflow(
         Push(branches = listOf("main")),
         PullRequest(),
         Schedule(triggers = listOf(Cron(hour = "6", minute = "0"))),
+    ),
+    consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
+        checkoutActionVersion = CheckoutActionVersionSource.InferFromClasspath(),
     ),
     sourceFile = __FILE__,
 ) {

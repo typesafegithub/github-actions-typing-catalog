@@ -14,6 +14,8 @@ import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicSte
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.domain.triggers.Push
+import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
+import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
 import it.krzeminski.snakeyaml.engine.kmp.api.Dump
 import it.krzeminski.snakeyaml.engine.kmp.api.DumpSettings
 import it.krzeminski.snakeyaml.engine.kmp.common.ScalarStyle
@@ -22,6 +24,9 @@ import org.eclipse.jgit.api.Git
 
 workflow(
     name = "Update metadata",
+    consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
+        checkoutActionVersion = CheckoutActionVersionSource.InferFromClasspath(),
+    ),
     sourceFile = __FILE__,
     on = listOf(Push(branches = listOf("main"))),
 ) {
