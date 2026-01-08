@@ -19,6 +19,8 @@ inputs:
     allowed-values:
       - default
       - none
+  token:
+    type: string
 outputs:
   ruby-prefix:
     type: string
