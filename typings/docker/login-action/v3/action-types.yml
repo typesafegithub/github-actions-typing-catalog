@@ -12,3 +12,5 @@ inputs:
     type: boolean
   registry-auth:
     type: string
+  scope:
+    type: string
