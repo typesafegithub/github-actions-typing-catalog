@@ -43,6 +43,8 @@ inputs:
     type: boolean
   working_directory:
     type: string
+  previous_tag:
+    type: string
 
 outputs:
   url:
