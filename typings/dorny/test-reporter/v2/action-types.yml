@@ -100,3 +100,6 @@ outputs:
 
   url_html:
     type: string
+
+  slug_prefix:
+    type: string
