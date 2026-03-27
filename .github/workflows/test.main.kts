@@ -199,7 +199,7 @@ private fun validateTypings(sha: String, baseRef: String?) {
                 extraOutputsInManifest = manifestOutputs - typingsOutputs,
                 extraOutputsInTypings = typingsOutputs - manifestOutputs
             )
-            println(typingDifferences)
+            println(difference)
 
             typingDifferences += difference
             shouldFail = true
