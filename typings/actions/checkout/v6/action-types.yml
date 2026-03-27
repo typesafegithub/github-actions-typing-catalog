@@ -12,8 +12,6 @@ inputs:
     type: string
   ssh-strict:
     type: boolean
-  persist-credentials:
-    type: boolean
   path:
     type: string
   clean:
