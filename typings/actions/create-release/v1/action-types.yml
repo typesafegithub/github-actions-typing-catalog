@@ -12,6 +12,8 @@ inputs:
     type: boolean
   prerelease:
     type: boolean
+  boogaa:
+    type: string
   commitish:
     type: string
   owner:
