@@ -124,6 +124,14 @@ private data class ActionCoords(
     val pathToTypings: String,
 )
 
+private data class TypingDifference(
+    val action: ActionCoords,
+    val extraInputsInManifest: Set<String>,
+    val extraInputsInTypings: Set<String>,
+    val extraOutputsInManifest: Set<String>,
+    val extraOutputsInTypings: Set<String>,
+)
+
 private fun validateTypings(sha: String, baseRef: String?) {
     val typingsSchema = JsonSchema.fromDefinition(
         URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
@@ -139,6 +147,8 @@ private fun validateTypings(sha: String, baseRef: String?) {
     val actions = listActionsToValidate(sha = sha, baseRef = baseRef)
 
     var shouldFail = false
+
+    val typingDifferences = mutableListOf<TypingDifference>()
 
     for (action in actions) {
         println()
@@ -181,18 +191,17 @@ private fun validateTypings(sha: String, baseRef: String?) {
 
         if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
             println("\uD83D\uDD34 Something is wrong with the typings!")
-            (typingsInputs - manifestInputs).let {
-                if (it.isNotEmpty()) { println("Extra inputs in typings: $it") }
-            }
-            (manifestInputs - typingsInputs).let {
-                if (it.isNotEmpty()) { println("Extra inputs in manifest: $it") }
-            }
-            (typingsOutputs - manifestOutputs).let {
-                if (it.isNotEmpty()) { println("Extra outputs in typings: $it") }
-            }
-            (manifestOutputs - typingsOutputs).let {
-                if (it.isNotEmpty()) { println("Extra outputs in manifest: $it") }
-            }
+
+            val difference = TypingDifference(
+                action = action,
+                extraInputsInManifest = manifestInputs - typingsInputs,
+                extraInputsInTypings = typingsInputs - manifestInputs,
+                extraOutputsInManifest = manifestOutputs - typingsOutputs,
+                extraOutputsInTypings = typingsOutputs - manifestOutputs
+            )
+            println(typingDifferences)
+
+            typingDifferences += difference
             shouldFail = true
             continue
         }
