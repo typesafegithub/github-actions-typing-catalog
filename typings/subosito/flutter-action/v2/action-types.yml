@@ -31,6 +31,8 @@ inputs:
     type: string
   git-source:
     type: string
+  pub-cache:
+    type: boolean
 
 outputs:
   CACHE-PATH:
