@@ -3,7 +3,7 @@
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.7.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:4.0.1")
 @file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.5.4")
-@file:DependsOn("com.github.sya-ri:kgit:1.1.0")
+@file:DependsOn("com.github.sya-ri:kgit:1.2.0")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v6")
