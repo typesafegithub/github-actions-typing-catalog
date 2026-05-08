@@ -36,6 +36,7 @@ workflow(
         runsOn = UbuntuLatest,
         permissions = mapOf(
             Permission.IdToken to Mode.Write,
+            Permission.Contents to Mode.Write,
             Permission.PullRequests to Mode.Write,
         ),
     ) {
