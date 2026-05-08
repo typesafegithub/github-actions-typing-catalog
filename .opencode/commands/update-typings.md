@@ -34,7 +34,7 @@ description: Fix typings from latest failed "Validate typings" CI run
    ```
    (Try `action.yaml` if `action.yml` doesn't exist. If `path` is not null, prefix with it.)
 
-6. For each missing input, add it to the `inputs:` section of the action-types.yml following the existing format (YAML with `type:` field). The available types are documented in https://github.com/typesafegithub/github-actions-typing/blob/main/README.md. Do not use string by default - there are concrete types available by the typing verification action, so worth looking for the right fit. Try to sort alphabetically alongside existing entries.
+6. For each missing input, add it to the `inputs:` section of the action-types.yml following the existing format (YAML with `type:` field). The available types are documented in https://github.com/typesafegithub/github-actions-typing/blob/main/README.md. Do not use string by default - there are concrete types available by the typing verification action, so worth looking for the right fit. For each found type, prove it by either linking to the action's docs, action.y(a)ml, or its source code. Try to sort alphabetically alongside existing entries.
 
 7. For each missing output, add it similarly under `outputs:`.
 
