@@ -42,7 +42,7 @@ jobs:
     - id: 'print_conclusion'
       name: 'Print conclusion'
       run: 'echo "Conclusion: ${{ steps.check_last_run.outputs.conclusion }}"'
-    - id: 'step-4'
+    - id: 'step-3'
       uses: 'anomalyco/opencode/github@latest'
       with:
         model: 'opencode/big-pickle'
