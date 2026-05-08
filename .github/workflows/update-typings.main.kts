@@ -45,7 +45,7 @@ workflow(
             name = "Check if latest workflow run failed",
             id = "check_last_run",
             command = """
-                CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion' 2>/dev/null || echo "")
+                CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion // ""' 2>/dev/null)
                 echo "conclusion=${'$'}CONCLUSION" >> "${'$'}GITHUB_OUTPUT"
             """.trimIndent(),
         )
