@@ -32,11 +32,10 @@ jobs:
     steps:
     - id: 'step-0'
       uses: 'actions/checkout@v6'
-    - id: 'debug'
-      name: 'Debug'
-      run: 'gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq ''.[0].conclusion // ""'''
     - id: 'check_last_run'
       name: 'Check if latest workflow run failed'
+      env:
+        GH_TOKEN: '${{ github.token }}'
       run: |-
         CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion // ""' 2>/dev/null)
         echo "conclusion=$CONCLUSION" >> "$GITHUB_OUTPUT"
