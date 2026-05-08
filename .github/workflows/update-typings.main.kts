@@ -12,8 +12,9 @@ import io.github.typesafegithub.workflows.actions.anomalyco.OpencodeGithub_Untyp
 import io.github.typesafegithub.workflows.domain.Mode
 import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
+import io.github.typesafegithub.workflows.domain.triggers.Cron
+import io.github.typesafegithub.workflows.domain.triggers.Schedule
 import io.github.typesafegithub.workflows.domain.triggers.WorkflowDispatch
-import io.github.typesafegithub.workflows.domain.triggers.WorkflowRun
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
@@ -22,13 +23,7 @@ import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CON
 workflow(
     name = "Update typings",
     on = listOf(
-        WorkflowRun(
-            _customArguments = mapOf(
-                "types" to listOf("completed"),
-                "workflows" to listOf("Test"),
-                "branches" to listOf("main"),
-            ),
-        ),
+        Schedule(triggers = listOf(Cron(hour = "7", minute = "0"))),
         WorkflowDispatch(),
     ),
     consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
