@@ -32,7 +32,12 @@ jobs:
     steps:
     - id: 'step-0'
       uses: 'actions/checkout@v6'
-    - id: 'step-1'
+    - id: 'check_last_run'
+      name: 'Check if latest workflow run failed'
+      run: |-
+        CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion' 2>/dev/null || echo "")
+        echo "conclusion=$CONCLUSION" >> "$GITHUB_OUTPUT"
+    - id: 'step-2'
       uses: 'anomalyco/opencode/github@latest'
       with:
         model: 'opencode/big-pickle'
@@ -40,3 +45,4 @@ jobs:
         use_github_token: 'true'
       env:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      if: '${{ steps.check_last_run.outputs.conclusion == ''failure'' || steps.check_last_run.outputs.conclusion == '''' }}'

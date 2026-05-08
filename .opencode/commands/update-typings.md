@@ -2,18 +2,14 @@
 description: Fix typings from latest concluded "Validate typings" CI run
 ---
 
-1. Get the latest concluded workflow run:
+1. Sanity-check that the latest concluded run of the test workflow actually failed. Exit early with a clear message if not:
    ```
-   gh run list --repo typesafegithub/github-actions-typing-catalog \
-     --workflow .github/workflows/test.yaml --limit 1 \
-     --json databaseId,conclusion
+   gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion
    ```
-    Extract `databaseId` and `conclusion`. If `conclusion` is `success`, exit early (no-op).
 
-2. For the run (which we know is failed), get the "Validate typings" job logs:
+2. Get the latest run ID, then fetch the "Validate typings" job logs:
    ```
-   gh run view <RUN_ID> --repo typesafegithub/github-actions-typing-catalog \
-     --log --job validate_typings
+   gh run view <RUN_ID> --log --job validate_typings
    ```
 
 3. Parse the log for `TypingDifference(...)` lines. Example format:

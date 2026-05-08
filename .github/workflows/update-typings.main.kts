@@ -41,12 +41,21 @@ workflow(
         ),
     ) {
         uses(action = Checkout())
+        run(
+            name = "Check if latest workflow run failed",
+            id = "check_last_run",
+            command = """
+                CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion' 2>/dev/null || echo "")
+                echo "conclusion=${'$'}CONCLUSION" >> "${'$'}GITHUB_OUTPUT"
+            """.trimIndent(),
+        )
         uses(
             action = OpencodeGithub_Untyped(
                 model_Untyped = "opencode/big-pickle",
                 useGithubToken_Untyped = "true",
                 prompt_Untyped = "Run the /update-typings command",
             ),
+            `if` = expr { "steps.check_last_run.outputs.conclusion == 'failure' || steps.check_last_run.outputs.conclusion == ''" },
             env = mapOf(
                 "GITHUB_TOKEN" to expr("secrets.GITHUB_TOKEN"),
             ),
