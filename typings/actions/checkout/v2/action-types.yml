@@ -20,3 +20,9 @@ inputs:
     type: boolean
   set-safe-directory:
     type: boolean
+  token:
+    type: string
+  ssh-strict:
+    type: boolean
+  fetch-depth:
+    type: integer
