@@ -1,17 +1,17 @@
 ---
-description: Fix typings from latest failed "Validate typings" CI run
+description: Fix typings from latest concluded "Validate typings" CI run
 ---
 
-1. Get latest run IDs:
+1. Get the latest concluded workflow run:
    ```
    gh run list --repo typesafegithub/github-actions-typing-catalog \
      --workflow .github/workflows/test.yaml --limit 1 \
-     --json databaseId,conclusion --jq '.[] | select(.conclusion == "failure") | .databaseId'
+     --json databaseId,conclusion --jq '.[] | .databaseId'
    ```
 
-2. If no failed run, stop.
+2. Check its conclusion. If `success`, stop (no-op).
 
-3. For the first failed run, get the "Validate typings" job logs:
+3. For the run (which we know is failed), get the "Validate typings" job logs:
    ```
    gh run view <RUN_ID> --repo typesafegithub/github-actions-typing-catalog \
      --log --job validate_typings
