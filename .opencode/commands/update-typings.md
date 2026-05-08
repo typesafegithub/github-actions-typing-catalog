@@ -33,4 +33,14 @@ description: Fix typings from latest concluded "Validate typings" CI run
 
 6. For each missing output, add it similarly under `outputs:`.
 
-7. After all fixes are applied, create a dedicated branch with a commit and push to the branch, then create a PR. Make sure all git and `gh` commands are non-interactive (set `GIT_TERMINAL_PROMPT=0`, configure `user.name`/`user.email` via `-c`, use `gh pr create` with `--title` and `--body` flags).
+7. After all fixes are applied, create a dedicated branch with a commit and push to the branch, then create a PR. Make sure all git and `gh` commands are non-interactive (set `GIT_TERMINAL_PROMPT=0`, configure `user.name`/`user.email` via `-c`). Use `gh pr create` with `--title "Update typings for <action-owner>/<action-name>@<version>"` and `--body` flags. The owner, name, version come from the `ActionCoords` in the `TypingDifference`.
+
+   The PR body should follow this template — an H2 header per action, then list items for each missing input/output with type and reasoning:
+
+   ```markdown
+   ## testlens-app/setup-testlens@v1
+
+   - `session-timeout-seconds` (input): proposed type `integer`. The action's action.yml declares it as `type: integer` and it represents a timeout duration in seconds.
+   - `api-key` (input): proposed type `string`. The action docs describe it as an API key passed via `inputs.api-key`.
+   - `report-url` (output): proposed type `string`. The action's source code calls `core.setOutput("report-url", ...)` with a URL string.
+   ```
