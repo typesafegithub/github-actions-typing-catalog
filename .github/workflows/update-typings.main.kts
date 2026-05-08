@@ -42,6 +42,11 @@ workflow(
     ) {
         uses(action = Checkout())
         run(
+            name = "Debug",
+            id = "debug",
+            command = """gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion // ""'"""
+        )
+        run(
             name = "Check if latest workflow run failed",
             id = "check_last_run",
             command = """
