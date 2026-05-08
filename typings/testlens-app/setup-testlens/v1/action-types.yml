@@ -6,5 +6,8 @@ inputs:
   instrumentation-version:
     type: string
 
+  session-timeout-seconds:
+    type: integer
+
   write-log-files:
     type: boolean
