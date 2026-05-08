@@ -44,7 +44,10 @@ workflow(
         run(
             name = "Debug",
             id = "debug",
-            command = """gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion // ""'"""
+            command = """gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion // ""'""",
+            env = mapOf(
+                "GH_TOKEN" to expr("secrets.GITHUB_TOKEN"),
+            ),
         )
         run(
             name = "Check if latest workflow run failed",
@@ -54,7 +57,7 @@ workflow(
                 echo "conclusion=${'$'}CONCLUSION" >> "${'$'}GITHUB_OUTPUT"
             """.trimIndent(),
             env = mapOf(
-                "GH_TOKEN" to expr("github.token"),
+                "GH_TOKEN" to expr("secrets.GITHUB_TOKEN"),
             ),
         )
         run(
