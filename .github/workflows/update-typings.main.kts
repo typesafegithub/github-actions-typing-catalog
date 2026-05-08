@@ -51,7 +51,7 @@ workflow(
         )
         run(
             name = "Print conclusion",
-            id = "print conclusion",
+            id = "print_conclusion",
             command = """
                 echo "Conclusion: ${expr { "steps.check_last_run.outputs.conclusion" }}"
             """.trimIndent()

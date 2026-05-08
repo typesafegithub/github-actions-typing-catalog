@@ -37,7 +37,7 @@ jobs:
       run: |-
         CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion' 2>/dev/null || echo "")
         echo "conclusion=$CONCLUSION" >> "$GITHUB_OUTPUT"
-    - id: 'print conclusion'
+    - id: 'print_conclusion'
       name: 'Print conclusion'
       run: 'echo "Conclusion: ${{ steps.check_last_run.outputs.conclusion }}"'
     - id: 'step-3'
