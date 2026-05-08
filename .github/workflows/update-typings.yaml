@@ -4,8 +4,11 @@
 
 name: 'Update typings'
 on:
-  schedule:
-  - cron: '0 7 * * *'
+  workflow_run:
+    types:
+    - 'completed'
+    workflows:
+    - 'Test'
   workflow_dispatch: {}
 jobs:
   check_yaml_consistency:
