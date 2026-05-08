@@ -42,18 +42,10 @@ workflow(
     ) {
         uses(action = Checkout())
         run(
-            name = "Debug",
-            id = "debug",
-            command = """gh run list --workflow .github/workflows/test.yaml --limit 1 --status completed --json conclusion --jq '.[0].conclusion // ""'""",
-            env = mapOf(
-                "GH_TOKEN" to expr("secrets.GITHUB_TOKEN"),
-            ),
-        )
-        run(
             name = "Check if latest workflow run failed",
             id = "check_last_run",
             command = """
-                CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --status completed --json conclusion --jq '.[0].conclusion // ""' 2>/dev/null)
+                CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --status completed --json conclusion --jq '.[0].conclusion' 2>/dev/null)
                 echo "conclusion=${'$'}CONCLUSION" >> "${'$'}GITHUB_OUTPUT"
             """.trimIndent(),
             env = mapOf(
@@ -73,7 +65,7 @@ workflow(
                 useGithubToken_Untyped = "true",
                 prompt_Untyped = "Run the /update-typings command",
             ),
-            `if` = expr { "steps.check_last_run.outputs.conclusion == 'failure' || steps.check_last_run.outputs.conclusion == ''" },
+            `if` = expr { "steps.check_last_run.outputs.conclusion == 'failure'" },
             env = mapOf(
                 "GITHUB_TOKEN" to expr("secrets.GITHUB_TOKEN"),
             ),
