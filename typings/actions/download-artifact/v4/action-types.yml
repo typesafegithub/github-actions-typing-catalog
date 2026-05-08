@@ -11,8 +11,6 @@ inputs:
     type: string
   pattern:
     type: string
-  merge-multiple:
-    type: boolean
   github-token:
     type: string
   repository:
