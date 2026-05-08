@@ -36,13 +36,13 @@ jobs:
       name: 'Debug'
       env:
         GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      run: 'gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq ''.[0].conclusion // ""'''
+      run: 'gh run list --workflow .github/workflows/test.yaml --limit 1 --status completed --json conclusion --jq ''.[0].conclusion // ""'''
     - id: 'check_last_run'
       name: 'Check if latest workflow run failed'
       env:
         GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
       run: |-
-        CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq '.[0].conclusion // ""' 2>/dev/null)
+        CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --status completed --json conclusion --jq '.[0].conclusion // ""' 2>/dev/null)
         echo "conclusion=$CONCLUSION" >> "$GITHUB_OUTPUT"
     - id: 'print_conclusion'
       name: 'Print conclusion'
