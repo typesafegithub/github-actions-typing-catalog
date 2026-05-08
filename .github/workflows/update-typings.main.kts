@@ -49,6 +49,13 @@ workflow(
                 echo "conclusion=${'$'}CONCLUSION" >> "${'$'}GITHUB_OUTPUT"
             """.trimIndent(),
         )
+        run(
+            name = "Print conclusion",
+            id = "print conclusion",
+            command = """
+                echo "Conclusion: ${expr { "steps.check_last_run.outputs.conclusion" }}"
+            """.trimIndent()
+        )
         uses(
             action = OpencodeGithub_Untyped(
                 model_Untyped = "opencode/big-pickle",
