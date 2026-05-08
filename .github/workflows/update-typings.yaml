@@ -32,6 +32,9 @@ jobs:
     steps:
     - id: 'step-0'
       uses: 'actions/checkout@v6'
+    - id: 'debug'
+      name: 'Debug'
+      run: 'gh run list --workflow .github/workflows/test.yaml --limit 1 --json conclusion --jq ''.[0].conclusion // ""'''
     - id: 'check_last_run'
       name: 'Check if latest workflow run failed'
       env:
@@ -42,7 +45,7 @@ jobs:
     - id: 'print_conclusion'
       name: 'Print conclusion'
       run: 'echo "Conclusion: ${{ steps.check_last_run.outputs.conclusion }}"'
-    - id: 'step-3'
+    - id: 'step-4'
       uses: 'anomalyco/opencode/github@latest'
       with:
         model: 'opencode/big-pickle'
