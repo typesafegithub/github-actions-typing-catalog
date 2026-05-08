@@ -26,3 +26,5 @@ inputs:
     type: boolean
   fetch-depth:
     type: integer
+    named-values:
+      Infinite: 0
