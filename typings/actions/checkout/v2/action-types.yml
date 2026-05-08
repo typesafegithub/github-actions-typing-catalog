@@ -1,22 +1,28 @@
 # See https://github.com/typesafegithub/github-actions-typing
 inputs:
-  repository:
+  clean:
+    type: boolean
+  fetch-depth:
+    type: integer
+  lfs:
+    type: boolean
+  path:
     type: string
+  persist-credentials:
+    type: boolean
   ref:
     type: string
+  repository:
+    type: string
+  set-safe-directory:
+    type: boolean
   ssh-key:
     type: string
   ssh-known-hosts:
     type: string
-  persist-credentials:
-    type: boolean
-  path:
-    type: string
-  clean:
-    type: boolean
-  lfs:
+  ssh-strict:
     type: boolean
   submodules:
     type: boolean
-  set-safe-directory:
-    type: boolean
+  token:
+    type: string
