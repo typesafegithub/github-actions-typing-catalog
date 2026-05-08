@@ -9,6 +9,8 @@ on:
     - 'completed'
     workflows:
     - 'Test'
+    branches:
+    - 'main'
   workflow_dispatch: {}
 jobs:
   check_yaml_consistency:

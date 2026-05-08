@@ -26,6 +26,7 @@ workflow(
             _customArguments = mapOf(
                 "types" to listOf("completed"),
                 "workflows" to listOf("Test"),
+                "branches" to listOf("main"),
             ),
         ),
         WorkflowDispatch(),
