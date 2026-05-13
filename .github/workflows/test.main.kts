@@ -44,9 +44,11 @@ import java.nio.file.Path
 import java.util.Collections.emptySet
 import java.util.stream.Stream
 import kotlin.io.path.Path
+import kotlin.io.path.div
 import kotlin.io.path.extension
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.name
+import kotlin.io.path.walk
 
 workflow(
     name = "Test",
@@ -87,6 +89,7 @@ workflow(
             name = "Check for actions",
         ) {
             validateTypings(github.sha, github.base_ref?.ifEmpty { null })
+            validateAllMajorVersionsPresent(github.base_ref?.ifEmpty { null })
         }
     }
 
@@ -144,13 +147,13 @@ private fun validateTypings(sha: String, baseRef: String?) {
     )
 
     println()
-    val actions = listActionsToValidate(sha = sha, baseRef = baseRef)
+    val actionVersions = listActionVersionsToValidate(sha = sha, baseRef = baseRef)
 
     var shouldFail = false
 
     val typingDifferences = mutableListOf<TypingDifference>()
 
-    for (action in actions) {
+    for (action in actionVersions) {
         println()
         println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}")
 
@@ -214,7 +217,28 @@ private fun validateTypings(sha: String, baseRef: String?) {
     }
 }
 
-private fun listActionsToValidate(sha: String, baseRef: String?): Stream<ActionCoords> =
+private fun validateAllMajorVersionsPresent(baseRef: String?) {
+    if (baseRef != null) {
+        // Assuming we're in a PR - skip this check
+        return
+    }
+
+    listAllActionMetadataFilesInRepo()
+        .map {
+            val (_, owner, name) = it.invariantSeparatorsPathString.split("/", limit = 3)
+            Pair(owner, name)
+        }.forEach { (owner, name) ->
+            println("For $owner/$name...")
+            val versionsInCatalog = (Path("typings") / owner / name).walk()
+                .filter { it.name == "action-types.yml" }
+                .map { it.invariantSeparatorsPathString.removePrefix("typings/").removeSuffix("/action-types.yml") }
+                .sorted()
+            println("  versions in catalog: $versionsInCatalog")
+            // TODO: list versions in action and compare
+        }
+}
+
+private fun listActionVersionsToValidate(sha: String, baseRef: String?): Stream<ActionCoords> =
     baseRef.let { baseRef ->
         if (baseRef == null) {
             println("Validating all typings")
@@ -244,6 +268,18 @@ private fun listAllActionManifestFilesInRepo(): Stream<Path> {
     }
 
     return Files.walk(Path("typings")).filter { it.name == "action-types.yml" }
+}
+
+
+private fun listAllActionMetadataFilesInRepo(): Stream<Path> {
+    val actionsWithYamlExtension = Files.walk(Path("typings"))
+        .filter { it.name == "metadata.yaml" }
+        .toList()
+    check(actionsWithYamlExtension.isEmpty()) {
+        "Some files have .yaml extension, and we'd like to use only .yml here: $actionsWithYamlExtension"
+    }
+
+    return Files.walk(Path("typings")).filter { it.name == "metadata.yml" }
 }
 
 private fun listAffectedActionManifestFiles(sha: String, baseRef: String): Stream<Path> {
