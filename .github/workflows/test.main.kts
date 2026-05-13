@@ -231,7 +231,7 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
             println("For $owner/$name...")
             val versionsInCatalog = (Path("typings") / owner / name).walk()
                 .filter { it.name == "action-types.yml" }
-                .map { it.invariantSeparatorsPathString.removePrefix("typings/").removeSuffix("/action-types.yml") }
+                .map { it.invariantSeparatorsPathString.split("/")[3] }
                 .sorted()
                 .toList()
             println("  versions in catalog: $versionsInCatalog")
