@@ -225,7 +225,7 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
 
     listAllActionMetadataFilesInRepo()
         .map {
-            val (_, owner, name) = it.invariantSeparatorsPathString.split("/", limit = 3)
+            val (_, owner, name) = it.invariantSeparatorsPathString.split("/", limit = 4)
             Pair(owner, name)
         }.forEach { (owner, name) ->
             println("For $owner/$name...")
@@ -233,6 +233,7 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
                 .filter { it.name == "action-types.yml" }
                 .map { it.invariantSeparatorsPathString.removePrefix("typings/").removeSuffix("/action-types.yml") }
                 .sorted()
+                .toList()
             println("  versions in catalog: $versionsInCatalog")
             // TODO: list versions in action and compare
         }
