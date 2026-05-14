@@ -261,7 +261,7 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
 
     println("Missing major versions found:")
     missingMajorVersionsForAction.forEach { (actionCoords, versions) ->
-        print("- $actionCoords: $versions")
+        println("- $actionCoords: $versions")
     }
     // TODO: fail once all missing major versions are added
 }
