@@ -1,0 +1,12 @@
+inputs:
+  name:
+    type: string
+  path:
+    type: string
+  retention-days:
+    type: integer
+  include-hidden-files:
+    type: boolean
+outputs:
+  artifact_id:
+    type: integer

@@ -1,0 +1,26 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  go-version:
+    type: string
+  go-version-file:
+    type: string
+  check-latest:
+    type: boolean
+  token:
+    type: string
+  cache:
+    type: boolean
+  cache-dependency-path:
+    type: string
+  architecture:
+    type: enum
+    allowed-values:
+    - x86
+    - x64
+  go-download-base-url:
+    type: string
+outputs:
+  go-version:
+    type: string
+  cache-hit:
+    type: boolean

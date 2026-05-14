@@ -1,0 +1,23 @@
+inputs:
+  static_site_generator:
+    type: enum
+    allowed-values:
+      - nuxt
+      - next
+      - gatsby
+      - sveltekit
+  generator_config_file:
+    type: string
+  token:
+    type: string
+  enablement:
+    type: boolean
+outputs:
+  base_url:
+    type: string
+  origin:
+    type: string
+  host:
+    type: string
+  base_path:
+    type: string
