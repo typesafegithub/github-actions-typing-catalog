@@ -67,7 +67,7 @@ outputs:
   pull-request-number:
     type: string
   pull-request-url:
-    type: integer
+    type: string
   pull-request-operation:
     type: enum
     allowed-values:
