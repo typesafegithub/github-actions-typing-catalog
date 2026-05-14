@@ -172,13 +172,14 @@ inputs:
   sort-by:
     type: enum
     allowed-values:
-      - github_updated
-      - oldest_issue_date
+      - created
+      - updated
+      - comments
   only-issue-types:
-    type: enum
-    allowed-values:
-      - pull_request
-      - issue
+    type: list
+    separator: ','
+    list-item:
+      type: string
 outputs:
   closed-issues-prs:
     type: string
