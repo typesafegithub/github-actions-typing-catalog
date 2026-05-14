@@ -252,7 +252,10 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
                 it.removePrefix("v").toInt() > maxVersionInCatalog.removePrefix("v").toInt()
             }
             println("  versions missing in catalog: $versionsMissingInCatalog")
-            missingMajorVersionsForAction["$owner/$name"] = versionsMissingInCatalog
+
+            if (versionsMissingInCatalog.isNotEmpty()) {
+                missingMajorVersionsForAction["$owner/$name"] = versionsMissingInCatalog
+            }
         }
 
     if (missingMajorVersionsForAction.isEmpty()) {
