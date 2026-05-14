@@ -227,6 +227,8 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
         return
     }
 
+    val missingMajorVersionsForAction: MutableMap<String, List<String>> = mutableMapOf()
+
     listAllActionMetadataFilesInRepo()
         .map {
             val (_, owner, name) = it.invariantSeparatorsPathString.split("/", limit = 4)
@@ -250,7 +252,18 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
                 it.removePrefix("v").toInt() > maxVersionInCatalog.removePrefix("v").toInt()
             }
             println("  versions missing in catalog: $versionsMissingInCatalog")
+            missingMajorVersionsForAction["$owner/$name"] = versionsMissingInCatalog
         }
+
+    if (missingMajorVersionsForAction.isEmpty()) {
+        return
+    }
+
+    println("Missing major versions found:")
+    missingMajorVersionsForAction.forEach { (actionCoords, versions) ->
+        print("- $actionCoords: $versions")
+    }
+    // TODO: fail once all missing major versions are added
 }
 
 private fun listActionVersionsToValidate(sha: String, baseRef: String?): Stream<ActionCoords> =
