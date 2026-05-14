@@ -120,7 +120,10 @@ inputs:
   recurse_submodules:
     type: boolean
   report_type:
-    type: string
+    type: enum
+    allowed-values:
+    - coverage
+    - test_results
   run_command:
     type: string
   skip_validation:
