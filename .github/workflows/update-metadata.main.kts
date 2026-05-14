@@ -72,7 +72,7 @@ fun generateMetadataFiles() {
             val versionsWithTypings = actionRootDir.listFiles()
                 .filter { it.isDirectory }
                 .map { it.name }
-                .sortedBy { it.removePrefix("v") }
+                .sortedBy { it.removePrefix("v").toInt() }
             writeToMetadataFile(actionRootDir, versionsWithTypings)
         }
 }
