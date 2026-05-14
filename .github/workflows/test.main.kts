@@ -375,8 +375,8 @@ private fun Any?.toJsonElement(): JsonElement {
 }
 
 private fun listGithubRefs(owner: String, name: String): List<String> {
-    fun ghApi(args: List<String>): List<String> {
-        val process = ProcessBuilder(listOf("gh", "api", "repos/$owner/$name") + args)
+    fun ghApi(endpoint: String): List<String> {
+        val process = ProcessBuilder("gh", "api", endpoint, "--jq", ".[].name")
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
             .redirectError(ProcessBuilder.Redirect.PIPE)
             .start()
@@ -388,8 +388,8 @@ private fun listGithubRefs(owner: String, name: String): List<String> {
         }
         return output.lines().filter { it.isNotEmpty() }
     }
-    return ghApi(listOf("branches", "--jq", ".[].name")) +
-        ghApi(listOf("tags", "--jq", ".[].name"))
+    return ghApi("repos/$owner/$name/branches") +
+        ghApi("repos/$owner/$name/tags")
 }
 
 private val ActionCoords.actionYmlUrl: String get() = "https://raw.githubusercontent.com/$owner/$name/$version$subName/action.yml"
