@@ -222,11 +222,6 @@ private fun validateTypings(sha: String, baseRef: String?) {
 }
 
 private fun validateAllMajorVersionsPresent(baseRef: String?) {
-    if (baseRef != null) {
-        // Assuming we're in a PR - skip this check
-        return
-    }
-
     val missingMajorVersionsForAction: MutableMap<String, List<String>> = mutableMapOf()
 
     listAllActionMetadataFilesInRepo()
