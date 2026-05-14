@@ -24,9 +24,10 @@ inputs:
   digest-mismatch:
     type: enum
     allowed-values:
-      - fail
-      - warn
       - ignore
+      - info
+      - warn
+      - error
 outputs:
   download-path:
     type: string
