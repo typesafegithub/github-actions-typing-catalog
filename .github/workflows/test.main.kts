@@ -236,7 +236,11 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
                 .sorted()
                 .toList()
             println("  versions in catalog: $versionsInCatalog")
-            // TODO: list versions in action and compare
+            val versionsInAction = listGithubRefs(owner = owner, name = name)
+                .filter { it.startsWith("v") && it.removePrefix("v").toIntOrNull() != null }
+                .sorted()
+                .toList()
+            println("  versions in action:   $versionsInAction")
         }
 }
 
@@ -368,6 +372,24 @@ private fun Any?.toJsonElement(): JsonElement {
         null -> JsonNull
         else -> error("Unexpected type: ${this::class.qualifiedName}")
     }
+}
+
+private fun listGithubRefs(owner: String, name: String): List<String> {
+    fun ghApi(args: List<String>): List<String> {
+        val process = ProcessBuilder(listOf("gh", "api", "repos/$owner/$name") + args)
+            .redirectOutput(ProcessBuilder.Redirect.PIPE)
+            .redirectError(ProcessBuilder.Redirect.PIPE)
+            .start()
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+        if (exitCode != 0) {
+            println("Warning: gh api call failed (exit $exitCode): ${process.errorStream.bufferedReader().readText()}")
+            return emptyList()
+        }
+        return output.lines().filter { it.isNotEmpty() }
+    }
+    return ghApi(listOf("branches", "--jq", ".[].name")) +
+        ghApi(listOf("tags", "--jq", ".[].name"))
 }
 
 private val ActionCoords.actionYmlUrl: String get() = "https://raw.githubusercontent.com/$owner/$name/$version$subName/action.yml"
