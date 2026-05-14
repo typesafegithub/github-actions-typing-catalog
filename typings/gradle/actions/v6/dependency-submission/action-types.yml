@@ -137,8 +137,8 @@ inputs:
   cache-provider:
     type: enum
     allowed-values:
-      - generic
-      - noop
+      - enhanced
+      - basic
 
 outputs:
   build-scan-url:
