@@ -21,6 +21,7 @@ import io.github.typesafegithub.workflows.domain.triggers.Cron
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.Schedule
+import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
 import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
@@ -83,6 +84,9 @@ workflow(
         id = "validate_typings",
         name = "Validate typings",
         runsOn = UbuntuLatest,
+        env = mapOf(
+            "GH_TOKEN" to expr { "github.token" },
+        )
     ) {
         uses(action = Checkout())
         run(
