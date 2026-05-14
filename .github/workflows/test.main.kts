@@ -380,7 +380,7 @@ private fun Any?.toJsonElement(): JsonElement {
 
 private fun listGithubRefs(owner: String, name: String): List<String> {
     fun ghApi(endpoint: String): List<String> {
-        val process = ProcessBuilder("gh", "api", endpoint, "--jq", ".[].name")
+        val process = ProcessBuilder("gh", "api", "--paginate", endpoint, "--jq", ".[].name")
             .redirectOutput(ProcessBuilder.Redirect.PIPE)
             .redirectError(ProcessBuilder.Redirect.PIPE)
             .start()
