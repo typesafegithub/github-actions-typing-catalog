@@ -1,0 +1,29 @@
+inputs:
+  token:
+    type: string
+  working-directory:
+    type: string
+  ref:
+    type: string
+  base:
+    type: string
+  filters:
+    type: string
+  list-files:
+    type: enum
+    allowed-values:
+      - none
+      - csv
+      - json
+      - shell
+      - escape
+  initial-fetch-depth:
+    type: integer
+  predicate-quantifier:
+    type: enum
+    allowed-values:
+      - some
+      - every
+outputs:
+  changes:
+    type: string
