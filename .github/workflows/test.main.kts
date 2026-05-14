@@ -237,12 +237,12 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
                 .filter { it.name == "action-types.yml" }
                 .map { it.invariantSeparatorsPathString.split("/")[3] }
                 .toSet()
-                .sorted()
+                .sortedBy { it.removePrefix("v").toInt() }
                 .toList()
             println("  versions in catalog: $versionsInCatalog")
             val versionsInAction = listGithubRefs(owner = owner, name = name)
                 .filter { it.startsWith("v") && it.removePrefix("v").toIntOrNull() != null }
-                .sorted()
+                .sortedBy { it.removePrefix("v").toInt() }
                 .toList()
             println("  versions in action:   $versionsInAction")
         }
