@@ -44,3 +44,11 @@ inputs:
     - MERGE
     - REBASE
     - SQUASH
+  distributions-base-url:
+    type: string
+  pr-title-template:
+    type: string
+  pr-message-template:
+    type: string
+  commit-message-template:
+    type: string

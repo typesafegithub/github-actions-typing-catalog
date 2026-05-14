@@ -1,6 +1,8 @@
 inputs:
   image:
     type: string
+  cache-image:
+    type: string
   platforms:
     type: list
     separator: ','

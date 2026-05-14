@@ -26,8 +26,6 @@ inputs:
       type: string
   fail_ci_if_error:
     type: boolean
-  file:
-    type: string
   files:
     type: list
     separator: ','
@@ -61,16 +59,6 @@ inputs:
     type: string
   override_pr:
     type: integer
-  plugin:
-    type: list
-    separator: ','
-    list-item:
-      type: enum
-      name: Plugin
-      allowed-values:
-      - xcode
-      - gcov
-      - pycoverage
   plugins:
     type: list
     separator: ','
@@ -106,4 +94,38 @@ inputs:
   network_prefix:
     type: string
   use_oidc:
+    type: boolean
+  base_sha:
+    type: string
+  binary:
+    type: boolean
+  disable_telem:
+    type: boolean
+  force:
+    type: boolean
+  gcov_args:
+    type: string
+  gcov_executable:
+    type: string
+  gcov_ignore:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  gcov_include:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  recurse_submodules:
+    type: boolean
+  report_type:
+    type: string
+  run_command:
+    type: string
+  skip_validation:
+    type: boolean
+  swift_project:
+    type: string
+  use_pypi:
     type: boolean

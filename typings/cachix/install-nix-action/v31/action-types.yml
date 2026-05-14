@@ -15,3 +15,5 @@ inputs:
     type: string
   enable_kvm:
     type: boolean
+  set_as_trusted_user:
+    type: boolean

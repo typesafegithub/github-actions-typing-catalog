@@ -19,6 +19,14 @@ inputs:
     type: string
   run-id:
     type: string
+  skip-decompress:
+    type: boolean
+  digest-mismatch:
+    type: enum
+    allowed-values:
+      - fail
+      - warn
+      - ignore
 outputs:
   download-path:
     type: string

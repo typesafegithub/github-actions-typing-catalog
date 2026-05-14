@@ -49,6 +49,17 @@ inputs:
     type: boolean
   use-existing-credentials:
     type: boolean
+  no-proxy:
+    type: string
+  allowed-account-ids:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  force-skip-oidc:
+    type: boolean
+  action-timeout-s:
+    type: integer
 
 outputs:
   aws-account-id:

@@ -134,6 +134,12 @@ inputs:
   github-token:
     type: string
 
+  cache-provider:
+    type: enum
+    allowed-values:
+      - generic
+      - noop
+
 outputs:
   build-scan-url:
     type: string

@@ -17,6 +17,8 @@ inputs:
     allowed-values:
     - x86
     - x64
+  go-download-base-url:
+    type: string
 outputs:
   go-version:
     type: string

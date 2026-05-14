@@ -32,6 +32,8 @@ inputs:
     type: string
   mirror-token:
     type: string
+  package-manager-cache:
+    type: string
 outputs:
   cache-hit:
     type: boolean

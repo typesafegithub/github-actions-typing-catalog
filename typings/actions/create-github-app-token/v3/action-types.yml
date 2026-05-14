@@ -21,6 +21,12 @@ inputs:
   github-api-url:
     type: string
 
+  client-id:
+    type: string
+
+  enterprise:
+    type: string
+
   permission-actions:
     type: enum
     allowed-values:
@@ -28,6 +34,18 @@ inputs:
       - "write"
 
   permission-administration:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+
+  permission-artifact-metadata:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+
+  permission-attestations:
     type: enum
     allowed-values:
       - "read"
@@ -58,6 +76,12 @@ inputs:
       - "write"
 
   permission-deployments:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+
+  permission-discussions:
     type: enum
     allowed-values:
       - "read"
@@ -106,6 +130,12 @@ inputs:
       - "write"
 
   permission-members:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+
+  permission-merge-queues:
     type: enum
     allowed-values:
       - "read"

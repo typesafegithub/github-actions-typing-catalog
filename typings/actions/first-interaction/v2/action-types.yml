@@ -1,8 +1,8 @@
 # See https://github.com/typesafegithub/github-actions-typing
 inputs:
-  repo-token:
+  repo_token:
     type: string
-  issue-message:
+  issue_message:
     type: string
-  pr-message:
+  pr_message:
     type: string

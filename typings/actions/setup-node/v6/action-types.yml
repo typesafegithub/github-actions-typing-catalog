@@ -1,7 +1,5 @@
 # See https://github.com/typesafegithub/github-actions-typing
 inputs:
-  always-auth:
-    type: boolean
   node-version:
     type: string
   node-version-file:
@@ -31,6 +29,8 @@ inputs:
   mirror:
     type: string
   mirror-token:
+    type: string
+  package-manager-cache:
     type: string
 outputs:
   cache-hit:

@@ -169,6 +169,16 @@ inputs:
     type: boolean
   include-only-assigned:
     type: boolean
+  sort-by:
+    type: enum
+    allowed-values:
+      - github_updated
+      - oldest_issue_date
+  only-issue-types:
+    type: enum
+    allowed-values:
+      - pull_request
+      - issue
 outputs:
   closed-issues-prs:
     type: string

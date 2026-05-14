@@ -110,6 +110,8 @@ inputs:
     separator: "\n"
     list-item:
       type: string
+  call:
+    type: string
   secret-envs:
     type: list
     separator: "\n"

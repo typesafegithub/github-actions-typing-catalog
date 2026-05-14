@@ -55,6 +55,22 @@ inputs:
     type: string
   dependency-caching:
     type: boolean
+  analysis-kinds:
+    type: list
+    separator: ','
+    list-item:
+      type: enum
+      allowed-values:
+        - default
+        - experimental
+  quality-queries:
+    type: enum
+    allowed-values:
+      - disabled
+      - default
+      - builtin
+  check-run-id:
+    type: integer
 
 outputs:
   codeql-path:

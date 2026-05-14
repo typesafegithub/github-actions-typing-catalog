@@ -19,6 +19,11 @@ inputs:
       - escape
   initial-fetch-depth:
     type: integer
+  predicate-quantifier:
+    type: enum
+    allowed-values:
+      - some
+      - every
 outputs:
   changes:
     type: string

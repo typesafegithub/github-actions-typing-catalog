@@ -19,3 +19,6 @@ inputs:
 outputs:
   sarif-id:
     type: string
+  sarif-ids:
+    type: string
+    type: string

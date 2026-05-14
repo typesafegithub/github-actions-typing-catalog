@@ -31,6 +31,8 @@ inputs:
     type: boolean
   include-hidden-files:
     type: boolean
+  archive:
+    type: boolean
 outputs:
   artifact-id:
     type: integer

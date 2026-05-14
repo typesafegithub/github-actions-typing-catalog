@@ -37,3 +37,27 @@ inputs:
     separator: ','
     list-item:
       type: string
+  SECTION_NAME:
+    type: string
+  PULL_BRANCH_NAME:
+    type: string
+  PUSH_BRANCH_NAME:
+    type: string
+  SHOW_UPDATED_DATE:
+    type: boolean
+  SHOW_TOTAL_CODE_TIME:
+    type: boolean
+  COMMIT_MESSAGE:
+    type: string
+  COMMIT_USERNAME:
+    type: string
+  COMMIT_EMAIL:
+    type: string
+  COMMIT_SINGLE:
+    type: boolean
+  UPDATED_DATE_FORMAT:
+    type: string
+  SYMBOL_VERSION:
+    type: string
+  DEBUG_LOGGING:
+    type: boolean

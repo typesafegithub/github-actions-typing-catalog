@@ -11,8 +11,6 @@ inputs:
       type: string
   buildkitd-flags:
     type: string
-  install:
-    type: boolean
   use:
     type: boolean
   endpoint:
@@ -22,10 +20,6 @@ inputs:
     separator: ','
     list-item:
       type: string
-  config:
-    type: string
-  config-inline:
-    type: string
   append:
     type: string
   cleanup:

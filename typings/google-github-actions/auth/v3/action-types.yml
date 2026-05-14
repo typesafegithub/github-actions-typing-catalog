@@ -35,12 +35,6 @@ inputs:
       type: string
   access_token_subject:
     type: string
-  retries:
-    type: integer
-  backoff:
-    type: integer
-  backoff_limit:
-    type: integer
   id_token_audience:
     type: string
   id_token_include_email:

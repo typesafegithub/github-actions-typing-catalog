@@ -49,6 +49,26 @@ inputs:
     type: boolean
   use-existing-credentials:
     type: boolean
+  aws-profile:
+    type: string
+  overwrite-aws-profile:
+    type: boolean
+  no-proxy:
+    type: string
+  transitive-tag-keys:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  allowed-account-ids:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  force-skip-oidc:
+    type: boolean
+  action-timeout-s:
+    type: integer
 
 outputs:
   aws-account-id:

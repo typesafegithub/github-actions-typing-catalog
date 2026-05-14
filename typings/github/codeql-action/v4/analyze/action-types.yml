@@ -43,6 +43,8 @@ inputs:
     type: string
   expect-error:
     type: boolean
+  post-processed-sarif-path:
+    type: string
 outputs:
   db-locations:
     type: string

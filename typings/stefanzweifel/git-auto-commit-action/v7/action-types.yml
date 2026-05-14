@@ -38,6 +38,10 @@ inputs:
     type: string
   create_git_tag_only:
     type: boolean
+  tag_name:
+    type: string
+  skip_push:
+    type: boolean
 
 outputs:
   changes_detected:

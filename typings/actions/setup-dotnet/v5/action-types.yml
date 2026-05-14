@@ -26,6 +26,10 @@ inputs:
     separator: "\n"
     list-item:
       type: string
+  workloads:
+    type: string
+  architecture:
+    type: string
 
 outputs:
   cache-hit:

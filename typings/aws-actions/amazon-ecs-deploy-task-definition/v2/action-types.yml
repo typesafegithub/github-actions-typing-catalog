@@ -22,8 +22,67 @@ inputs:
     type: boolean
   desired-count:
     type: integer
+  wait-max-delay-seconds:
+    type: integer
+  codedeploy-deployment-config:
+    type: string
+  service-managed-ebs-volume-name:
+    type: string
+  service-managed-ebs-volume:
+    type: string
+  run-task:
+    type: boolean
+  run-task-container-overrides:
+    type: string
+  run-task-security-groups:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  run-task-subnets:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  run-task-assign-public-IP:
+    type: enum
+    allowed-values:
+      - ENABLED
+      - DISABLED
+  run-task-capacity-provider-strategy:
+    type: string
+  run-task-launch-type:
+    type: enum
+    allowed-values:
+      - EC2
+      - FARGATE
+      - EXTERNAL
+  run-task-started-by:
+    type: string
+  run-task-tags:
+    type: string
+  run-task-managed-ebs-volume-name:
+    type: string
+  run-task-managed-ebs-volume:
+    type: string
+  wait-for-task-stopped:
+    type: boolean
+  enable-ecs-managed-tags:
+    type: boolean
+  propagate-tags:
+    type: enum
+    allowed-values:
+      - TASK_DEFINITION
+      - SERVICE
+      - NONE
+  keep-null-value-keys:
+    type: boolean
+  max-retries:
+    type: integer
 outputs:
   task-definition-arn:
     type: string
   codedeploy-deployment-id:
+    type: string
+  run-task-arn:
     type: string

@@ -13,6 +13,10 @@ inputs:
     - aarch64
   show-versioninfo:
     type: boolean
+  force-arch:
+    type: boolean
+  project:
+    type: string
 outputs:
   julia-version:
     type: string

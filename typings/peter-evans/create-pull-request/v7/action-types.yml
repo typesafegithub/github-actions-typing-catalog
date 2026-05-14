@@ -57,8 +57,12 @@ inputs:
     type: string
   draft:
     type: boolean
-  git-token:
+  branch-token:
     type: string
+  sign-commits:
+    type: boolean
+  maintainer-can-modify:
+    type: boolean
 outputs:
   pull-request-number:
     type: string
