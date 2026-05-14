@@ -1,0 +1,25 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  token:
+    type: string
+  repository:
+    type: string
+  issue-number:
+    type: integer
+  title:
+    type: string
+  content-filepath:
+    type: string
+  labels:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  assignees:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+outputs:
+  issue-number:
+    type: integer

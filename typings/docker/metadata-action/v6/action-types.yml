@@ -1,0 +1,70 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  context:
+    type: enum
+    allowed-values:
+      - workflow
+      - git
+  images:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+  tags:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+  flavor:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+  labels:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+  sep-tags:
+    type: string
+  sep-labels:
+    type: string
+  bake-target:
+    type: string
+  annotations:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+  sep-annotations:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string
+  github-token:
+    type: string
+
+outputs:
+  version:
+    type: string
+  tags:
+    type: string
+  labels:
+    type: string
+  annotations:
+    type: string
+  json:
+    type: string
+  bake-file-tags:
+    type: string
+  bake-file-labels:
+    type: string
+  bake-file-annotations:
+    type: string
+  bake-file:
+    type: string
+  tag-names:
+    type: list
+    separator: '\n'
+    list-item:
+      type: string

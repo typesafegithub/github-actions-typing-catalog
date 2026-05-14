@@ -1,0 +1,14 @@
+inputs:
+  image:
+    type: string
+  platforms:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+outputs:
+  platforms:
+    type: list
+    separator: ','
+    list-item:
+      type: string

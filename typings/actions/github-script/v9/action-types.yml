@@ -1,0 +1,34 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  script:
+    type: string
+  github-token:
+    type: string
+  debug:
+    type: boolean
+  user-agent:
+    type: string
+  previews:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  result-encoding:
+    type: enum
+    name: Encoding
+    allowed-values:
+    - string
+    - json
+  retries:
+    type: integer
+  retry-exempt-status-codes:
+    type: list
+    separator: ','
+    list-item:
+      type: integer
+  base-url:
+    type: string
+
+outputs:
+  result:
+    type: string
