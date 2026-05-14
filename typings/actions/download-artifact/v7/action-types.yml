@@ -1,0 +1,24 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  name:
+    type: string
+  artifact-ids:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  path:
+    type: string
+  pattern:
+    type: string
+  merge-multiple:
+    type: boolean
+  github-token:
+    type: string
+  repository:
+    type: string
+  run-id:
+    type: string
+outputs:
+  download-path:
+    type: string

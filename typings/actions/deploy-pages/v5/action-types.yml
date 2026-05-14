@@ -1,0 +1,17 @@
+inputs:
+  token:
+    type: string
+  timeout:
+    type: integer
+  error_count:
+    type: integer
+  reporting_interval:
+    type: integer
+  artifact_name:
+    type: string
+  preview:
+    type: boolean
+outputs:
+  page_url:
+    type: string
+

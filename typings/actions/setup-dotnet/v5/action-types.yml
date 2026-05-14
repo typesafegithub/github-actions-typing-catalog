@@ -1,0 +1,50 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  dotnet-version:
+    type: string
+  dotnet-quality:
+    type: enum
+    name: DotNetQuality
+    allowed-values:
+    - daily
+    - signed
+    - validated
+    - preview
+    - ga
+  global-json-file:
+    type: string
+  source-url:
+    type: string
+  owner:
+    type: string
+  config-file:
+    type: string
+  cache:
+    type: boolean
+  cache-dependency-path:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
+  workloads:
+    type: list
+    separator: ','
+    list-item:
+      type: string    
+  architecture:
+    type: enum
+    allowed-values:
+      - x64
+      - x86
+      - arm64
+      - amd64
+      - arm
+      - s390x
+      - ppc64le
+      - riscv64
+
+outputs:
+  cache-hit:
+    type: boolean
+  dotnet-version:
+    type: string
