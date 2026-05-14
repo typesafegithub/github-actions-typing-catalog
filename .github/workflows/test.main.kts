@@ -244,7 +244,12 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
                 .filter { it.startsWith("v") && it.removePrefix("v").toIntOrNull() != null }
                 .sortedBy { it.removePrefix("v").toInt() }
                 .toList()
-            println("  versions in action:   $versionsInAction")
+            println("  versions in action: $versionsInAction")
+            val maxVersionInCatalog = versionsInCatalog.maxBy { it.removePrefix("v").toInt() }
+            val versionsMissingInCatalog = versionsInAction.filter {
+                it.removePrefix("v").toInt() > maxVersionInCatalog.removePrefix("v").toInt()
+            }
+            println("  versions missing in catalog: $versionsMissingInCatalog")
         }
 }
 
