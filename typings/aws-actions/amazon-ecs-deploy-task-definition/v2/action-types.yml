@@ -69,11 +69,7 @@ inputs:
   enable-ecs-managed-tags:
     type: boolean
   propagate-tags:
-    type: enum
-    allowed-values:
-      - TASK_DEFINITION
-      - SERVICE
-      - NONE
+    type: boolean
   keep-null-value-keys:
     type: boolean
   max-retries:
