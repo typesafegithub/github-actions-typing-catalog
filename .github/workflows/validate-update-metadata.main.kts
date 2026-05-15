@@ -14,7 +14,6 @@ import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicSte
 import io.github.typesafegithub.workflows.domain.Mode
 import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
-import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
@@ -62,16 +61,13 @@ workflow(
             generateMetadataFiles()
             val isPullRequest = github.base_ref?.isNotEmpty() == true
             if (isPullRequest) {
-                commitChanges(github.sha)
+                if (commitChanges(github.sha)) {
+                    gitPush()
+                }
             } else {
                 checkForChanges()
             }
         }
-        run(
-            name = "Push new commit",
-            command = "git push",
-            `if` = expr { "github.base_ref != ''" },
-        )
     }
 }
 
@@ -99,14 +95,27 @@ fun checkForChanges() {
     }
 }
 
-fun commitChanges(sha: String) {
+fun commitChanges(sha: String): Boolean {
     Git.open(File(".")).apply {
         add().addFilepattern("typings/").call()
 
         if (status().call().hasUncommittedChanges()) {
             commit().setMessage("Update metadata for commit $sha").call()
+            return true
         }
     }
+    return false
+}
+
+fun gitPush() {
+    val contextJson = System.getenv("GHWKT_GITHUB_CONTEXT_JSON")!!
+    val headRef = Regex("\"head_ref\"\\s*:\\s*\"([^\"]+)\"")
+        .find(contextJson)!!.groupValues[1]
+    val process = ProcessBuilder("git", "push", "origin", "HEAD:refs/heads/$headRef")
+        .inheritIO()
+        .start()
+    val exitCode = process.waitFor()
+    check(exitCode == 0) { "git push failed with exit code $exitCode" }
 }
 
 fun writeToMetadataFile(actionRootDir: File, versionsWithTypings: List<String>) {
