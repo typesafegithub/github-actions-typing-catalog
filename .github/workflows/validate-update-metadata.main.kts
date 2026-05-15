@@ -51,10 +51,15 @@ workflow(
             removeMetadataFiles()
             generateMetadataFiles()
             if (github.ref == "main") {
+                println("Main branch - just validating")
                 checkForChanges()
             } else {
+                println("Non-main branch...")
                 if (commitChanges(github.sha)) {
+                    println("Committing changes")
                     gitPush()
+                } else {
+                    println("Nothing to commit")
                 }
             }
         }
