@@ -56,7 +56,6 @@ inputs:
     allowed-values:
       - EC2
       - FARGATE
-      - EXTERNAL
   run-task-started-by:
     type: string
   run-task-tags:
