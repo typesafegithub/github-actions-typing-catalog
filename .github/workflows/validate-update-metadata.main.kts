@@ -50,6 +50,9 @@ workflow(
         run(name = "Run generation logic") {
             removeMetadataFiles()
             generateMetadataFiles()
+
+            println("github.ref: ${github.ref}")
+
             if (github.ref == "main") {
                 println("Main branch - just validating")
                 checkForChanges()
