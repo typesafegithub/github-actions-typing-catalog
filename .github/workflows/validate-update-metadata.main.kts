@@ -52,8 +52,10 @@ workflow(
             generateMetadataFiles()
 
             println("github.ref: ${github.ref}")
+            val branch = github.ref?.removePrefix("refs/heads/")
+            println("branch: $branch")
 
-            if (github.ref == "main") {
+            if (branch == "main") {
                 println("Main branch - just validating")
                 checkForChanges()
             } else {
