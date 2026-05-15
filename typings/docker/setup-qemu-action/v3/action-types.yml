@@ -2,7 +2,7 @@ inputs:
   image:
     type: string
   cache-image:
-    type: string
+    type: boolean
   platforms:
     type: list
     separator: ','
