@@ -27,7 +27,7 @@ import java.io.File
 import org.eclipse.jgit.api.Git
 
 workflow(
-    name = "Update metadata",
+    name = "Validate/Update metadata",
     consistencyCheckJobConfig = DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG.copy(
         checkoutActionVersion = CheckoutActionVersionSource.InferFromClasspath(),
     ),
