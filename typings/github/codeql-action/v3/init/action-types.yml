@@ -61,14 +61,13 @@ inputs:
     list-item:
       type: enum
       allowed-values:
-        - default
-        - experimental
+        - code-scanning
+        - code-quality
   quality-queries:
-    type: enum
-    allowed-values:
-      - disabled
-      - default
-      - builtin
+    type: list
+    separator: ','
+    list-item:
+      type: string
   check-run-id:
     type: integer
 
