@@ -11,8 +11,12 @@
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.SetupJava
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
+import io.github.typesafegithub.workflows.domain.Mode
+import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
+import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
+import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
 import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
@@ -28,11 +32,17 @@ workflow(
         checkoutActionVersion = CheckoutActionVersionSource.InferFromClasspath(),
     ),
     sourceFile = __FILE__,
-    on = listOf(Push(branches = listOf("main"))),
+    on = listOf(
+        Push(branches = listOf("main")),
+        PullRequest(),
+    ),
 ) {
     job(
         id = "generate",
         runsOn = RunnerType.UbuntuLatest,
+        permissions = mapOf(
+            Permission.Contents to Mode.Write,
+        ),
     ) {
         uses(action = Checkout())
         uses(action = SetupJava(
@@ -50,11 +60,17 @@ workflow(
         run(name = "Run generation logic") {
             removeMetadataFiles()
             generateMetadataFiles()
-            commitChanges(github.sha)
+            val isPullRequest = github.base_ref?.isNotEmpty() == true
+            if (isPullRequest) {
+                commitChanges(github.sha)
+            } else {
+                checkForChanges()
+            }
         }
         run(
             name = "Push new commit",
             command = "git push",
+            `if` = expr { "github.base_ref != ''" },
         )
     }
 }
@@ -75,6 +91,12 @@ fun generateMetadataFiles() {
                 .sortedBy { it.removePrefix("v").toInt() }
             writeToMetadataFile(actionRootDir, versionsWithTypings)
         }
+}
+
+fun checkForChanges() {
+    require(!Git.open(File(".")).status().call().hasUncommittedChanges()) {
+        "Metadata files changed after regeneration — they are not up to date!"
+    }
 }
 
 fun commitChanges(sha: String) {
