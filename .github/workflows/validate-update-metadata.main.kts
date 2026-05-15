@@ -30,9 +30,7 @@ workflow(
         checkoutActionVersion = CheckoutActionVersionSource.InferFromClasspath(),
     ),
     sourceFile = __FILE__,
-    on = listOf(
-        Push(),
-    ),
+    on = listOf(Push()),
 ) {
     job(
         id = "generate",
