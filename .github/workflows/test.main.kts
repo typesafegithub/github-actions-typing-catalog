@@ -266,7 +266,8 @@ private fun validateAllMajorVersionsPresent(baseRef: String?) {
     missingMajorVersionsForAction.forEach { (actionCoords, versions) ->
         println("- $actionCoords: $versions")
     }
-    // TODO: fail once all missing major versions are added
+
+    throw RuntimeException("Missing major versions found!")
 }
 
 private fun listActionVersionsToValidate(sha: String, baseRef: String?): Stream<ActionCoords> =
