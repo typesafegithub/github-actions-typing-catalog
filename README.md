@@ -1,4 +1,5 @@
 # GitHub Actions Typing Catalog
+test
 
 This repository contains type definitions for various GitHub Actions APIs (inputs and outputs). It's best for action
 owners to provide the typings themselves and host them from within their repositories (see
