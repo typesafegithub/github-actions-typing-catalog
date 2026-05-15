@@ -1,0 +1,16 @@
+inputs:
+  image:
+    type: string
+  cache-image:
+    type: boolean
+  platforms:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+outputs:
+  platforms:
+    type: list
+    separator: ','
+    list-item:
+      type: string
