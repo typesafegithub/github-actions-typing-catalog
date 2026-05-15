@@ -71,7 +71,10 @@ inputs:
   propagate-tags:
     type: boolean
   keep-null-value-keys:
-    type: boolean
+    type: list
+    separator: ','
+    list-item:
+      type: string
   max-retries:
     type: integer
 outputs:
