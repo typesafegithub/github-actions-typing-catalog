@@ -15,7 +15,6 @@ import io.github.typesafegithub.workflows.domain.Mode
 import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
-import io.github.typesafegithub.workflows.domain.triggers.PullRequest
 import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
 import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
@@ -32,8 +31,7 @@ workflow(
     ),
     sourceFile = __FILE__,
     on = listOf(
-        Push(branches = listOf("main")),
-        PullRequest(),
+        Push(),
     ),
 ) {
     job(
@@ -59,13 +57,12 @@ workflow(
         run(name = "Run generation logic") {
             removeMetadataFiles()
             generateMetadataFiles()
-            val isPullRequest = github.base_ref?.isNotEmpty() == true
-            if (isPullRequest) {
+            if (github.ref == "main") {
+                checkForChanges()
+            } else {
                 if (commitChanges(github.sha)) {
                     gitPush()
                 }
-            } else {
-                checkForChanges()
             }
         }
     }
@@ -108,14 +105,9 @@ fun commitChanges(sha: String): Boolean {
 }
 
 fun gitPush() {
-    val contextJson = System.getenv("GHWKT_GITHUB_CONTEXT_JSON")!!
-    val headRef = Regex("\"head_ref\"\\s*:\\s*\"([^\"]+)\"")
-        .find(contextJson)!!.groupValues[1]
-    val process = ProcessBuilder("git", "push", "origin", "HEAD:refs/heads/$headRef")
-        .inheritIO()
-        .start()
-    val exitCode = process.waitFor()
-    check(exitCode == 0) { "git push failed with exit code $exitCode" }
+    val process = ProcessBuilder("git", "push")
+        .inheritIO().start()
+    check(process.waitFor() == 0) { "git push failed" }
 }
 
 fun writeToMetadataFile(actionRootDir: File, versionsWithTypings: List<String>) {
