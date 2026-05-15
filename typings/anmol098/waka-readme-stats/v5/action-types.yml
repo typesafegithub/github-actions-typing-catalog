@@ -1,0 +1,63 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  GH_TOKEN:
+    type: string
+  WAKATIME_API_KEY:
+    type: string
+  SHOW_OS:
+    type: boolean
+  SHOW_PROJECTS:
+    type: boolean
+  SHOW_EDITORS:
+    type: boolean
+  SHOW_TIMEZONE:
+    type: boolean
+  SHOW_COMMIT:
+    type: boolean
+  SHOW_LANGUAGE:
+    type: boolean
+  SHOW_LINES_OF_CODE:
+    type: boolean
+  SHOW_LANGUAGE_PER_REPO:
+    type: boolean
+  SHOW_LOC_CHART:
+    type: boolean
+  SHOW_DAYS_OF_WEEK:
+    type: boolean
+  SHOW_PROFILE_VIEWS:
+    type: boolean
+  SHOW_SHORT_INFO:
+    type: boolean
+  LOCALE:
+    type: string
+  COMMIT_BY_ME:
+    type: boolean
+  IGNORED_REPOS:
+    type: list
+    separator: ','
+    list-item:
+      type: string
+  SECTION_NAME:
+    type: string
+  PULL_BRANCH_NAME:
+    type: string
+  PUSH_BRANCH_NAME:
+    type: string
+  SHOW_UPDATED_DATE:
+    type: boolean
+  SHOW_TOTAL_CODE_TIME:
+    type: boolean
+  COMMIT_MESSAGE:
+    type: string
+  COMMIT_USERNAME:
+    type: string
+  COMMIT_EMAIL:
+    type: string
+  COMMIT_SINGLE:
+    type: boolean
+  UPDATED_DATE_FORMAT:
+    type: string
+  SYMBOL_VERSION:
+    type: string
+  DEBUG_LOGGING:
+    type: boolean
