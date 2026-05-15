@@ -11,8 +11,6 @@
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.actions.SetupJava
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
-import io.github.typesafegithub.workflows.domain.Mode
-import io.github.typesafegithub.workflows.domain.Permission
 import io.github.typesafegithub.workflows.domain.RunnerType
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.domain.triggers.Push
@@ -35,9 +33,6 @@ workflow(
     job(
         id = "generate",
         runsOn = RunnerType.UbuntuLatest,
-        permissions = mapOf(
-            Permission.Contents to Mode.Write,
-        ),
     ) {
         uses(action = Checkout())
         uses(action = SetupJava(
