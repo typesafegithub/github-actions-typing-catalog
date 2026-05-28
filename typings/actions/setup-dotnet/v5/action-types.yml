@@ -11,6 +11,8 @@ inputs:
     - validated
     - preview
     - ga
+  dotnet-channel:
+    type: string
   global-json-file:
     type: string
   source-url:
