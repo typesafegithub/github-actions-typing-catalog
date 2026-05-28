@@ -3,6 +3,8 @@ inputs:
     type: string
   cache-image:
     type: boolean
+  reset:
+    type: boolean
   platforms:
     type: list
     separator: ','
