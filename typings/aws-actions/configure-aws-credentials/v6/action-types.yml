@@ -69,6 +69,10 @@ inputs:
     type: boolean
   action-timeout-s:
     type: integer
+  custom-tags:
+    type: string
+  sts-endpoint:
+    type: string
 
 outputs:
   aws-account-id:
