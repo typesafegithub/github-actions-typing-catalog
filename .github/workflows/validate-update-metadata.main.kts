@@ -2,7 +2,7 @@
 @file:Repository("https://repo1.maven.org/maven2/")
 @file:DependsOn("io.github.typesafegithub:github-workflows-kt:3.7.0")
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:4.0.1")
-@file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r")
+@file:DependsOn("org.eclipse.jgit:org.eclipse.jgit:7.7.0.202606012155-r")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v6")
