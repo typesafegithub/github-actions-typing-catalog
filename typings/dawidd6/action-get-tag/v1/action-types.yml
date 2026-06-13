@@ -1,0 +1,7 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  strip_v:
+    type: boolean
+outputs:
+  tag:
+    type: string
