@@ -33,16 +33,11 @@ jobs:
     - id: 'step-0'
       uses: 'actions/checkout@v6'
     - id: 'step-1'
-      name: 'Downgrade Kotlin'
-      uses: 'fwilhe2/setup-kotlin@v1'
-      with:
-        version: '2.3.21'
-    - id: 'step-2'
       run: |-
         find -name *.main.kts -print0 | while read -d $'\0' file
         do
             echo "Compiling $file..."
-            kotlinc -Xallow-any-scripts-in-source-roots -Xuse-fir-lt=false "$file"
+            kotlinc -script -Xallow-any-scripts-in-source-roots -Xuse-fir-lt=false "$file"
         done
   validate_typings:
     name: 'Validate typings'

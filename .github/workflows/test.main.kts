@@ -4,7 +4,6 @@
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:4.0.1")
 @file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.5.5")
 @file:DependsOn("com.github.sya-ri:kgit:1.2.0")
-@file:DependsOn("fwilhe2:setup-kotlin:v1")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v6")
@@ -16,7 +15,6 @@ import io.github.optimumcode.json.schema.ErrorCollector
 import io.github.optimumcode.json.schema.JsonSchema
 import io.github.optimumcode.json.schema.ValidationError
 import io.github.typesafegithub.workflows.actions.actions.Checkout
-import io.github.typesafegithub.workflows.actions.fwilhe2.SetupKotlin
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.triggers.Cron
@@ -71,21 +69,12 @@ workflow(
         runsOn = UbuntuLatest,
     ) {
         uses(action = Checkout())
-        uses(
-            name = "Downgrade Kotlin",
-            action = SetupKotlin(
-                // One version before 2.4.0 that contains a bug leading to this failure:
-                //   exception: java.lang.ClassNotFoundException: kotlin.script.experimental.dependencies.Repository
-                // This downgrade is meant to be a temporary workaround.
-                version = "2.3.21",
-            ),
-        )
         run(
             command = """
             find -name *.main.kts -print0 | while read -d ${'$'}'\0' file
             do
                 echo "Compiling ${'$'}file..."
-                kotlinc -Xallow-any-scripts-in-source-roots -Xuse-fir-lt=false "${'$'}file"
+                kotlinc -script -Xallow-any-scripts-in-source-roots -Xuse-fir-lt=false "${'$'}file"
             done
             """.trimIndent()
         )
