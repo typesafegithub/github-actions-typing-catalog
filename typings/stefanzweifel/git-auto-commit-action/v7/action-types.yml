@@ -42,6 +42,24 @@ inputs:
     type: string
   skip_push:
     type: boolean
+  before_add_hook:
+    type: string
+  after_add_hook:
+    type: string
+  before_commit_hook:
+    type: string
+  after_commit_hook:
+    type: string
+  before_tag_hook:
+    type: string
+  after_tag_hook:
+    type: string
+  before_push_hook:
+    type: string
+  after_push_hook:
+    type: string
+  disable_pull_request_target_trigger_warning:
+    type: boolean
 
 outputs:
   changes_detected:
