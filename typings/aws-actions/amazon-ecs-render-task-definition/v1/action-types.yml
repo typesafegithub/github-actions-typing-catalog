@@ -41,6 +41,10 @@ inputs:
     separator: "\n"
     list-item:
       type: string
+  task-role-arn:
+    type: string
+  execution-role-arn:
+    type: string
 
 outputs:
   task-definition:
