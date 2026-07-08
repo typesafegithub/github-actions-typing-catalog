@@ -59,6 +59,14 @@ inputs:
     type: string
   java-version-file:
     type: string
+  set-default:
+    type: boolean
+  verify-signature:
+    type: boolean
+  verify-signature-public-key:
+    type: string
+  show-download-progress:
+    type: boolean
 
 outputs:
   distribution: *distribution
