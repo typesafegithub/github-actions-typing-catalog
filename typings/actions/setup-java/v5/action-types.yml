@@ -67,6 +67,8 @@ inputs:
     type: string
   show-download-progress:
     type: boolean
+  jdk-file:
+    type: string
 
 outputs:
   distribution: *distribution
@@ -76,3 +78,5 @@ outputs:
     type: string
   cache-hit:
     type: boolean
+  cache-primary-key:
+    type: string
