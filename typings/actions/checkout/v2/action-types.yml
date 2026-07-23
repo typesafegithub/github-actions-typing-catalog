@@ -28,3 +28,5 @@ inputs:
     type: integer
     named-values:
       Infinite: 0
+  allow-unsafe-pr-checkout:
+    type: boolean

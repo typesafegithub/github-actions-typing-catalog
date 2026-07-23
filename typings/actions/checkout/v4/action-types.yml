@@ -42,6 +42,8 @@ inputs:
     type: string
   filter:
     type: string
+  allow-unsafe-pr-checkout:
+    type: boolean
 
 outputs:
   ref:
