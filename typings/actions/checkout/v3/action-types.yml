@@ -36,3 +36,5 @@ inputs:
     type: boolean
   fetch-tags:
     type: boolean
+  allow-unsafe-pr-checkout:
+    type: boolean
