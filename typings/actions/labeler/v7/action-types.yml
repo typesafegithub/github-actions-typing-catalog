@@ -1,0 +1,27 @@
+# See https://github.com/typesafegithub/github-actions-typing
+inputs:
+  repo-token:
+    type: string
+  configuration-path:
+    type: string
+  sync-labels:
+    type: boolean
+  dot:
+    type: boolean
+  pr-number:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
+
+outputs:
+  new-labels:
+    type: list
+    separator: ","
+    list-item:
+      type: string
+  all-labels:
+    type: list
+    separator: ","
+    list-item:
+      type: string
