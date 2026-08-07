@@ -11,3 +11,6 @@ inputs:
 
   write-log-files:
     type: boolean
+
+  working-directory:
+    type: string
