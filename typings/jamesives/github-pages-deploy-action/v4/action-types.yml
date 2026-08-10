@@ -37,6 +37,10 @@ inputs:
     type: boolean
   attempt-limit:
     type: integer
+  include-github-folder:
+    type: boolean
+  lfs:
+    type: boolean
 outputs:
   deployment-status:
     type: enum
