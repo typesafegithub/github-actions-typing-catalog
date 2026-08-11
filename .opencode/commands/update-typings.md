@@ -53,6 +53,8 @@ For a difference in typings:
    - `report-url` (output): proposed type `string`. The action's source code calls `core.setOutput("report-url", ...)` with a URL string.
    ```
 
+   If a similar (in intent) PR already exists and requires no changes, do nothing. If it requires changes, update the existing PR instead by adding a commit.
+
 For a new major version not tracked in this repo:
 
 1. If e.g. v5 is a new major version, start by literally copying the typings from v4, as if there were no changes in typings.
