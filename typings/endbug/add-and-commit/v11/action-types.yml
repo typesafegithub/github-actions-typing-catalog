@@ -44,6 +44,12 @@ inputs:
     type: string
   github_token:
     type: string
+  dry_run:
+    type: boolean
+  push_attempts:
+    type: integer
+  allow_unsafe_git_protocols:
+    type: boolean
 outputs:
   committed:
     type: boolean
