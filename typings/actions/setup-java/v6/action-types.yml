@@ -6,11 +6,22 @@ inputs:
     type: enum
     allowed-values:
     - corretto
-    - graalce
+    - dragonwell
+    - graalvm
+    - graalvm-community
+    - jetbrains
+    - kona
     - liberica
+    - liberica-nik
     - microsoft
+    - oracle
+    - oracle-openjdk
+    - redhat
+    - sapmachine
+    - semeru
     - temurin
     - zulu
+    - jdkfile
   java-package:
     type: enum
     allowed-values:
