@@ -27,3 +27,7 @@ inputs:
     allowed-values:
     - SERVICE_PRINCIPAL
     - IDENTITY
+  max-context-population:
+    type: integer
+  mask-client-id:
+    type: boolean
