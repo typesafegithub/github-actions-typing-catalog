@@ -29,5 +29,7 @@ inputs:
     - IDENTITY
   max-context-population:
     type: integer
+    named-values:
+      load-all: -1
   mask-client-id:
     type: boolean
