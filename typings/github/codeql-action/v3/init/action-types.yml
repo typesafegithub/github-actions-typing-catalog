@@ -70,6 +70,8 @@ inputs:
       type: string
   check-run-id:
     type: integer
+  job-status:
+    type: string
 
 outputs:
   codeql-path:
