@@ -34,10 +34,12 @@ jobs:
       uses: 'actions/checkout@v7'
     - id: 'step-1'
       run: |-
+        KOTLIN_HOME=$(dirname $(dirname $(which kotlinc)))
+        KOTLIN_MAIN_KTS_JAR="${KOTLIN_HOME}/lib/kotlin-main-kts.jar"
         find -name *.main.kts -print0 | while read -d $'\0' file
         do
             echo "Compiling $file..."
-            kotlinc -script -Xallow-any-scripts-in-source-roots -Xuse-fir-lt=false "$file"
+            kotlinc -cp "${KOTLIN_MAIN_KTS_JAR}" -script -Xallow-any-scripts-in-source-roots "$file"
         done
   validate_typings:
     name: 'Validate typings'
