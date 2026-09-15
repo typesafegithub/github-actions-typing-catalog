@@ -132,3 +132,5 @@ inputs:
     type: string
   use_pypi:
     type: boolean
+  cleanup:
+    type: boolean
