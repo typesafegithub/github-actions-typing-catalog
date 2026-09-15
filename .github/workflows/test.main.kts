@@ -70,11 +70,13 @@ workflow(
     ) {
         uses(action = Checkout())
         run(
-            command = """
-            find -name *.main.kts -print0 | while read -d ${'$'}'\0' file
+            command = $$"""
+            KOTLIN_HOME=$(dirname $(dirname $(which kotlinc)))
+            KOTLIN_MAIN_KTS_JAR="${KOTLIN_HOME}/lib/kotlin-main-kts.jar"
+            find -name *.main.kts -print0 | while read -d $'\0' file
             do
-                echo "Compiling ${'$'}file..."
-                kotlinc -script -Xallow-any-scripts-in-source-roots -Xuse-fir-lt=false "${'$'}file"
+                echo "Compiling $file..."
+                kotlinc -cp "${KOTLIN_MAIN_KTS_JAR}" -script -Xallow-any-scripts-in-source-roots "$file"
             done
             """.trimIndent()
         )
