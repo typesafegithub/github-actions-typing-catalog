@@ -73,6 +73,8 @@ inputs:
     type: string
   sts-endpoint:
     type: string
+  translate-env-variables:
+    type: boolean
 
 outputs:
   aws-account-id:
