@@ -76,6 +76,13 @@ inputs:
       - always
       - auto
 
+  list-files:
+    type: enum
+    allowed-values:
+      - all
+      - failed
+      - none
+
 outputs:
   conclusion:
     type: enum
@@ -102,4 +109,7 @@ outputs:
     type: string
 
   slug_prefix:
+    type: string
+
+  summary_file:
     type: string
