@@ -27,3 +27,6 @@ inputs:
 outputs:
   ssh-command:
     type: string
+
+  join-command:
+    type: string
