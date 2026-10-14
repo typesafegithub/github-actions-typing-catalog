@@ -320,12 +320,6 @@ inputs:
       - "read"
       - "write"
 
-  permission-team-discussions:
-    type: enum
-    allowed-values:
-      - "read"
-      - "write"
-
   permission-vulnerability-alerts:
     type: enum
     allowed-values:
@@ -344,6 +338,25 @@ inputs:
       - "write"
 
   permission-enterprise-custom-properties-for-organizations:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+      - "admin"
+
+  permission-code-quality:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+
+  permission-organization-copilot-agent-settings:
+    type: enum
+    allowed-values:
+      - "read"
+      - "write"
+
+  permission-organization-external-properties-for-repos:
     type: enum
     allowed-values:
       - "read"
