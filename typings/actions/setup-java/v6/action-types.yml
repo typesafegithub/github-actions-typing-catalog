@@ -112,6 +112,16 @@ inputs:
     type: string
   problem-matcher:
     type: boolean
+  mvn-server-repository-origins:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
+  mvn-plugin-repositories:
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
 
 outputs:
   distribution: *distribution
