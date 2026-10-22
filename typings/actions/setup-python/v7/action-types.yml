@@ -33,6 +33,10 @@ inputs:
     type: boolean
   pip-version:
     type: string
+  mirror:
+    type: string
+  mirror-token:
+    type: string
 outputs:
   python-version:
     type: string
