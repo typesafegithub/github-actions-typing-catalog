@@ -14,3 +14,9 @@ inputs:
 
   working-directory:
     type: string
+
+  use-oidc:
+    type: boolean
+
+  token-exchange-url:
+    type: string
