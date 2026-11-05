@@ -20,11 +20,7 @@ import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
 import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
-import it.krzeminski.snakeyaml.engine.kmp.api.Dump
-import it.krzeminski.snakeyaml.engine.kmp.api.DumpSettings
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
-import it.krzeminski.snakeyaml.engine.kmp.api.copy
-import it.krzeminski.snakeyaml.engine.kmp.common.FlowStyle
 import java.io.File
 import java.net.URI
 import java.net.URLEncoder
@@ -303,21 +299,21 @@ private fun applyFileFix(fix: FileFix): AppliedChange? {
 
     val targetFile = File(fix.typingsPath)
     val baseFile = File(fix.copyFromTypingsPath ?: fix.typingsPath)
-    val typings = loadYaml(baseFile)
-    val typingsInputs = typings.section("inputs")
-    val typingsOutputs = typings.section("outputs")
+    val baseText = if (baseFile.exists()) baseFile.readText() else ""
 
     val manifestInputs = manifest.names("inputs")
     val manifestOutputs = manifest.names("outputs")
+    val existingInputs = entryNames(baseText, "inputs")
+    val existingOutputs = entryNames(baseText, "outputs")
 
-    val addedInputs = manifestInputs.filterNot { it in typingsInputs }.associateWith { inputName ->
+    val addedInputs = manifestInputs.filterNot { it in existingInputs }.associateWith { inputName ->
         inferType(manifest.definition("inputs", inputName))
     }
-    val removedInputs = typingsInputs.keys.filterNot { it in manifestInputs }.toSet()
-    val addedOutputs = manifestOutputs.filterNot { it in typingsOutputs }.associateWith { outputName ->
+    val removedInputs = existingInputs.filterNot { it in manifestInputs }.toSet()
+    val addedOutputs = manifestOutputs.filterNot { it in existingOutputs }.associateWith { outputName ->
         inferType(manifest.definition("outputs", outputName))
     }
-    val removedOutputs = typingsOutputs.keys.filterNot { it in manifestOutputs }.toSet()
+    val removedOutputs = existingOutputs.filterNot { it in manifestOutputs }.toSet()
 
     val isNewVersion = fix.copiedFromVersion != null
     if (!isNewVersion &&
@@ -329,20 +325,14 @@ private fun applyFileFix(fix: FileFix): AppliedChange? {
         return null
     }
 
-    removedInputs.forEach(typingsInputs::remove)
-    removedOutputs.forEach(typingsOutputs::remove)
-    addedInputs.forEach { (name, type) -> typingsInputs[name] = property(type) }
-    addedOutputs.forEach { (name, type) -> typingsOutputs[name] = property(type) }
-
-    if (typingsInputs.isEmpty() && typings["inputs"] != null) {
-        typings.remove("inputs")
-    }
-    if (typingsOutputs.isEmpty() && typings["outputs"] != null) {
-        typings.remove("outputs")
-    }
+    var text = baseText.ifBlank { typingsHeader }
+    text = addEntries(text, "inputs", addedInputs)
+    text = addEntries(text, "outputs", addedOutputs)
+    text = removeEntries(text, "inputs", removedInputs)
+    text = removeEntries(text, "outputs", removedOutputs)
 
     targetFile.parentFile.mkdirs()
-    targetFile.writeText(typingsHeader + dumpYaml(typings))
+    targetFile.writeText(text)
 
     return AppliedChange(
         typingsPath = fix.typingsPath,
@@ -411,20 +401,8 @@ private fun fetchManifest(action: ActionKey, actionPath: String?): Map<String, A
     }
 }
 
-private fun loadYaml(file: File): MutableMap<String, Any?> =
-    if (file.exists()) loadYaml(file.readText()) else linkedMapOf()
-
 private fun loadYaml(text: String): MutableMap<String, Any?> =
     (Load().loadOne(text) as? MutableMap<String, Any?>) ?: linkedMapOf()
-
-private fun MutableMap<String, Any?>.section(name: String): MutableMap<String, Any?> {
-    val existing = this[name]
-    return when (existing) {
-        null -> linkedMapOf<String, Any?>().also { this[name] = it }
-        is MutableMap<*, *> -> existing as MutableMap<String, Any?>
-        else -> error("Expected '$name' to be a map, got ${existing::class.qualifiedName}.")
-    }
-}
 
 private fun Map<String, Any?>.names(section: String): List<String> =
     (this[section] as? Map<*, *>)?.keys?.map { it.toString() } ?: emptyList()
@@ -449,18 +427,137 @@ private fun inferType(definition: Any?): String {
     }
 }
 
-private fun property(type: String): Map<String, Any> =
-    linkedMapOf("type" to type)
-
-private fun dumpYaml(value: Any?): String {
-    val settings = DumpSettings().copy {
-        defaultFlowStyle = FlowStyle.BLOCK
-        indent = 2
-        indicatorIndent = 0
-        width = 120
-    }
-    return Dump(settings).dumpToString(value)
+private fun entryNames(text: String, sectionName: String): Set<String> {
+    val lines = text.split("\n")
+    val section = findSection(lines, sectionName) ?: return emptySet()
+    return findEntries(lines, section).map { it.name }.toSet()
 }
+
+private fun removeEntries(text: String, sectionName: String, names: Set<String>): String {
+    if (names.isEmpty()) return text
+
+    val lines = text.split("\n").toMutableList()
+    while (true) {
+        val section = findSection(lines, sectionName) ?: break
+        val entries = findEntries(lines, section)
+        val index = entries.indexOfLast { it.name in names }
+        if (index == -1) break
+
+        val entry = entries[index]
+        val isLast = index == entries.lastIndex
+        val removeStart = if (isLast) {
+            entries.getOrNull(index - 1)?.contentEndIndex ?: entry.startIndex
+        } else {
+            entry.startIndex
+        }
+        val removeEnd = if (isLast) entry.contentEndIndex else entry.endIndex
+        lines.subList(removeStart, removeEnd).clear()
+    }
+
+    val updatedSection = findSection(lines, sectionName)
+    if (updatedSection != null && findEntries(lines, updatedSection).isEmpty()) {
+        val removeEnd = if (updatedSection.endIndex == lines.size && lines.lastOrNull()?.isEmpty() == true) {
+            lines.size - 1
+        } else {
+            updatedSection.endIndex
+        }
+        lines.subList(updatedSection.headerIndex, removeEnd).clear()
+    }
+
+    return lines.joinToString("\n")
+}
+
+private fun addEntries(text: String, sectionName: String, entries: Map<String, String>): String {
+    if (entries.isEmpty()) return text
+
+    val lines = text.split("\n").toMutableList()
+    val section = findSection(lines, sectionName) ?: return appendSection(text, sectionName, entries)
+    val existingEntries = findEntries(lines, section)
+    val insertionIndex = existingEntries.lastOrNull()?.contentEndIndex ?: (section.headerIndex + 1)
+    val useBlankSeparators = hasBlankSeparators(lines, existingEntries)
+
+    val newLines = mutableListOf<String>()
+    entries.forEach { (name, type) ->
+        if (newLines.isNotEmpty() && useBlankSeparators) {
+            newLines.add("")
+        }
+        newLines.add("  $name:")
+        newLines.add("    type: $type")
+    }
+    if (existingEntries.isNotEmpty() && useBlankSeparators) {
+        newLines.add(0, "")
+    }
+
+    lines.addAll(insertionIndex, newLines)
+    return lines.joinToString("\n")
+}
+
+private fun hasBlankSeparators(lines: List<String>, entries: List<YamlEntry>): Boolean =
+    entries.size >= 2 && entries.zipWithNext().any { (first, second) ->
+        (first.contentEndIndex until second.startIndex).any { index -> lines[index].isBlank() }
+    }
+
+private fun appendSection(text: String, sectionName: String, entries: Map<String, String>): String {
+    val hadTrailingNewline = text.endsWith("\n")
+    val lines = text.split("\n").toMutableList()
+    while (lines.isNotEmpty() && lines.last().isEmpty()) {
+        lines.removeAt(lines.lastIndex)
+    }
+
+    val hasExistingSection = lines.any { it.trimEnd() == "inputs:" || it.trimEnd() == "outputs:" }
+    if (hasExistingSection && lines.isNotEmpty()) {
+        lines.add("")
+    }
+
+    lines.add("$sectionName:")
+    entries.forEach { (name, type) ->
+        lines.add("  $name:")
+        lines.add("    type: $type")
+    }
+
+    return lines.joinToString("\n") + if (hadTrailingNewline) "\n" else ""
+}
+
+private fun findSection(lines: List<String>, sectionName: String): YamlSection? {
+    val headerIndex = lines.indexOfFirst { it.trimEnd() == "$sectionName:" }
+    if (headerIndex == -1) return null
+
+    val endIndex = (headerIndex + 1 until lines.size).firstOrNull { index ->
+        val line = lines[index]
+        line.isNotEmpty() && !line.first().isWhitespace()
+    } ?: lines.size
+
+    return YamlSection(headerIndex = headerIndex, endIndex = endIndex)
+}
+
+private fun findEntries(lines: List<String>, section: YamlSection): List<YamlEntry> {
+    val startIndices = (section.headerIndex + 1 until section.endIndex)
+        .filter { isEntryKey(lines[it]) }
+
+    return startIndices.mapIndexed { index, startIndex ->
+        val endIndex = startIndices.getOrNull(index + 1) ?: section.endIndex
+        var contentEndIndex = endIndex
+        while (contentEndIndex > startIndex + 1 && lines[contentEndIndex - 1].isBlank()) {
+            contentEndIndex--
+        }
+        YamlEntry(
+            name = entryName(lines[startIndex]),
+            startIndex = startIndex,
+            contentEndIndex = contentEndIndex,
+            endIndex = endIndex,
+        )
+    }
+}
+
+private fun isEntryKey(line: String): Boolean =
+    line.startsWith("  ") &&
+        line.length > 2 &&
+        !line[2].isWhitespace() &&
+        line[2] != '#' &&
+        ':' in line.substring(2)
+
+private fun entryName(line: String): String =
+    line.trim().substringBefore(':').trim()
 
 private fun runCommand(vararg command: String): String {
     val processBuilder = ProcessBuilder(*command)
@@ -501,4 +598,16 @@ private data class AppliedChange(
     val removedInputs: Set<String>,
     val addedOutputs: Map<String, String>,
     val removedOutputs: Set<String>,
+)
+
+private data class YamlSection(
+    val headerIndex: Int,
+    val endIndex: Int,
+)
+
+private data class YamlEntry(
+    val name: String,
+    val startIndex: Int,
+    val contentEndIndex: Int,
+    val endIndex: Int,
 )
