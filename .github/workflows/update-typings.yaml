@@ -24,30 +24,19 @@ jobs:
   update_typings:
     runs-on: 'ubuntu-latest'
     permissions:
-      id-token: 'write'
+      actions: 'read'
       contents: 'write'
       pull-requests: 'write'
     needs:
     - 'check_yaml_consistency'
+    env:
+      GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
     steps:
     - id: 'step-0'
       uses: 'actions/checkout@v7'
-    - id: 'check_last_run'
-      name: 'Check if latest workflow run failed'
+    - id: 'step-1'
+      name: 'Create a PR for every outdated action version'
       env:
-        GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      run: |-
-        CONCLUSION=$(gh run list --workflow .github/workflows/test.yaml --limit 1 --status completed --json conclusion --jq '.[0].conclusion' 2>/dev/null)
-        echo "conclusion=$CONCLUSION" >> "$GITHUB_OUTPUT"
-    - id: 'print_conclusion'
-      name: 'Print conclusion'
-      run: 'echo "Conclusion: ${{ steps.check_last_run.outputs.conclusion }}"'
-    - id: 'step-3'
-      uses: 'anomalyco/opencode/github@latest'
-      with:
-        model: 'opencode/big-pickle'
-        prompt: 'Run the /update-typings command'
-        use_github_token: 'true'
-      env:
-        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      if: '${{ steps.check_last_run.outputs.conclusion == ''failure'' }}'
+        GHWKT_GITHUB_CONTEXT_JSON: '${{ toJSON(github) }}'
+      run: 'GHWKT_RUN_STEP=''update-typings.yaml:update_typings:step-1'' ''.github/workflows/update-typings.main.kts'''
