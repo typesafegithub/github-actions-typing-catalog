@@ -272,6 +272,10 @@ private fun createPullRequestIfNeeded(
 
     if (existingPullRequest != null) {
         runCommand("git", "push", "origin", "HEAD:refs/heads/${existingPullRequest.headRefName}")
+        runCommand(
+            "gh", "pr", "edit", existingPullRequest.number.toString(),
+            "--body", buildPullRequestBody(action, changes),
+        )
         println("Updated PR #${existingPullRequest.number} with a new commit.")
         return
     }
@@ -364,8 +368,8 @@ private fun applyFileFix(fix: FileFix, baseRevision: String? = null): AppliedCha
     }
 
     var text = baseText.ifBlank { typingsHeader }
-    text = addEntries(text, "inputs", addedInputs)
-    text = addEntries(text, "outputs", addedOutputs)
+    text = addEntries(text, "inputs", addedInputs.mapValues { (_, inference) -> inference.type })
+    text = addEntries(text, "outputs", addedOutputs.mapValues { (_, inference) -> inference.type })
     text = removeEntries(text, "inputs", removedInputs)
     text = removeEntries(text, "outputs", removedOutputs)
 
@@ -401,14 +405,16 @@ private fun buildPullRequestBody(action: ActionKey, changes: List<AppliedChange>
             appendLine("Copied from `${change.copiedFromVersion}` and reconciled against the action manifest.")
             appendLine()
         }
-        change.addedInputs.forEach { (name, type) ->
-            appendLine("- `$name` (input): added with type `$type`.")
+        change.addedInputs.forEach { (name, inference) ->
+            val reason = inference.reason?.let { " because $it" } ?: ""
+            appendLine("- `$name` (input): added with type `${inference.type}`$reason.")
         }
         change.removedInputs.forEach { name ->
             appendLine("- `$name` (input): removed because it is no longer declared in the action manifest.")
         }
-        change.addedOutputs.forEach { (name, type) ->
-            appendLine("- `$name` (output): added with type `$type`.")
+        change.addedOutputs.forEach { (name, inference) ->
+            val reason = inference.reason?.let { " because $it" } ?: ""
+            appendLine("- `$name` (output): added with type `${inference.type}`$reason.")
         }
         change.removedOutputs.forEach { name ->
             appendLine("- `$name` (output): removed because it is no longer declared in the action manifest.")
@@ -455,22 +461,47 @@ private fun Map<String, Any?>.names(section: String): List<String> =
 private fun Map<String, Any?>.definition(section: String, name: String): Any? =
     (this[section] as? Map<*, *>)?.get(name)
 
-private fun inferType(definition: Any?): String {
-    val map = definition as? Map<*, *> ?: return "string"
+private fun inferType(definition: Any?): TypeInference {
+    val map = definition as? Map<*, *> ?: return TypeInference(type = "string", reason = null)
+    val declaredType = (map["type"] as? String)?.lowercase()
 
-    return when ((map["type"] as? String)?.lowercase()) {
-        "boolean", "bool" -> "boolean"
-        "integer", "int", "long" -> "integer"
-        "float", "number", "double" -> "float"
-        "string" -> "string"
-        else -> when (map["default"]) {
-            is Boolean -> "boolean"
-            is Int, is Long -> "integer"
-            is Double, is Float -> "float"
-            else -> "string"
+    return when (declaredType) {
+        "boolean", "bool" -> TypeInference(
+            type = "boolean",
+            reason = "the action manifest declares `type: $declaredType`",
+        )
+        "integer", "int", "long" -> TypeInference(
+            type = "integer",
+            reason = "the action manifest declares `type: $declaredType`",
+        )
+        "float", "number", "double" -> TypeInference(
+            type = "float",
+            reason = "the action manifest declares `type: $declaredType`",
+        )
+        "string" -> TypeInference(
+            type = "string",
+            reason = "the action manifest declares `type: $declaredType`",
+        )
+        else -> when (val defaultValue = map["default"]) {
+            is Boolean -> TypeInference(
+                type = "boolean",
+                reason = defaultValueReason(defaultValue),
+            )
+            is Int, is Long -> TypeInference(
+                type = "integer",
+                reason = defaultValueReason(defaultValue),
+            )
+            is Double, is Float -> TypeInference(
+                type = "float",
+                reason = defaultValueReason(defaultValue),
+            )
+            else -> TypeInference(type = "string", reason = null)
         }
     }
 }
+
+private fun defaultValueReason(value: Any): String =
+    "the action manifest does not declare a supported type, but its default value is `$value`"
 
 private fun entryNames(text: String, sectionName: String): Set<String> {
     val lines = text.split("\n")
@@ -636,12 +667,17 @@ private data class FileFix(
     val copiedFromVersion: String?,
 )
 
+private data class TypeInference(
+    val type: String,
+    val reason: String?,
+)
+
 private data class AppliedChange(
     val typingsPath: String,
     val copiedFromVersion: String?,
-    val addedInputs: Map<String, String>,
+    val addedInputs: Map<String, TypeInference>,
     val removedInputs: Set<String>,
-    val addedOutputs: Map<String, String>,
+    val addedOutputs: Map<String, TypeInference>,
     val removedOutputs: Set<String>,
 )
 
