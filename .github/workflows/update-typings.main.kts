@@ -236,21 +236,29 @@ private fun createPullRequestIfNeeded(
         runCommand("git", "checkout", "-B", existingPullRequest.headRefName, "FETCH_HEAD")
     }
 
-    val changes = fixes.mapNotNull { applyFileFix(it) }
+    val changes = if (existingPullRequest == null) {
+        fixes.mapNotNull { applyFileFix(it) }
+    } else {
+        fixes.mapNotNull { applyFileFix(it, baseRevision = baseSha) }
+    }
     if (changes.isEmpty()) {
         if (existingPullRequest == null) {
             println("No changes to apply for ${action.owner}/${action.name}@${action.version}.")
+        } else {
+            println("Could not compute the expected changes for ${action.owner}/${action.name}@${action.version}.")
+        }
+        return
+    }
+
+    if (runCommand("git", "status", "--porcelain").isBlank()) {
+        if (existingPullRequest == null) {
+            println("Typings for ${action.owner}/${action.name}@${action.version} are already up to date.")
         } else {
             println(
                 "PR #${existingPullRequest.number} for ${action.owner}/${action.name}@${action.version} " +
                     "already contains the expected changes."
             )
         }
-        return
-    }
-
-    if (runCommand("git", "status", "--porcelain").isBlank()) {
-        println("Typings for ${action.owner}/${action.name}@${action.version} are already up to date.")
         return
     }
 
@@ -314,7 +322,7 @@ private fun findPullRequest(action: ActionKey): ExistingPullRequest? {
     }
 }
 
-private fun applyFileFix(fix: FileFix): AppliedChange? {
+private fun applyFileFix(fix: FileFix, baseRevision: String? = null): AppliedChange? {
     val manifest = fetchManifest(fix.action, fix.actionPath)
     if (manifest == null) {
         println("Could not fetch the manifest for ${fix.action.owner}/${fix.action.name}@${fix.action.version}${fix.actionPath?.let { "/$it" } ?: ""}.")
@@ -322,8 +330,13 @@ private fun applyFileFix(fix: FileFix): AppliedChange? {
     }
 
     val targetFile = File(fix.typingsPath)
-    val baseFile = File(fix.copyFromTypingsPath ?: fix.typingsPath)
-    val baseText = if (baseFile.exists()) baseFile.readText() else ""
+    val basePath = fix.copyFromTypingsPath ?: fix.typingsPath
+    val baseText = if (baseRevision == null) {
+        val baseFile = File(basePath)
+        if (baseFile.exists()) baseFile.readText() else ""
+    } else {
+        readFileAtRevision(baseRevision, basePath)
+    }
 
     val manifestInputs = manifest.names("inputs")
     val manifestOutputs = manifest.names("outputs")
@@ -340,7 +353,8 @@ private fun applyFileFix(fix: FileFix): AppliedChange? {
     val removedOutputs = existingOutputs.filterNot { it in manifestOutputs }.toSet()
 
     val isNewVersion = fix.copiedFromVersion != null
-    if (!isNewVersion &&
+    if (baseRevision == null &&
+        !isNewVersion &&
         addedInputs.isEmpty() &&
         removedInputs.isEmpty() &&
         addedOutputs.isEmpty() &&
@@ -367,6 +381,13 @@ private fun applyFileFix(fix: FileFix): AppliedChange? {
         removedOutputs = removedOutputs,
     )
 }
+
+private fun readFileAtRevision(revision: String, path: String): String =
+    try {
+        runCommand("git", "show", "$revision:$path")
+    } catch (_: Exception) {
+        ""
+    }
 
 private fun buildPullRequestBody(action: ActionKey, changes: List<AppliedChange>): String = buildString {
     appendLine("## ${action.owner}/${action.name}@${action.version}")
