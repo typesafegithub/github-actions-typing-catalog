@@ -44,6 +44,10 @@ inputs:
       - s390x
       - ppc64le
       - riscv64
+  skip-lts-prepass:
+    type: boolean
+  check-latest:
+    type: boolean
 
 outputs:
   cache-hit:
