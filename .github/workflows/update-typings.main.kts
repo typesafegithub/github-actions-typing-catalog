@@ -227,16 +227,25 @@ private fun createPullRequestIfNeeded(
     defaultBranch: String,
     baseSha: String,
 ) {
-    if (pullRequestExists(action)) {
-        println("An open PR already exists for ${action.owner}/${action.name}@${action.version}. Skipping.")
-        return
-    }
+    val existingPullRequest = findPullRequest(action)
 
-    runCommand("git", "checkout", "-B", action.branch, baseSha)
+    if (existingPullRequest == null) {
+        runCommand("git", "checkout", "-B", action.branch, baseSha)
+    } else {
+        runCommand("git", "fetch", "origin", "refs/heads/${existingPullRequest.headRefName}")
+        runCommand("git", "checkout", "-B", existingPullRequest.headRefName, "FETCH_HEAD")
+    }
 
     val changes = fixes.mapNotNull { applyFileFix(it) }
     if (changes.isEmpty()) {
-        println("No changes to apply for ${action.owner}/${action.name}@${action.version}.")
+        if (existingPullRequest == null) {
+            println("No changes to apply for ${action.owner}/${action.name}@${action.version}.")
+        } else {
+            println(
+                "PR #${existingPullRequest.number} for ${action.owner}/${action.name}@${action.version} " +
+                    "already contains the expected changes."
+            )
+        }
         return
     }
 
@@ -252,6 +261,13 @@ private fun createPullRequestIfNeeded(
         "-c", "user.email=41898282+github-actions[bot]@users.noreply.github.com",
         "commit", "-m", action.title,
     )
+
+    if (existingPullRequest != null) {
+        runCommand("git", "push", "origin", "HEAD:refs/heads/${existingPullRequest.headRefName}")
+        println("Updated PR #${existingPullRequest.number} with a new commit.")
+        return
+    }
+
     runCommand("git", "push", "--force", "origin", "HEAD:refs/heads/${action.branch}")
 
     val body = buildPullRequestBody(action, changes)
@@ -266,27 +282,35 @@ private fun createPullRequestIfNeeded(
     println("Created PR '${action.title}'${if (prUrl.isEmpty()) "" else ": $prUrl"}.")
 }
 
-private fun pullRequestExists(action: ActionKey): Boolean {
+private fun findPullRequest(action: ActionKey): ExistingPullRequest? {
     val byBranch = runCommand(
         "gh", "pr", "list",
         "--state", "open",
         "--head", action.branch,
-        "--json", "number",
-        "--jq", ".[].number",
+        "--json", "number,headRefName",
+        "--jq", ".[0] | [(.number | tostring), .headRefName] | @tsv",
     ).trim()
     if (byBranch.isNotEmpty()) {
-        return true
+        val parts = byBranch.split('\t', limit = 2)
+        if (parts.size == 2) {
+            return ExistingPullRequest(number = parts[0].toInt(), headRefName = parts[1])
+        }
     }
 
     return runCommand(
         "gh", "pr", "list",
         "--state", "open",
         "--search", "${action.title} in:title",
-        "--json", "number,title",
-        "--jq", ".[] | [(.number | tostring), .title] | @tsv",
+        "--json", "number,title,headRefName",
+        "--jq", ".[] | [(.number | tostring), .title, .headRefName] | @tsv",
         "--limit", "100",
-    ).lines().any { line ->
-        line.split('\t', limit = 2).getOrNull(1) == action.title
+    ).lines().firstNotNullOfOrNull { line ->
+        val parts = line.split('\t', limit = 3)
+        if (parts.size == 3 && parts[1] == action.title) {
+            ExistingPullRequest(number = parts[0].toInt(), headRefName = parts[2])
+        } else {
+            null
+        }
     }
 }
 
@@ -598,6 +622,11 @@ private data class AppliedChange(
     val removedInputs: Set<String>,
     val addedOutputs: Map<String, String>,
     val removedOutputs: Set<String>,
+)
+
+private data class ExistingPullRequest(
+    val number: Int,
+    val headRefName: String,
 )
 
 private data class YamlSection(
