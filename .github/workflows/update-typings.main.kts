@@ -4,7 +4,7 @@
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:5.0.0")
 @file:DependsOn("io.kotest:kotest-framework-engine-jvm:6.2.6")
 @file:DependsOn("io.kotest:kotest-assertions-core-jvm:6.2.6")
-@file:DependsOn("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.10.2")
+@file:DependsOn("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v7")
