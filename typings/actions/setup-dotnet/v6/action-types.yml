@@ -25,26 +25,30 @@ inputs:
     type: boolean
   cache-dependency-path:
     type: list
-    separator: "\n"
+    separator: |2+
+
     list-item:
       type: string
   workloads:
     type: list
     separator: ','
     list-item:
-      type: string    
+      type: string
   architecture:
     type: enum
     allowed-values:
-      - x64
-      - x86
-      - arm64
-      - amd64
-      - arm
-      - s390x
-      - ppc64le
-      - riscv64
-
+    - x64
+    - x86
+    - arm64
+    - amd64
+    - arm
+    - s390x
+    - ppc64le
+    - riscv64
+  skip-lts-prepass:
+    type: boolean
+  check-latest:
+    type: string
 outputs:
   cache-hit:
     type: boolean
