@@ -24,9 +24,21 @@ inputs:
   detached:
     type: boolean
 
+  allow-exec:
+    type: boolean
+
+  allow-forwarding:
+    type: boolean
+
+  full-access:
+    type: boolean
+
 outputs:
   ssh-command:
     type: string
 
   join-command:
+    type: string
+
+  ssh-config:
     type: string
