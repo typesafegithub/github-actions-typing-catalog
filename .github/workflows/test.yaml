@@ -41,6 +41,9 @@ jobs:
             echo "Compiling $file..."
             kotlinc -cp "${KOTLIN_MAIN_KTS_JAR}" -script -Xallow-any-scripts-in-source-roots "$file"
         done
+    - id: 'step-2'
+      name: 'Run update typings tests'
+      run: 'RUN_TESTS=true .github/workflows/update-typings.main.kts'
   validate_typings:
     name: 'Validate typings'
     runs-on: 'ubuntu-latest'

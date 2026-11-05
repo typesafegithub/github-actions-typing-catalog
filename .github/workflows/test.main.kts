@@ -80,6 +80,10 @@ workflow(
             done
             """.trimIndent()
         )
+        run(
+            name = "Run update typings tests",
+            command = "RUN_TESTS=true .github/workflows/update-typings.main.kts",
+        )
     }
 
     job(
