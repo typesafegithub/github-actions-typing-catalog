@@ -348,7 +348,7 @@ private fun applyFileFix(fix: FileFix, baseRevision: String? = null): AppliedCha
     val existingOutputs = entryNames(baseText, "outputs")
 
     val addedInputs = manifestInputs.filterNot { it in existingInputs }.associateWith { inputName ->
-        inferType(manifest.definition("inputs", inputName))
+        inferType(manifest.definition("inputs", inputName), inputName)
     }
     val removedInputs = existingInputs.filterNot { it in manifestInputs }.toSet()
     val addedOutputs = manifestOutputs.filterNot { it in existingOutputs }.associateWith { outputName ->
@@ -461,7 +461,7 @@ private fun Map<String, Any?>.names(section: String): List<String> =
 private fun Map<String, Any?>.definition(section: String, name: String): Any? =
     (this[section] as? Map<*, *>)?.get(name)
 
-private fun inferType(definition: Any?): TypeInference {
+private fun inferType(definition: Any?, inputName: String? = null): TypeInference {
     val map = definition as? Map<*, *> ?: return TypeInference(type = "string", reason = null)
     val declaredType = (map["type"] as? String)?.lowercase()
 
@@ -482,21 +482,47 @@ private fun inferType(definition: Any?): TypeInference {
             type = "string",
             reason = "the action manifest declares `type: $declaredType`",
         )
-        else -> when (val defaultValue = map["default"]) {
-            is Boolean -> TypeInference(
-                type = "boolean",
-                reason = defaultValueReason(defaultValue),
-            )
-            is Int, is Long -> TypeInference(
-                type = "integer",
-                reason = defaultValueReason(defaultValue),
-            )
-            is Double, is Float -> TypeInference(
-                type = "float",
-                reason = defaultValueReason(defaultValue),
-            )
-            else -> TypeInference(type = "string", reason = null)
+        else -> {
+            val heuristicReason = inputName?.let { booleanHeuristicReason(it, map) }
+            if (heuristicReason != null) {
+                TypeInference(type = "boolean", reason = heuristicReason)
+            } else {
+                when (val defaultValue = map["default"]) {
+                    is Boolean -> TypeInference(
+                        type = "boolean",
+                        reason = defaultValueReason(defaultValue),
+                    )
+                    is Int, is Long -> TypeInference(
+                        type = "integer",
+                        reason = defaultValueReason(defaultValue),
+                    )
+                    is Double, is Float -> TypeInference(
+                        type = "float",
+                        reason = defaultValueReason(defaultValue),
+                    )
+                    else -> TypeInference(type = "string", reason = null)
+                }
+            }
         }
+    }
+}
+
+private fun booleanHeuristicReason(inputName: String, definition: Map<*, *>): String? {
+    val lowerName = inputName.lowercase()
+    val matchedPrefix = listOf("skip", "check", "allow").firstOrNull { lowerName.startsWith(it) }
+    if (matchedPrefix != null) {
+        return "the input name starts with `$matchedPrefix`"
+    }
+
+    val description = definition["description"] as? String ?: return null
+    val trimmedDescription = description.trimStart()
+    val startsWithIfWord = trimmedDescription.startsWith("if", ignoreCase = true) &&
+        (trimmedDescription.length == 2 || !trimmedDescription[2].isLetterOrDigit())
+
+    return if (startsWithIfWord) {
+        "the input description starts with `${trimmedDescription.take(2)}`"
+    } else {
+        null
     }
 }
 
