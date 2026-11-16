@@ -856,6 +856,39 @@ private class TypingHeuristicsTest : FunSpec({
         ) shouldBe TypeInference(type = "string", reason = null)
     }
 
+    withData(
+        nameFn = { (description, _) -> "infers a list from description `$description`" },
+        listOf(
+            "Multiline list of Maven mirrors in the format `mirror-id:mirror-url:mirror-of`." to
+                TypeInference(type = "string", reason = null),
+            "MULTILINE LIST of Maven mirrors." to
+                TypeInference(type = "string", reason = null),
+            "Comma-separated list of labels to apply." to
+                TypeInference(type = "string", reason = null),
+            "Comma separated list of labels to apply." to
+                TypeInference(type = "string", reason = null),
+        ),
+    ) { (description, expected) ->
+        inferType(
+            linkedMapOf("description" to description),
+            inputName = "some-input",
+        ) shouldBe expected
+    }
+
+    test("assumes newline separators for a list without a detected separator") {
+        inferType(
+            linkedMapOf("description" to "A list of Maven mirrors."),
+            inputName = "mvn-mirrors",
+        ) shouldBe TypeInference(type = "string", reason = null)
+    }
+
+    test("does not treat words containing `list` as a list") {
+        inferType(
+            linkedMapOf("description" to "A holistic approach to Maven mirrors."),
+            inputName = "mvn-mirrors",
+        ) shouldBe TypeInference(type = "string", reason = null)
+    }
+
     test("infers types from default values") {
         inferType(linkedMapOf("default" to false)) shouldBe TypeInference(
             type = "boolean",
