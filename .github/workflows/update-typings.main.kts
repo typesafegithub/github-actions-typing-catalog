@@ -45,6 +45,10 @@ private val missingVersionRegex = Regex("""-\s*([^/\s:]+)/([^:\s]+):\s*\[([^\]]*
 
 private val typingsHeader = "# See https://github.com/typesafegithub/github-actions-typing\n"
 
+private val listWordRegex = Regex("""\blist\b""", RegexOption.IGNORE_CASE)
+private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
+private val commaSeparatedRegex = Regex("""\bcomma[\s-]+separated\b""", RegexOption.IGNORE_CASE)
+
 if (System.getenv("RUN_TESTS") == "true") {
     runUpdateTypingsTests()
     exitProcess(0)
@@ -384,8 +388,8 @@ private fun applyFileFix(fix: FileFix, baseRevision: String? = null): AppliedCha
     }
 
     var text = baseText.ifBlank { typingsHeader }
-    text = addEntries(text, "inputs", addedInputs.mapValues { (_, inference) -> inference.type })
-    text = addEntries(text, "outputs", addedOutputs.mapValues { (_, inference) -> inference.type })
+    text = addEntries(text, "inputs", addedInputs)
+    text = addEntries(text, "outputs", addedOutputs)
     text = removeEntries(text, "inputs", removedInputs)
     text = removeEntries(text, "outputs", removedOutputs)
 
@@ -499,27 +503,58 @@ private fun inferType(definition: Any?, inputName: String? = null): TypeInferenc
             reason = "the action manifest declares `type: $declaredType`",
         )
         else -> {
-            val heuristicReason = inputName?.let { booleanHeuristicReason(it, map) }
-            if (heuristicReason != null) {
-                TypeInference(type = "boolean", reason = heuristicReason)
+            val listInference = listHeuristic(map)
+            if (listInference != null) {
+                listInference
             } else {
-                when (val defaultValue = map["default"]) {
-                    is Boolean -> TypeInference(
-                        type = "boolean",
-                        reason = defaultValueReason(defaultValue),
-                    )
-                    is Int, is Long -> TypeInference(
-                        type = "integer",
-                        reason = defaultValueReason(defaultValue),
-                    )
-                    is Double, is Float -> TypeInference(
-                        type = "float",
-                        reason = defaultValueReason(defaultValue),
-                    )
-                    else -> TypeInference(type = "string", reason = null)
+                val heuristicReason = inputName?.let { booleanHeuristicReason(it, map) }
+                if (heuristicReason != null) {
+                    TypeInference(type = "boolean", reason = heuristicReason)
+                } else {
+                    when (val defaultValue = map["default"]) {
+                        is Boolean -> TypeInference(
+                            type = "boolean",
+                            reason = defaultValueReason(defaultValue),
+                        )
+                        is Int, is Long -> TypeInference(
+                            type = "integer",
+                            reason = defaultValueReason(defaultValue),
+                        )
+                        is Double, is Float -> TypeInference(
+                            type = "float",
+                            reason = defaultValueReason(defaultValue),
+                        )
+                        else -> TypeInference(type = "string", reason = null)
+                    }
                 }
             }
         }
+    }
+}
+
+private fun listHeuristic(definition: Map<*, *>): TypeInference? {
+    val description = definition["description"] as? String ?: return null
+    if (!listWordRegex.containsMatchIn(description)) return null
+
+    return when {
+        commaSeparatedRegex.containsMatchIn(description) -> TypeInference(
+            type = "list",
+            reason = "the input description mentions a comma-separated list",
+            separator = ",",
+            listItemType = "string",
+        )
+        multilineRegex.containsMatchIn(description) -> TypeInference(
+            type = "list",
+            reason = "the input description mentions a multiline list",
+            separator = "\n",
+            listItemType = "string",
+        )
+        else -> TypeInference(
+            type = "list",
+            reason = "the input description mentions a list",
+            separator = "\n",
+            listItemType = "string",
+        )
     }
 }
 
@@ -585,7 +620,7 @@ private fun removeEntries(text: String, sectionName: String, names: Set<String>)
     return lines.joinToString("\n")
 }
 
-private fun addEntries(text: String, sectionName: String, entries: Map<String, String>): String {
+private fun addEntries(text: String, sectionName: String, entries: Map<String, TypeInference>): String {
     if (entries.isEmpty()) return text
 
     val lines = text.split("\n").toMutableList()
@@ -595,12 +630,11 @@ private fun addEntries(text: String, sectionName: String, entries: Map<String, S
     val useBlankSeparators = hasBlankSeparators(lines, existingEntries)
 
     val newLines = mutableListOf<String>()
-    entries.forEach { (name, type) ->
+    entries.forEach { (name, inference) ->
         if (newLines.isNotEmpty() && useBlankSeparators) {
             newLines.add("")
         }
-        newLines.add("  $name:")
-        newLines.add("    type: $type")
+        newLines.addAll(renderEntry(name, inference))
     }
     if (existingEntries.isNotEmpty() && useBlankSeparators) {
         newLines.add(0, "")
@@ -610,12 +644,29 @@ private fun addEntries(text: String, sectionName: String, entries: Map<String, S
     return lines.joinToString("\n")
 }
 
+private fun renderEntry(name: String, inference: TypeInference): List<String> = buildList {
+    add("  $name:")
+    add("    type: ${inference.type}")
+    inference.separator?.let { separator ->
+        add("    separator: ${renderSeparator(separator)}")
+    }
+    inference.listItemType?.let { listItemType ->
+        add("    list-item:")
+        add("      type: $listItemType")
+    }
+}
+
+private fun renderSeparator(separator: String): String = when (separator) {
+    "\n" -> "\"\\n\""
+    else -> "'$separator'"
+}
+
 private fun hasBlankSeparators(lines: List<String>, entries: List<YamlEntry>): Boolean =
     entries.size >= 2 && entries.zipWithNext().any { (first, second) ->
         (first.contentEndIndex until second.startIndex).any { index -> lines[index].isBlank() }
     }
 
-private fun appendSection(text: String, sectionName: String, entries: Map<String, String>): String {
+private fun appendSection(text: String, sectionName: String, entries: Map<String, TypeInference>): String {
     val hadTrailingNewline = text.endsWith("\n")
     val lines = text.split("\n").toMutableList()
     while (lines.isNotEmpty() && lines.last().isEmpty()) {
@@ -628,9 +679,8 @@ private fun appendSection(text: String, sectionName: String, entries: Map<String
     }
 
     lines.add("$sectionName:")
-    entries.forEach { (name, type) ->
-        lines.add("  $name:")
-        lines.add("    type: $type")
+    entries.forEach { (name, inference) ->
+        lines.addAll(renderEntry(name, inference))
     }
 
     return lines.joinToString("\n") + if (hadTrailingNewline) "\n" else ""
@@ -712,6 +762,8 @@ private data class FileFix(
 private data class TypeInference(
     val type: String,
     val reason: String?,
+    val separator: String? = null,
+    val listItemType: String? = null,
 )
 
 private data class AppliedChange(
@@ -859,14 +911,30 @@ private class TypingHeuristicsTest : FunSpec({
     withData(
         nameFn = { (description, _) -> "infers a list from description `$description`" },
         listOf(
-            "Multiline list of Maven mirrors in the format `mirror-id:mirror-url:mirror-of`." to
-                TypeInference(type = "string", reason = null),
-            "MULTILINE LIST of Maven mirrors." to
-                TypeInference(type = "string", reason = null),
-            "Comma-separated list of labels to apply." to
-                TypeInference(type = "string", reason = null),
-            "Comma separated list of labels to apply." to
-                TypeInference(type = "string", reason = null),
+            "Multiline list of Maven mirrors in the format `mirror-id:mirror-url:mirror-of`." to TypeInference(
+                type = "list",
+                reason = "the input description mentions a multiline list",
+                separator = "\n",
+                listItemType = "string",
+            ),
+            "MULTILINE LIST of Maven mirrors." to TypeInference(
+                type = "list",
+                reason = "the input description mentions a multiline list",
+                separator = "\n",
+                listItemType = "string",
+            ),
+            "Comma-separated list of labels to apply." to TypeInference(
+                type = "list",
+                reason = "the input description mentions a comma-separated list",
+                separator = ",",
+                listItemType = "string",
+            ),
+            "Comma separated list of labels to apply." to TypeInference(
+                type = "list",
+                reason = "the input description mentions a comma-separated list",
+                separator = ",",
+                listItemType = "string",
+            ),
         ),
     ) { (description, expected) ->
         inferType(
@@ -879,7 +947,12 @@ private class TypingHeuristicsTest : FunSpec({
         inferType(
             linkedMapOf("description" to "A list of Maven mirrors."),
             inputName = "mvn-mirrors",
-        ) shouldBe TypeInference(type = "string", reason = null)
+        ) shouldBe TypeInference(
+            type = "list",
+            reason = "the input description mentions a list",
+            separator = "\n",
+            listItemType = "string",
+        )
     }
 
     test("does not treat words containing `list` as a list") {
