@@ -4,3 +4,7 @@ inputs:
     type: string
   extended:
     type: boolean
+  dart-sass-version:
+    type: string
+  github-token:
+    type: string
