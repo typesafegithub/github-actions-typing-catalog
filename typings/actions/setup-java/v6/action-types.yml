@@ -123,7 +123,10 @@ inputs:
     list-item:
       type: string
   mvn-mirrors:
-    type: string
+    type: list
+    separator: "\n"
+    list-item:
+      type: string
 
 outputs:
   distribution: *distribution
