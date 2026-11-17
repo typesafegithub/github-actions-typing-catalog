@@ -10,6 +10,7 @@
 @file:DependsOn("actions:checkout:v7")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
 @file:Suppress("UNCHECKED_CAST")
+@file:Import("typing-heuristics.kts")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.annotations.ExperimentalKotlinLogicStep
@@ -23,14 +24,7 @@ import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
 import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
-import io.kotest.core.spec.SpecRef
-import io.kotest.core.spec.style.FunSpec
-import io.kotest.datatest.withData
-import io.kotest.engine.TestEngineLauncher
-import io.kotest.engine.listener.CollectingTestEngineListener
-import io.kotest.matchers.shouldBe
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.net.URI
 import java.net.URLEncoder
@@ -45,12 +39,8 @@ private val missingVersionRegex = Regex("""-\s*([^/\s:]+)/([^:\s]+):\s*\[([^\]]*
 
 private val typingsHeader = "# See https://github.com/typesafegithub/github-actions-typing\n"
 
-private val listWordRegex = Regex("""\blist\b""", RegexOption.IGNORE_CASE)
-private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
-private val commaSeparatedRegex = Regex("""\bcomma[\s-]+separated\b""", RegexOption.IGNORE_CASE)
-
 if (System.getenv("RUN_TESTS") == "true") {
-    runUpdateTypingsTests()
+    runTypingHeuristicsTests()
     exitProcess(0)
 }
 
@@ -368,11 +358,11 @@ private fun applyFileFix(fix: FileFix, baseRevision: String? = null): AppliedCha
     val existingOutputs = entryNames(baseText, "outputs")
 
     val addedInputs = manifestInputs.filterNot { it in existingInputs }.associateWith { inputName ->
-        inferType(manifest.definition("inputs", inputName), inputName)
+        inferInferredType(manifest.definition("inputs", inputName), inputName)
     }
     val removedInputs = existingInputs.filterNot { it in manifestInputs }.toSet()
     val addedOutputs = manifestOutputs.filterNot { it in existingOutputs }.associateWith { outputName ->
-        inferType(manifest.definition("outputs", outputName))
+        inferInferredType(manifest.definition("outputs", outputName))
     }
     val removedOutputs = existingOutputs.filterNot { it in manifestOutputs }.toSet()
 
@@ -481,105 +471,6 @@ private fun Map<String, Any?>.names(section: String): List<String> =
 private fun Map<String, Any?>.definition(section: String, name: String): Any? =
     (this[section] as? Map<*, *>)?.get(name)
 
-private fun inferType(definition: Any?, inputName: String? = null): TypeInference {
-    val map = definition as? Map<*, *> ?: return TypeInference(type = "string", reason = null)
-    val declaredType = (map["type"] as? String)?.lowercase()
-
-    return when (declaredType) {
-        "boolean", "bool" -> TypeInference(
-            type = "boolean",
-            reason = "the action manifest declares `type: $declaredType`",
-        )
-        "integer", "int", "long" -> TypeInference(
-            type = "integer",
-            reason = "the action manifest declares `type: $declaredType`",
-        )
-        "float", "number", "double" -> TypeInference(
-            type = "float",
-            reason = "the action manifest declares `type: $declaredType`",
-        )
-        "string" -> TypeInference(
-            type = "string",
-            reason = "the action manifest declares `type: $declaredType`",
-        )
-        else -> {
-            val listInference = listHeuristic(map)
-            if (listInference != null) {
-                listInference
-            } else {
-                val heuristicReason = inputName?.let { booleanHeuristicReason(it, map) }
-                if (heuristicReason != null) {
-                    TypeInference(type = "boolean", reason = heuristicReason)
-                } else {
-                    when (val defaultValue = map["default"]) {
-                        is Boolean -> TypeInference(
-                            type = "boolean",
-                            reason = defaultValueReason(defaultValue),
-                        )
-                        is Int, is Long -> TypeInference(
-                            type = "integer",
-                            reason = defaultValueReason(defaultValue),
-                        )
-                        is Double, is Float -> TypeInference(
-                            type = "float",
-                            reason = defaultValueReason(defaultValue),
-                        )
-                        else -> TypeInference(type = "string", reason = null)
-                    }
-                }
-            }
-        }
-    }
-}
-
-private fun listHeuristic(definition: Map<*, *>): TypeInference? {
-    val description = definition["description"] as? String ?: return null
-    if (!listWordRegex.containsMatchIn(description)) return null
-
-    return when {
-        commaSeparatedRegex.containsMatchIn(description) -> TypeInference(
-            type = "list",
-            reason = "the input description mentions a comma-separated list",
-            separator = ",",
-            listItemType = "string",
-        )
-        multilineRegex.containsMatchIn(description) -> TypeInference(
-            type = "list",
-            reason = "the input description mentions a multiline list",
-            separator = "\n",
-            listItemType = "string",
-        )
-        else -> TypeInference(
-            type = "list",
-            reason = "the input description mentions a list",
-            separator = "\n",
-            listItemType = "string",
-        )
-    }
-}
-
-private fun booleanHeuristicReason(inputName: String, definition: Map<*, *>): String? {
-    val lowerName = inputName.lowercase()
-    val matchedPrefix = listOf("skip", "check", "allow").firstOrNull { lowerName.startsWith(it) }
-    if (matchedPrefix != null) {
-        return "the input name starts with `$matchedPrefix`"
-    }
-
-    val description = definition["description"] as? String ?: return null
-    val trimmedDescription = description.trimStart()
-    val startsWithIfWord = trimmedDescription.startsWith("if", ignoreCase = true) &&
-        (trimmedDescription.length == 2 || !trimmedDescription[2].isLetterOrDigit())
-
-    return if (startsWithIfWord) {
-        "the input description starts with `${trimmedDescription.take(2)}`"
-    } else {
-        null
-    }
-}
-
-private fun defaultValueReason(value: Any): String =
-    "the action manifest does not declare a supported type, but its default value is `$value`"
-
 private fun entryNames(text: String, sectionName: String): Set<String> {
     val lines = text.split("\n")
     val section = findSection(lines, sectionName) ?: return emptySet()
@@ -620,7 +511,17 @@ private fun removeEntries(text: String, sectionName: String, names: Set<String>)
     return lines.joinToString("\n")
 }
 
-private fun addEntries(text: String, sectionName: String, entries: Map<String, TypeInference>): String {
+private fun inferInferredType(definition: Any?, inputName: String? = null): InferredType {
+    val inference = inferType(definition, inputName)
+    return InferredType(
+        type = inference.type,
+        reason = inference.reason,
+        separator = inference.separator,
+        listItemType = inference.listItemType,
+    )
+}
+
+private fun addEntries(text: String, sectionName: String, entries: Map<String, InferredType>): String {
     if (entries.isEmpty()) return text
 
     val lines = text.split("\n").toMutableList()
@@ -644,7 +545,7 @@ private fun addEntries(text: String, sectionName: String, entries: Map<String, T
     return lines.joinToString("\n")
 }
 
-private fun renderEntry(name: String, inference: TypeInference): List<String> = buildList {
+private fun renderEntry(name: String, inference: InferredType): List<String> = buildList {
     add("  $name:")
     add("    type: ${inference.type}")
     inference.separator?.let { separator ->
@@ -666,7 +567,7 @@ private fun hasBlankSeparators(lines: List<String>, entries: List<YamlEntry>): B
         (first.contentEndIndex until second.startIndex).any { index -> lines[index].isBlank() }
     }
 
-private fun appendSection(text: String, sectionName: String, entries: Map<String, TypeInference>): String {
+private fun appendSection(text: String, sectionName: String, entries: Map<String, InferredType>): String {
     val hadTrailingNewline = text.endsWith("\n")
     val lines = text.split("\n").toMutableList()
     while (lines.isNotEmpty() && lines.last().isEmpty()) {
@@ -759,7 +660,7 @@ private data class FileFix(
     val copiedFromVersion: String?,
 )
 
-private data class TypeInference(
+private data class InferredType(
     val type: String,
     val reason: String?,
     val separator: String? = null,
@@ -769,9 +670,9 @@ private data class TypeInference(
 private data class AppliedChange(
     val typingsPath: String,
     val copiedFromVersion: String?,
-    val addedInputs: Map<String, TypeInference>,
+    val addedInputs: Map<String, InferredType>,
     val removedInputs: Set<String>,
-    val addedOutputs: Map<String, TypeInference>,
+    val addedOutputs: Map<String, InferredType>,
     val removedOutputs: Set<String>,
 )
 
@@ -791,196 +692,3 @@ private data class YamlEntry(
     val contentEndIndex: Int,
     val endIndex: Int,
 )
-
-// -----------------------------------------------------------------------------
-// TESTS
-// -----------------------------------------------------------------------------
-
-private fun runUpdateTypingsTests() {
-    val collector = CollectingTestEngineListener()
-    val result = runBlocking {
-        TestEngineLauncher()
-            .withConsoleListener()
-            .withListener(collector)
-            .withSpecRefs(SpecRef.Function({ TypingHeuristicsTest() }, TypingHeuristicsTest::class))
-            .execute()
-    }
-    check(result.errors.isEmpty() && !collector.errors) {
-        "Typing heuristic tests failed." +
-            result.errors.joinToString(separator = "\n", prefix = "\n") { it.stackTraceToString() }
-    }
-}
-
-private class TypingHeuristicsTest : FunSpec({
-    test("manifest type takes precedence over name and description heuristics") {
-        inferType(
-            linkedMapOf("type" to "string", "description" to "If true"),
-            inputName = "skip-cache",
-        ) shouldBe TypeInference(
-            type = "string",
-            reason = "the action manifest declares `type: string`",
-        )
-    }
-
-    withData(
-        nameFn = { (declaredType, _) -> "maps declared type `$declaredType`" },
-        listOf(
-            "boolean" to TypeInference(
-                type = "boolean",
-                reason = "the action manifest declares `type: boolean`",
-            ),
-            "bool" to TypeInference(
-                type = "boolean",
-                reason = "the action manifest declares `type: bool`",
-            ),
-            "integer" to TypeInference(
-                type = "integer",
-                reason = "the action manifest declares `type: integer`",
-            ),
-            "int" to TypeInference(
-                type = "integer",
-                reason = "the action manifest declares `type: int`",
-            ),
-            "long" to TypeInference(
-                type = "integer",
-                reason = "the action manifest declares `type: long`",
-            ),
-            "float" to TypeInference(
-                type = "float",
-                reason = "the action manifest declares `type: float`",
-            ),
-            "number" to TypeInference(
-                type = "float",
-                reason = "the action manifest declares `type: number`",
-            ),
-            "double" to TypeInference(
-                type = "float",
-                reason = "the action manifest declares `type: double`",
-            ),
-            "string" to TypeInference(
-                type = "string",
-                reason = "the action manifest declares `type: string`",
-            ),
-        ),
-    ) { (declaredType, expected) ->
-        inferType(linkedMapOf("type" to declaredType)) shouldBe expected
-    }
-
-    withData(
-        nameFn = { (inputName, _) -> "infers boolean for input `$inputName`" },
-        listOf(
-            "skip-cache" to TypeInference(
-                type = "boolean",
-                reason = "the input name starts with `skip`",
-            ),
-            "check-cache" to TypeInference(
-                type = "boolean",
-                reason = "the input name starts with `check`",
-            ),
-            "allow-cache" to TypeInference(
-                type = "boolean",
-                reason = "the input name starts with `allow`",
-            ),
-            "SKIP-cache" to TypeInference(
-                type = "boolean",
-                reason = "the input name starts with `skip`",
-            ),
-        ),
-    ) { (inputName, expected) ->
-        inferType(
-            linkedMapOf("description" to "Not a boolean description"),
-            inputName = inputName,
-        ) shouldBe expected
-    }
-
-    test("infers booleans from descriptions starting with the word If") {
-        inferType(
-            linkedMapOf("description" to "If the token is set, use it"),
-            inputName = "token",
-        ) shouldBe TypeInference(
-            type = "boolean",
-            reason = "the input description starts with `If`",
-        )
-
-        inferType(
-            linkedMapOf("description" to "ifdef is not the word If"),
-            inputName = "token",
-        ) shouldBe TypeInference(type = "string", reason = null)
-    }
-
-    withData(
-        nameFn = { (description, _) -> "infers a list from description `$description`" },
-        listOf(
-            "Multiline list of Maven mirrors in the format `mirror-id:mirror-url:mirror-of`." to TypeInference(
-                type = "list",
-                reason = "the input description mentions a multiline list",
-                separator = "\n",
-                listItemType = "string",
-            ),
-            "MULTILINE LIST of Maven mirrors." to TypeInference(
-                type = "list",
-                reason = "the input description mentions a multiline list",
-                separator = "\n",
-                listItemType = "string",
-            ),
-            "Comma-separated list of labels to apply." to TypeInference(
-                type = "list",
-                reason = "the input description mentions a comma-separated list",
-                separator = ",",
-                listItemType = "string",
-            ),
-            "Comma separated list of labels to apply." to TypeInference(
-                type = "list",
-                reason = "the input description mentions a comma-separated list",
-                separator = ",",
-                listItemType = "string",
-            ),
-        ),
-    ) { (description, expected) ->
-        inferType(
-            linkedMapOf("description" to description),
-            inputName = "some-input",
-        ) shouldBe expected
-    }
-
-    test("assumes newline separators for a list without a detected separator") {
-        inferType(
-            linkedMapOf("description" to "A list of Maven mirrors."),
-            inputName = "mvn-mirrors",
-        ) shouldBe TypeInference(
-            type = "list",
-            reason = "the input description mentions a list",
-            separator = "\n",
-            listItemType = "string",
-        )
-    }
-
-    test("does not treat words containing `list` as a list") {
-        inferType(
-            linkedMapOf("description" to "A holistic approach to Maven mirrors."),
-            inputName = "mvn-mirrors",
-        ) shouldBe TypeInference(type = "string", reason = null)
-    }
-
-    test("infers types from default values") {
-        inferType(linkedMapOf("default" to false)) shouldBe TypeInference(
-            type = "boolean",
-            reason = "the action manifest does not declare a supported type, but its default value is `false`",
-        )
-        inferType(linkedMapOf("default" to 42)) shouldBe TypeInference(
-            type = "integer",
-            reason = "the action manifest does not declare a supported type, but its default value is `42`",
-        )
-        inferType(linkedMapOf("default" to 1.5)) shouldBe TypeInference(
-            type = "float",
-            reason = "the action manifest does not declare a supported type, but its default value is `1.5`",
-        )
-    }
-
-    test("falls back to string without a reason") {
-        inferType(null) shouldBe TypeInference(type = "string", reason = null)
-        inferType(linkedMapOf<String, Any?>()) shouldBe TypeInference(type = "string", reason = null)
-        inferType(linkedMapOf("description" to "Some description")) shouldBe
-            TypeInference(type = "string", reason = null)
-    }
-})

@@ -4,11 +4,15 @@
 @file:DependsOn("it.krzeminski:snakeyaml-engine-kmp-jvm:5.0.0")
 @file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.5.5")
 @file:DependsOn("com.github.sya-ri:kgit:1.2.2")
+@file:DependsOn("io.kotest:kotest-framework-engine-jvm:6.2.7")
+@file:DependsOn("io.kotest:kotest-assertions-core-jvm:6.2.7")
+@file:DependsOn("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.11.0")
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v7")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
 @file:Suppress("UNCHECKED_CAST")
+@file:Import("typing-heuristics.kts")
 
 import com.github.syari.kgit.KGit
 import io.github.optimumcode.json.schema.ErrorCollector
@@ -145,6 +149,52 @@ private data class TypingDifference(
     val extraOutputsInTypings: Set<String>,
 )
 
+private data class HeuristicTypeMismatch(
+    val action: ActionCoords,
+    val section: String,
+    val name: String,
+    val actualType: String,
+    val inferredType: String,
+    val reason: String?,
+)
+
+private fun findHeuristicTypeMismatches(
+    typings: Map<String, Any>,
+    manifest: Map<String, Any>,
+    action: ActionCoords,
+): List<HeuristicTypeMismatch> = buildList {
+    listOf("inputs" to true, "outputs" to false).forEach { (sectionName, isInput) ->
+        val typingsSection = typings[sectionName] as? Map<*, *> ?: return@forEach
+        val manifestSection = manifest[sectionName] as? Map<*, *> ?: return@forEach
+        typingsSection.forEach { (entryName, typingDefinition) ->
+            val name = entryName.toString()
+            val actualType = (typingDefinition as? Map<*, *>)?.get("type")?.toString()
+            val inference = inferType(manifestSection[name], name.takeIf { isInput })
+            if (!actualType.equals(inference.type, ignoreCase = true)) {
+                add(
+                    HeuristicTypeMismatch(
+                        action = action,
+                        section = if (isInput) "input" else "output",
+                        name = name,
+                        actualType = actualType ?: "(none)",
+                        inferredType = inference.type,
+                        reason = inference.reason,
+                    )
+                )
+            }
+        }
+    }
+}
+
+private fun printHeuristicTypeMismatches(mismatches: List<HeuristicTypeMismatch>) {
+    println("\uD83D\uDD34 The heuristic would infer different types than the stored typings:")
+    mismatches.forEach { mismatch ->
+        val reason = mismatch.reason?.let { " because $it" } ?: ""
+        println("  - ${mismatch.action.pathToTypings}: `${mismatch.name}` (${mismatch.section}): " +
+            "typings say `${mismatch.actualType}`, heuristic says `${mismatch.inferredType}`$reason")
+    }
+}
+
 private fun validateTypings(sha: String, baseRef: String?) {
     val typingsSchema = JsonSchema.fromDefinition(
         URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
@@ -160,6 +210,7 @@ private fun validateTypings(sha: String, baseRef: String?) {
     val actionVersions = listActionVersionsToValidate(sha = sha, baseRef = baseRef)
 
     var shouldFail = false
+    var heuristicMismatchCount = 0
 
     val typingDifferences = mutableListOf<TypingDifference>()
 
@@ -219,7 +270,20 @@ private fun validateTypings(sha: String, baseRef: String?) {
             continue
         }
 
+        val heuristicMismatches = findHeuristicTypeMismatches(typings, manifest, action)
+        if (heuristicMismatches.isNotEmpty()) {
+            printHeuristicTypeMismatches(heuristicMismatches)
+            heuristicMismatchCount += heuristicMismatches.size
+            shouldFail = true
+            continue
+        }
+
         println("\uD83D\uDFE2 OK!")
+    }
+
+    if (heuristicMismatchCount > 0) {
+        println()
+        println("Heuristic type mismatches: $heuristicMismatchCount")
     }
 
     require(shouldFail == false) {
