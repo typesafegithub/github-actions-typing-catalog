@@ -24,3 +24,21 @@ outputs:
     type: string
   cache-hit:
     type: boolean
+  GOPATH:
+    type: string
+  GOBIN:
+    type: string
+  go-bin-path:
+    type: string
+  GOROOT:
+    type: string
+  GOCACHE:
+    type: string
+  GOMODCACHE:
+    type: string
+  GOOS:
+    type: string
+  GOARCH:
+    type: string
+  GOTOOLDIR:
+    type: string
