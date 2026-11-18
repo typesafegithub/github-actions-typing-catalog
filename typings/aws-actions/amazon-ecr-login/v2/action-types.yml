@@ -16,6 +16,8 @@ inputs:
     - public
   http-proxy:
     type: string
+  ecr-private-token-type:
+    type: string
 
 outputs:
   registry:
