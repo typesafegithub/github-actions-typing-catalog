@@ -5,6 +5,8 @@
 @file:DependsOn("io.github.optimumcode:json-schema-validator-jvm:0.5.5")
 @file:DependsOn("com.github.sya-ri:kgit:1.2.2")
 
+@file:Import("typing-heuristics.main.kts")
+
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v7")
 @file:OptIn(ExperimentalKotlinLogicStep::class)
@@ -214,6 +216,33 @@ private fun validateTypings(sha: String, baseRef: String?) {
         val manifestInputs = if ("inputs" in manifest) (manifest["inputs"] as Map<String, Any>).keys else emptySet()
         val manifestOutputs = if ("outputs" in manifest) (manifest["outputs"] as Map<String, Any>).keys else emptySet()
 
+        fun logTypeInferences(section: String, names: Set<String>, includeInputName: Boolean) {
+            names.forEach { name ->
+                val inference = TypingHeuristics.inferType(
+                    manifest.definition(section, name),
+                    if (includeInputName) name else null,
+                )
+                val actualType = (typings.definition(section, name) as? Map<*, *>)?.get("type")?.toString()
+                val warning = if (actualType?.equals(inference.type, ignoreCase = true) == true) {
+                    ""
+                } else {
+                    "\u26A0\uFE0F "
+                }
+                val reason = inference.reason?.let { " ($it)" } ?: ""
+                val label = if (section == "inputs") "Input" else "Output"
+                println(
+                    "  ${warning}$label `$name`: actual type `${actualType ?: "n/a"}`, " +
+                        "inferred `${inference.type}`$reason"
+                )
+            }
+        }
+
+        // Input names feed boolean heuristics (e.g. `skip-cache`). Outputs have names too, but
+        // update-typings.main.kts currently omits passing them - that's a bug there. Mirror it for now
+        // so validation agrees with what the update workflow would actually generate.
+        logTypeInferences("inputs", manifestInputs, includeInputName = true)
+        logTypeInferences("outputs", manifestOutputs, includeInputName = false)
+
         if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
             println("\uD83D\uDD34 Something is wrong with the typings!")
 
@@ -376,6 +405,9 @@ private fun listAffectedActionManifestFiles(sha: String, baseRef: String): Strea
 
 private fun loadTypings(path: String): Map<String, Any> =
     Load().loadOne(File(path).readText()) as Map<String, Any>
+
+private fun Map<*, *>.definition(section: String, name: String): Any? =
+    (this[section] as? Map<*, *>)?.get(name)
 
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
     val list = listOf(action.actionYmlUrl, action.actionYamlUrl)
