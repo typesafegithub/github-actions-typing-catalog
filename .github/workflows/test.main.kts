@@ -222,17 +222,15 @@ private fun validateTypings(sha: String, baseRef: String?) {
                     manifest.definition(section, name),
                     if (includeInputName) name else null,
                 )
-                val actualType = (typings.definition(section, name) as? Map<*, *>)?.get("type")?.toString()
-                val warning = if (actualType?.equals(inference.type, ignoreCase = true) == true) {
-                    ""
-                } else {
-                    "\u26A0\uFE0F "
-                }
+                val actualTyping: Map<*, *> =
+                    (typings.definition(section, name) as? Map<*, *>) ?: emptyMap<Any?, Any?>()
+                val inferredTyping: Map<*, *> = inference.toTypingMap()
+                val warning = if (actualTyping == inferredTyping) "" else "\u26A0\uFE0F "
                 val reason = inference.reason?.let { " ($it)" } ?: ""
                 val label = if (section == "inputs") "Input" else "Output"
                 println(
-                    "  ${warning}$label `$name`: actual type `${actualType ?: "n/a"}`, " +
-                        "inferred `${inference.type}`$reason"
+                    "  ${warning}$label `$name`: actual `${formatTyping(actualTyping)}`, " +
+                        "inferred `${formatTyping(inferredTyping)}`$reason"
                 )
             }
         }
@@ -408,6 +406,15 @@ private fun loadTypings(path: String): Map<String, Any> =
 
 private fun Map<*, *>.definition(section: String, name: String): Any? =
     (this[section] as? Map<*, *>)?.get(name)
+
+private fun formatTyping(typing: Map<*, *>): String =
+    typing.entries.joinToString(", ") { (key, value) -> "$key: ${formatTypingValue(value)}" }
+
+private fun formatTypingValue(value: Any?): String = when (value) {
+    is Map<*, *> -> "{${formatTyping(value)}}"
+    is List<*> -> value.joinToString(", ", "[", "]") { formatTypingValue(it) }
+    else -> value?.toString()?.replace("\n", "\\n") ?: "n/a"
+}
 
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
     val list = listOf(action.actionYmlUrl, action.actionYamlUrl)
