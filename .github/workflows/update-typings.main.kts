@@ -29,6 +29,7 @@ import io.kotest.datatest.withData
 import io.kotest.engine.TestEngineLauncher
 import io.kotest.engine.listener.CollectingTestEngineListener
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -48,6 +49,7 @@ private val typingsHeader = "# See https://github.com/typesafegithub/github-acti
 private val listWordRegex = Regex("""\blist\b""", RegexOption.IGNORE_CASE)
 private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
 private val commaSeparatedRegex = Regex("""\bcomma[\s-]+separated\b""", RegexOption.IGNORE_CASE)
+private val whitespaceRegex = Regex("""\s+""")
 
 if (System.getenv("RUN_TESTS") == "true") {
     runUpdateTypingsTests()
@@ -427,14 +429,16 @@ private fun buildPullRequestBody(action: ActionKey, changes: List<AppliedChange>
         }
         change.addedInputs.forEach { (name, inference) ->
             val reason = inference.reason?.let { " because $it" } ?: ""
-            appendLine("- `$name` (input): added with type `${inference.type}`$reason.")
+            val description = inference.description?.let { " Description: ${formatDescription(it)}" } ?: ""
+            appendLine("- `$name` (input): added with type `${inference.type}`$reason.$description")
         }
         change.removedInputs.forEach { name ->
             appendLine("- `$name` (input): removed because it is no longer declared in the action manifest.")
         }
         change.addedOutputs.forEach { (name, inference) ->
             val reason = inference.reason?.let { " because $it" } ?: ""
-            appendLine("- `$name` (output): added with type `${inference.type}`$reason.")
+            val description = inference.description?.let { " Description: ${formatDescription(it)}" } ?: ""
+            appendLine("- `$name` (output): added with type `${inference.type}`$reason.$description")
         }
         change.removedOutputs.forEach { name ->
             appendLine("- `$name` (output): removed because it is no longer declared in the action manifest.")
@@ -449,6 +453,8 @@ private fun buildPullRequestBody(action: ActionKey, changes: List<AppliedChange>
         appendLine()
     }
 }
+
+private fun formatDescription(description: String): String = whitespaceRegex.replace(description, " ")
 
 private fun fetchManifest(action: ActionKey, actionPath: String?): Map<String, Any?>? {
     val pathSuffix = actionPath?.let { "/$it" } ?: ""
@@ -483,9 +489,10 @@ private fun Map<String, Any?>.definition(section: String, name: String): Any? =
 
 private fun inferType(definition: Any?, inputName: String? = null): TypeInference {
     val map = definition as? Map<*, *> ?: return TypeInference(type = "string", reason = null)
+    val description = (map["description"] as? String)?.trim()?.takeIf { it.isNotEmpty() }
     val declaredType = (map["type"] as? String)?.lowercase()
 
-    return when (declaredType) {
+    val inference = when (declaredType) {
         "boolean", "bool" -> TypeInference(
             type = "boolean",
             reason = "the action manifest declares `type: $declaredType`",
@@ -530,6 +537,7 @@ private fun inferType(definition: Any?, inputName: String? = null): TypeInferenc
             }
         }
     }
+    return inference.copy(description = description)
 }
 
 private fun listHeuristic(definition: Map<*, *>): TypeInference? {
@@ -764,6 +772,7 @@ private data class TypeInference(
     val reason: String?,
     val separator: String? = null,
     val listItemType: String? = null,
+    val description: String? = null,
 )
 
 private data class AppliedChange(
@@ -819,6 +828,7 @@ private class TypingHeuristicsTest : FunSpec({
         ) shouldBe TypeInference(
             type = "string",
             reason = "the action manifest declares `type: string`",
+            description = "If true",
         )
     }
 
@@ -890,7 +900,7 @@ private class TypingHeuristicsTest : FunSpec({
         inferType(
             linkedMapOf("description" to "Not a boolean description"),
             inputName = inputName,
-        ) shouldBe expected
+        ) shouldBe expected.copy(description = "Not a boolean description")
     }
 
     test("infers booleans from descriptions starting with the word If") {
@@ -900,12 +910,13 @@ private class TypingHeuristicsTest : FunSpec({
         ) shouldBe TypeInference(
             type = "boolean",
             reason = "the input description starts with `If`",
+            description = "If the token is set, use it",
         )
 
         inferType(
             linkedMapOf("description" to "ifdef is not the word If"),
             inputName = "token",
-        ) shouldBe TypeInference(type = "string", reason = null)
+        ) shouldBe TypeInference(type = "string", reason = null, description = "ifdef is not the word If")
     }
 
     withData(
@@ -940,7 +951,7 @@ private class TypingHeuristicsTest : FunSpec({
         inferType(
             linkedMapOf("description" to description),
             inputName = "some-input",
-        ) shouldBe expected
+        ) shouldBe expected.copy(description = description)
     }
 
     test("assumes newline separators for a list without a detected separator") {
@@ -952,6 +963,7 @@ private class TypingHeuristicsTest : FunSpec({
             reason = "the input description mentions a list",
             separator = "\n",
             listItemType = "string",
+            description = "A list of Maven mirrors.",
         )
     }
 
@@ -959,7 +971,7 @@ private class TypingHeuristicsTest : FunSpec({
         inferType(
             linkedMapOf("description" to "A holistic approach to Maven mirrors."),
             inputName = "mvn-mirrors",
-        ) shouldBe TypeInference(type = "string", reason = null)
+        ) shouldBe TypeInference(type = "string", reason = null, description = "A holistic approach to Maven mirrors.")
     }
 
     test("infers types from default values") {
@@ -981,6 +993,33 @@ private class TypingHeuristicsTest : FunSpec({
         inferType(null) shouldBe TypeInference(type = "string", reason = null)
         inferType(linkedMapOf<String, Any?>()) shouldBe TypeInference(type = "string", reason = null)
         inferType(linkedMapOf("description" to "Some description")) shouldBe
-            TypeInference(type = "string", reason = null)
+            TypeInference(type = "string", reason = null, description = "Some description")
+    }
+
+    test("PR body includes descriptions of added inputs and outputs") {
+        val body = buildPullRequestBody(
+            action = ActionKey("some-owner", "some-action", "v1"),
+            changes = listOf(
+                AppliedChange(
+                    typingsPath = "typings/some-owner/some-action/v1/action-types.yml",
+                    copiedFromVersion = null,
+                    addedInputs = mapOf(
+                        "token" to TypeInference(
+                            type = "string",
+                            reason = null,
+                            description = "The token\n  to use.",
+                        ),
+                    ),
+                    removedInputs = emptySet(),
+                    addedOutputs = mapOf(
+                        "result" to TypeInference(type = "string", reason = null, description = "The result."),
+                    ),
+                    removedOutputs = emptySet(),
+                ),
+            ),
+        )
+
+        body shouldContain "- `token` (input): added with type `string`. Description: The token to use."
+        body shouldContain "- `result` (output): added with type `string`. Description: The result."
     }
 })
