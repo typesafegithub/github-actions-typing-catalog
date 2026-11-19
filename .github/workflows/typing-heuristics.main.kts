@@ -141,11 +141,7 @@ object TypingHeuristics {
         "the action manifest does not declare a supported type, but its default value is `$value`"
 }
 
-if (System.getenv("RUN_TESTS") == "true") {
-    runTypingHeuristicsTests()
-}
-
-private fun runTypingHeuristicsTests() {
+fun runTypingHeuristicsTests() {
     val collector = CollectingTestEngineListener()
     val result = runBlocking {
         TestEngineLauncher()
