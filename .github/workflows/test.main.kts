@@ -81,6 +81,10 @@ workflow(
             """.trimIndent()
         )
         run(
+            name = "Run typing heuristics tests",
+            command = "RUN_TYPING_HEURISTICS_TESTS=true .github/workflows/typing-heuristics.main.kts",
+        )
+        run(
             name = "Run update typings tests",
             command = "RUN_TESTS=true .github/workflows/update-typings.main.kts",
         )

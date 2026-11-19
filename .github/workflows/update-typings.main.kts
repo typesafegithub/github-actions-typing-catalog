@@ -49,7 +49,6 @@ private val typingsHeader = "# See https://github.com/typesafegithub/github-acti
 private val whitespaceRegex = Regex("""\s+""")
 
 if (System.getenv("RUN_TESTS") == "true") {
-    runTypingHeuristicsTests()
     runUpdateTypingsTests()
     exitProcess(0)
 }

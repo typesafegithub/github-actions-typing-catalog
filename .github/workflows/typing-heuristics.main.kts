@@ -141,7 +141,12 @@ object TypingHeuristics {
         "the action manifest does not declare a supported type, but its default value is `$value`"
 }
 
-fun runTypingHeuristicsTests() {
+// Separate flag so importing this script from update-typings.main.kts doesn't run these tests there.
+if (System.getenv("RUN_TYPING_HEURISTICS_TESTS") == "true") {
+    runTypingHeuristicsTests()
+}
+
+private fun runTypingHeuristicsTests() {
     val collector = CollectingTestEngineListener()
     val result = runBlocking {
         TestEngineLauncher()

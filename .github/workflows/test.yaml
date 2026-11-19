@@ -42,6 +42,9 @@ jobs:
             kotlinc -cp "${KOTLIN_MAIN_KTS_JAR}" -script -Xallow-any-scripts-in-source-roots "$file"
         done
     - id: 'step-2'
+      name: 'Run typing heuristics tests'
+      run: 'RUN_TYPING_HEURISTICS_TESTS=true .github/workflows/typing-heuristics.main.kts'
+    - id: 'step-3'
       name: 'Run update typings tests'
       run: 'RUN_TESTS=true .github/workflows/update-typings.main.kts'
   validate_typings:
