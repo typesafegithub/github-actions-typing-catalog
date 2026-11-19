@@ -49,6 +49,7 @@ private val typingsHeader = "# See https://github.com/typesafegithub/github-acti
 private val listWordRegex = Regex("""\blist\b""", RegexOption.IGNORE_CASE)
 private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
 private val commaSeparatedRegex = Regex("""\bcomma[\s-]+separated\b""", RegexOption.IGNORE_CASE)
+private val optionsRegex = Regex("""\boptions\s*:\s*\[([^\]]+)\]""", RegexOption.IGNORE_CASE)
 private val whitespaceRegex = Regex("""\s+""")
 
 if (System.getenv("RUN_TESTS") == "true") {
@@ -509,35 +510,46 @@ private fun inferType(definition: Any?, inputName: String? = null): TypeInferenc
             type = "string",
             reason = "the action manifest declares `type: $declaredType`",
         )
-        else -> {
-            val listInference = listHeuristic(map)
-            if (listInference != null) {
-                listInference
+        else -> enumHeuristic(map) ?: listHeuristic(map) ?: run {
+            val heuristicReason = inputName?.let { booleanHeuristicReason(it, map) }
+            if (heuristicReason != null) {
+                TypeInference(type = "boolean", reason = heuristicReason)
             } else {
-                val heuristicReason = inputName?.let { booleanHeuristicReason(it, map) }
-                if (heuristicReason != null) {
-                    TypeInference(type = "boolean", reason = heuristicReason)
-                } else {
-                    when (val defaultValue = map["default"]) {
-                        is Boolean -> TypeInference(
-                            type = "boolean",
-                            reason = defaultValueReason(defaultValue),
-                        )
-                        is Int, is Long -> TypeInference(
-                            type = "integer",
-                            reason = defaultValueReason(defaultValue),
-                        )
-                        is Double, is Float -> TypeInference(
-                            type = "float",
-                            reason = defaultValueReason(defaultValue),
-                        )
-                        else -> TypeInference(type = "string", reason = null)
-                    }
+                when (val defaultValue = map["default"]) {
+                    is Boolean -> TypeInference(
+                        type = "boolean",
+                        reason = defaultValueReason(defaultValue),
+                    )
+                    is Int, is Long -> TypeInference(
+                        type = "integer",
+                        reason = defaultValueReason(defaultValue),
+                    )
+                    is Double, is Float -> TypeInference(
+                        type = "float",
+                        reason = defaultValueReason(defaultValue),
+                    )
+                    else -> TypeInference(type = "string", reason = null)
                 }
             }
         }
     }
     return inference.copy(description = description)
+}
+
+private fun enumHeuristic(definition: Map<*, *>): TypeInference? {
+    val description = definition["description"] as? String ?: return null
+    val allowedValues = optionsRegex.find(description)?.groupValues?.get(1)
+        ?.split(',')
+        ?.map { it.trim() }
+        ?.filter { it.isNotEmpty() }
+        ?.takeIf { it.isNotEmpty() }
+        ?: return null
+
+    return TypeInference(
+        type = "enum",
+        reason = "the input description lists options",
+        allowedValues = allowedValues,
+    )
 }
 
 private fun listHeuristic(definition: Map<*, *>): TypeInference? {
@@ -662,6 +674,10 @@ private fun renderEntry(name: String, inference: TypeInference): List<String> = 
         add("    list-item:")
         add("      type: $listItemType")
     }
+    inference.allowedValues?.let { allowedValues ->
+        add("    allowed-values:")
+        allowedValues.forEach { value -> add("    - $value") }
+    }
 }
 
 private fun renderSeparator(separator: String): String = when (separator) {
@@ -772,6 +788,7 @@ private data class TypeInference(
     val reason: String?,
     val separator: String? = null,
     val listItemType: String? = null,
+    val allowedValues: List<String>? = null,
     val description: String? = null,
 )
 
@@ -994,6 +1011,49 @@ private class TypingHeuristicsTest : FunSpec({
         inferType(linkedMapOf<String, Any?>()) shouldBe TypeInference(type = "string", reason = null)
         inferType(linkedMapOf("description" to "Some description")) shouldBe
             TypeInference(type = "string", reason = null, description = "Some description")
+    }
+
+    test("infers an enum from options listed in the description") {
+        val description = "Choose the token type for ECR Private registries. " +
+            "Options: [regional-token, global-token]"
+        val inference = inferType(
+            linkedMapOf("description" to description, "default" to "regional-token"),
+            inputName = "ecr-private-token-type",
+        )
+
+        inference.type shouldBe "enum"
+        inference.reason shouldBe "the input description lists options"
+        renderEntry("ecr-private-token-type", inference) shouldBe listOf(
+            "  ecr-private-token-type:",
+            "    type: enum",
+            "    allowed-values:",
+            "    - regional-token",
+            "    - global-token",
+        )
+    }
+
+    test("enum options take precedence over name heuristics and default values") {
+        val inference = inferType(
+            linkedMapOf(
+                "description" to "Options: [regional-token, global-token]",
+                "default" to true,
+            ),
+            inputName = "skip-token-type",
+        )
+
+        inference.type shouldBe "enum"
+        inference.reason shouldBe "the input description lists options"
+    }
+
+    test("does not infer an enum from an options word without a list of options") {
+        inferType(
+            linkedMapOf("description" to "Choose the token type from the available options."),
+            inputName = "token-type",
+        ) shouldBe TypeInference(
+            type = "string",
+            reason = null,
+            description = "Choose the token type from the available options.",
+        )
     }
 
     test("PR body includes descriptions of added inputs and outputs") {
