@@ -16,6 +16,11 @@ inputs:
     - public
   http-proxy:
     type: string
+  ecr-private-token-type:
+    type: enum
+    allowed-values:
+    - regional-token
+    - global-token
 
 outputs:
   registry:
