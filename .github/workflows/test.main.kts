@@ -80,6 +80,14 @@ workflow(
             done
             """.trimIndent()
         )
+    }
+
+    job(
+        id = "run_tests",
+        name = "Run tests",
+        runsOn = UbuntuLatest,
+    ) {
+        uses(action = Checkout())
         run(
             name = "Run typing heuristics tests",
             command = "RUN_TYPING_HEURISTICS_TESTS=true .github/workflows/typing-heuristics.main.kts",
