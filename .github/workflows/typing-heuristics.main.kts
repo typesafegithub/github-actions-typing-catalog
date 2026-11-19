@@ -20,7 +20,16 @@ data class HeuristicType(
     val listItemType: String? = null,
     val allowedValues: List<String>? = null,
     val description: String? = null,
-)
+) {
+    // Only attributes written to action-types.yml are included. `reason` explains the inference,
+    // and `description` is used in PR bodies - neither is a typing attribute.
+    fun toTypingMap(): Map<String, Any> = buildMap {
+        put("type", type)
+        separator?.let { put("separator", it) }
+        listItemType?.let { put("list-item", mapOf("type" to it)) }
+        allowedValues?.let { put("allowed-values", it) }
+    }
+}
 
 object TypingHeuristics {
     private val listWordRegex = Regex("""\blist\b""", RegexOption.IGNORE_CASE)
@@ -371,6 +380,27 @@ private class TypingHeuristicsTest : FunSpec({
             type = "string",
             reason = null,
             description = "Choose the token type from the available options.",
+        )
+    }
+
+    test("maps a list inference to YAML typing attributes") {
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to "Comma-separated list of labels to apply."),
+            inputName = "labels",
+        ).toTypingMap() shouldBe mapOf(
+            "type" to "list",
+            "separator" to ",",
+            "list-item" to mapOf("type" to "string"),
+        )
+    }
+
+    test("maps an enum inference to YAML typing attributes") {
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to "Options: [regional-token, global-token]"),
+            inputName = "token-type",
+        ).toTypingMap() shouldBe mapOf(
+            "type" to "enum",
+            "allowed-values" to listOf("regional-token", "global-token"),
         )
     }
 })
