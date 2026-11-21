@@ -323,18 +323,20 @@ private fun listActionVersionsToValidate(sha: String, baseRef: String?): Stream<
         } else {
             println("Only validating changed typings")
             listAffectedActionManifestFiles(sha = sha, baseRef = baseRef)
-        }.map {
-            val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
-            val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
-            ActionCoords(
-                owner = owner,
-                name = name,
-                version = version,
-                path = path,
-                pathToTypings = it.invariantSeparatorsPathString,
-            )
-        }
+        }.map { it.toActionCoords() }
     }
+
+private fun Path.toActionCoords(): ActionCoords {
+    val (_, owner, name, version, pathAndYaml) = invariantSeparatorsPathString.split("/", limit = 5)
+    val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
+    return ActionCoords(
+        owner = owner,
+        name = name,
+        version = version,
+        path = path,
+        pathToTypings = invariantSeparatorsPathString,
+    )
+}
 
 private fun listAllActionManifestFilesInRepo(): Stream<Path> {
     val actionsWithYamlExtension = Files.walk(Path("typings"))
