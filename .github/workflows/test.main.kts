@@ -112,8 +112,9 @@ workflow(
         run(
             name = "Check for actions",
         ) {
-            validateTypings(github.sha, github.base_ref?.ifEmpty { null })
-            validateAllMajorVersionsPresent(github.base_ref?.ifEmpty { null })
+            val baseRef = resolveBaseRef(github.base_ref?.ifEmpty { null }, github.ref, github.repository)
+            validateTypings(github.sha, baseRef)
+            validateAllMajorVersionsPresent(baseRef)
         }
     }
 
@@ -167,6 +168,22 @@ private data class TypingInference(
     val reason: String?,
 ) {
     val isMismatch: Boolean get() = actual != inferred
+}
+
+private fun resolveBaseRef(rawBaseRef: String?, ref: String?, repository: String?): String? {
+    if (rawBaseRef == null || !rawBaseRef.startsWith("graphite-base/")) return rawBaseRef
+
+    // Graphite reports a synthetic, non-existent base branch for stacked PRs. Ask GitHub for the real one.
+    val prNumber = ref?.removePrefix("refs/pull/")?.substringBefore("/merge")
+    check(prNumber != null && prNumber != ref) {
+        "Cannot resolve the real base branch for Graphite PR from ref $ref"
+    }
+    val process = ProcessBuilder(
+        "gh", "api", "repos/$repository/pulls/$prNumber", "--jq", ".base.ref",
+    ).redirectErrorStream(true).start()
+    val output = process.inputStream.bufferedReader().readText().trim()
+    check(process.waitFor() == 0) { "Failed to resolve the PR base branch: $output" }
+    return output
 }
 
 private fun validateTypings(sha: String, baseRef: String?) {
