@@ -27,7 +27,10 @@ import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
 import io.github.typesafegithub.workflows.yaml.CheckoutActionVersionSource
 import io.github.typesafegithub.workflows.yaml.DEFAULT_CONSISTENCY_CHECK_JOB_CONFIG
+import it.krzeminski.snakeyaml.engine.kmp.api.Dump
+import it.krzeminski.snakeyaml.engine.kmp.api.DumpSettings
 import it.krzeminski.snakeyaml.engine.kmp.api.Load
+import it.krzeminski.snakeyaml.engine.kmp.common.FlowStyle
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -52,6 +55,28 @@ import kotlin.io.path.extension
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.name
 import kotlin.io.path.walk
+import kotlin.system.exitProcess
+
+private val mismatchBaselinePath = "typing-mismatches.yml"
+
+private val mismatchBaselineHeader = listOf(
+    "# Generated with: DUMP_TYPING_MISMATCHES=true .github/workflows/test.main.kts",
+    "# Lists all differences between the typings in this catalog and the types inferred by the heuristics.",
+    "# CI fails when this file is out of sync with the actual mismatches.",
+).joinToString("\n")
+
+private val mismatchComparator = compareBy<TypingMismatch> { it.action.owner }
+    .thenBy { it.action.name }
+    .thenBy { versionOrder(it.action.version) }
+    .thenBy { it.action.version }
+    .thenBy { it.action.path ?: "" }
+    .thenBy { sectionOrder(it.inference.section) }
+    .thenBy { it.inference.name }
+
+if (System.getenv("DUMP_TYPING_MISMATCHES") == "true") {
+    dumpTypingMismatchBaseline()
+    exitProcess(0)
+}
 
 workflow(
     name = "Test",
@@ -170,6 +195,30 @@ private data class TypingInference(
     val isMismatch: Boolean get() = actual != inferred
 }
 
+private data class TypingMismatch(
+    val action: ActionCoords,
+    val inference: TypingInference,
+) {
+    val key: MismatchKey = MismatchKey(action.key, inference.section, inference.name)
+    val values: MismatchValues = MismatchValues(inference.actual, inference.inferred)
+}
+
+private data class MismatchKey(
+    val action: String,
+    val section: String,
+    val name: String,
+) {
+    override fun toString(): String = "$action:$section:$name"
+}
+
+private data class MismatchValues(
+    val actual: Map<String, Any?>,
+    val inferred: Map<String, Any?>,
+)
+
+private val ActionCoords.key: String
+    get() = listOfNotNull("$owner/$name@$version", path).joinToString("/")
+
 private fun resolveBaseRef(rawBaseRef: String?, ref: String?, repository: String?): String? {
     if (rawBaseRef == null || !rawBaseRef.startsWith("graphite-base/")) return rawBaseRef
 
@@ -198,9 +247,11 @@ private fun validateTypings(sha: String, baseRef: String?) {
     )
 
     println()
-    val actionVersions = listActionVersionsToValidate(sha = sha, baseRef = baseRef)
+    val actionVersions = listActionVersionsToValidate(sha = sha, baseRef = baseRef).toList()
 
     val validationErrors = mutableListOf<String>()
+    val validatedActionKeys = mutableSetOf<String>()
+    val mismatches = mutableListOf<TypingMismatch>()
 
     for (action in actionVersions) {
         println()
@@ -241,6 +292,9 @@ private fun validateTypings(sha: String, baseRef: String?) {
         val manifestOutputs = manifest.names("outputs")
 
         val inferences = compareTypings(typings, manifest)
+        validatedActionKeys += action.key
+        mismatches += inferences.filter { it.isMismatch }.map { TypingMismatch(action, it) }
+
         inferences.forEach { inference ->
             val warning = if (inference.isMismatch) "\u26A0\uFE0F " else ""
             val reason = inference.reason?.let { " ($it)" } ?: ""
@@ -266,10 +320,16 @@ private fun validateTypings(sha: String, baseRef: String?) {
         println("\uD83D\uDFE2 OK!")
     }
 
+    val baselineIssues = validateMismatchBaseline(validatedActionKeys, mismatches)
+    validationErrors += baselineIssues
+
     if (validationErrors.isNotEmpty()) {
         println()
         println("\uD83D\uDD34 Typing validation found ${validationErrors.size} issue(s):")
         validationErrors.sorted().forEach { println("  - $it") }
+        if (baselineIssues.isNotEmpty()) {
+            println("  Regenerate with: DUMP_TYPING_MISMATCHES=true .github/workflows/test.main.kts")
+        }
     }
 
     require(validationErrors.isEmpty()) {
@@ -432,6 +492,10 @@ private fun formatTypingValue(value: Any?): String = when (value) {
 private fun Map<*, *>.names(section: String): Set<String> =
     (this[section] as? Map<*, *>)?.keys?.map { it.toString() }?.toSet() ?: emptySet()
 
+/**
+ * Single source of truth for comparing stored typings with heuristic inferences. Both validation and
+ * the baseline dump go through here, so the YAML file can't drift from what CI checks.
+ */
 private fun compareTypings(typings: Map<*, *>, manifest: Map<*, *>): List<TypingInference> =
     // Input names feed boolean heuristics (e.g. `skip-cache`). Outputs have names too, but
     // update-typings.main.kts currently omits passing them - that's a bug there. Mirror it for now
@@ -460,6 +524,96 @@ private fun normalizeTyping(value: Any?): Any? = when (value) {
     is List<*> -> value.map { normalizeTyping(it) }
     else -> value
 }
+
+private fun validateMismatchBaseline(
+    validatedActionKeys: Set<String>,
+    mismatches: List<TypingMismatch>,
+): List<String> {
+    val expected = loadMismatchBaseline().filterKeys { it.action in validatedActionKeys }
+    val actual = mismatches.associate { it.key to it.values }
+
+    val unexpected = actual.keys - expected.keys
+    val stale = expected.keys - actual.keys
+    val changed = actual.keys.intersect(expected.keys).filter { actual[it] != expected[it] }
+
+    val issues = mutableListOf<String>()
+    unexpected.sortedBy { it.toString() }.forEach {
+        issues += "$mismatchBaselinePath is missing a mismatch for $it: ${formatMismatchValues(actual[it]!!)}"
+    }
+    stale.sortedBy { it.toString() }.forEach {
+        issues += "$mismatchBaselinePath has a stale entry for $it: the inferred typing now matches the actual typing"
+    }
+    changed.sortedBy { it.toString() }.forEach { key ->
+        issues += "$mismatchBaselinePath has outdated typings for $key: baseline " +
+                "${formatMismatchValues(expected[key]!!)}, actual ${formatMismatchValues(actual[key]!!)}"
+    }
+    return issues
+}
+
+private fun formatMismatchValues(values: MismatchValues): String =
+    "actual: {${formatTyping(values.actual)}}, inferred: {${formatTyping(values.inferred)}}"
+
+private fun loadMismatchBaseline(): Map<MismatchKey, MismatchValues> {
+    val file = File(mismatchBaselinePath)
+    if (!file.exists()) return emptyMap()
+    val root = Load().loadOne(file.readText()) as? Map<*, *> ?: return emptyMap()
+    val actions = root["actions"] as? Map<*, *> ?: return emptyMap()
+    return buildMap {
+        actions.forEach { (actionKey, actionNode) ->
+            (actionNode as? Map<*, *>)?.forEach { (section, sectionNode) ->
+                (sectionNode as? Map<*, *>)?.forEach { (name, values) ->
+                    val valueMap = values as? Map<*, *> ?: return@forEach
+                    put(
+                        MismatchKey(actionKey.toString(), section.toString(), name.toString()),
+                        MismatchValues(
+                            actual = (valueMap["actual"] as? Map<*, *>)?.asTypingMap() ?: emptyMap(),
+                            inferred = (valueMap["inferred"] as? Map<*, *>)?.asTypingMap() ?: emptyMap(),
+                        ),
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun dumpTypingMismatchBaseline() {
+    val mismatches = listAllActionManifestFilesInRepo()
+        .map { it.toActionCoords() }
+        .toList()
+        .flatMap { action ->
+            val manifest = fetchManifest(action)
+            if (manifest == null) {
+                println("\u26A0\uFE0F No manifest found for ${action.key}, skipping")
+                emptyList()
+            } else {
+                compareTypings(loadTypings(action.pathToTypings), manifest)
+                    .filter { it.isMismatch }
+                    .map { TypingMismatch(action, it) }
+            }
+        }
+        .sortedWith(mismatchComparator)
+
+    File(mismatchBaselinePath).writeText(renderMismatchBaseline(mismatches))
+    println("Wrote ${mismatches.size} mismatches to $mismatchBaselinePath")
+}
+
+private fun renderMismatchBaseline(mismatches: List<TypingMismatch>): String {
+    val actions = linkedMapOf<String, Any>()
+    mismatches.forEach { mismatch ->
+        val actionNode = actions.getOrPut(mismatch.action.key) { linkedMapOf<String, Any>() } as MutableMap<String, Any>
+        val sectionNode = actionNode.getOrPut(mismatch.inference.section) { linkedMapOf<String, Any>() } as MutableMap<String, Any>
+        sectionNode[mismatch.inference.name] = linkedMapOf(
+            "actual" to mismatch.inference.actual,
+            "inferred" to mismatch.inference.inferred,
+        )
+    }
+    val settings = DumpSettings(defaultFlowStyle = FlowStyle.BLOCK, indent = 2, width = 120)
+    return mismatchBaselineHeader + "\n" + Dump(settings).dumpToString(mapOf("actions" to actions))
+}
+
+private fun versionOrder(version: String): Int = version.removePrefix("v").toIntOrNull() ?: Int.MAX_VALUE
+
+private fun sectionOrder(section: String): Int = if (section == "inputs") 0 else 1
 
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
     val list = listOf(action.actionYmlUrl, action.actionYamlUrl)
