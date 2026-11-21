@@ -200,18 +200,17 @@ private fun validateTypings(sha: String, baseRef: String?) {
     println()
     val actionVersions = listActionVersionsToValidate(sha = sha, baseRef = baseRef)
 
-    var shouldFail = false
-
-    val typingDifferences = mutableListOf<TypingDifference>()
+    val validationErrors = mutableListOf<String>()
 
     for (action in actionVersions) {
         println()
-        println("➡\uFE0F For https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}")
+        val actionDescription =
+            "https://github.com/${action.owner}/${action.name}/tree/${action.version}/${action.path ?: ""}"
+        println("➡\uFE0F For $actionDescription")
 
         if (action.pathToTypings != action.pathToTypings.lowercase()) {
-            println("\uD83D\uDD34 Action's owner and name should be lowercase, " +
-                    "to enable the bindings server to load them in a case-insensitive manner!")
-            shouldFail = true
+            validationErrors += "$actionDescription: action's owner and name should be lowercase, " +
+                    "to enable the bindings server to load them in a case-insensitive manner!"
             continue
         }
 
@@ -224,9 +223,8 @@ private fun validateTypings(sha: String, baseRef: String?) {
 
         val schemaComplianceErrors = typingsSchema.checkForSchemaComplianceErrors(typings)
         if (schemaComplianceErrors != null) {
-            println("\uD83D\uDD34 Typings aren't compliant with the schema!")
-            println(schemaComplianceErrors)
-            shouldFail = true
+            validationErrors += "$actionDescription: typings aren't compliant with the schema: " +
+                    schemaComplianceErrors.replace("\n", " ")
             continue
         }
 
@@ -235,8 +233,7 @@ private fun validateTypings(sha: String, baseRef: String?) {
         val manifest = fetchManifest(action)
 
         if (manifest == null) {
-            println("\uD83D\uDD34 No manifest found!")
-            shouldFail = true
+            validationErrors += "$actionDescription: no manifest found"
             continue
         }
 
@@ -255,26 +252,27 @@ private fun validateTypings(sha: String, baseRef: String?) {
         }
 
         if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
-            println("\uD83D\uDD34 Something is wrong with the typings!")
-
-            val difference = TypingDifference(
-                action = action,
-                extraInputsInManifest = manifestInputs - typingsInputs,
-                extraInputsInTypings = typingsInputs - manifestInputs,
-                extraOutputsInManifest = manifestOutputs - typingsOutputs,
-                extraOutputsInTypings = typingsOutputs - manifestOutputs
-            )
-            println(difference)
-
-            typingDifferences += difference
-            shouldFail = true
+            validationErrors += "$actionDescription: something is wrong with the typings: " +
+                    TypingDifference(
+                        action = action,
+                        extraInputsInManifest = manifestInputs - typingsInputs,
+                        extraInputsInTypings = typingsInputs - manifestInputs,
+                        extraOutputsInManifest = manifestOutputs - typingsOutputs,
+                        extraOutputsInTypings = typingsOutputs - manifestOutputs,
+                    )
             continue
         }
 
         println("\uD83D\uDFE2 OK!")
     }
 
-    require(shouldFail == false) {
+    if (validationErrors.isNotEmpty()) {
+        println()
+        println("\uD83D\uDD34 Typing validation found ${validationErrors.size} issue(s):")
+        validationErrors.sorted().forEach { println("  - $it") }
+    }
+
+    require(validationErrors.isEmpty()) {
         "This is the end of processing, and something doesn't match - see the logs!"
     }
 }
