@@ -203,8 +203,8 @@ private fun validateTypings(sha: String, baseRef: String?) {
             continue
         }
 
-        val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
-        val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
+        val typingsInputs = typings.names("inputs")
+        val typingsOutputs = typings.names("outputs")
         val manifest = fetchManifest(action)
 
         if (manifest == null) {
@@ -213,8 +213,8 @@ private fun validateTypings(sha: String, baseRef: String?) {
             continue
         }
 
-        val manifestInputs = if ("inputs" in manifest) (manifest["inputs"] as Map<String, Any>).keys else emptySet()
-        val manifestOutputs = if ("outputs" in manifest) (manifest["outputs"] as Map<String, Any>).keys else emptySet()
+        val manifestInputs = manifest.names("inputs")
+        val manifestOutputs = manifest.names("outputs")
 
         fun logTypeInferences(section: String, names: Set<String>, includeInputName: Boolean) {
             names.forEach { name ->
@@ -417,6 +417,9 @@ private fun formatTypingValue(value: Any?): String = when (value) {
     is List<*> -> value.joinToString(", ", "[", "]") { formatTypingValue(it) }
     else -> value?.toString()?.replace("\n", "\\n") ?: "n/a"
 }
+
+private fun Map<*, *>.names(section: String): Set<String> =
+    (this[section] as? Map<*, *>)?.keys?.map { it.toString() }?.toSet() ?: emptySet()
 
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
     val list = listOf(action.actionYmlUrl, action.actionYamlUrl)
