@@ -392,8 +392,8 @@ private fun listActionVersionsToValidate(sha: String, baseRef: String?): Stream<
             println("Validating all typings")
             listAllActionManifestFilesInRepo()
         } else {
-            println("Only validating changed typings")
-            listAffectedActionManifestFiles(sha = sha, baseRef = baseRef)
+            println("Validating all typings")
+            listAllActionManifestFilesInRepo()
         }.map { it.toActionCoords() }
     }
 
