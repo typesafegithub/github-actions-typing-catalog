@@ -159,6 +159,16 @@ private data class TypingDifference(
     val extraOutputsInTypings: Set<String>,
 )
 
+private data class TypingInference(
+    val section: String,
+    val name: String,
+    val actual: Map<String, Any?>,
+    val inferred: Map<String, Any?>,
+    val reason: String?,
+) {
+    val isMismatch: Boolean get() = actual != inferred
+}
+
 private fun validateTypings(sha: String, baseRef: String?) {
     val typingsSchema = JsonSchema.fromDefinition(
         URI.create("https://raw.githubusercontent.com/typesafegithub/github-actions-typing/" +
@@ -203,8 +213,8 @@ private fun validateTypings(sha: String, baseRef: String?) {
             continue
         }
 
-        val typingsInputs = if ("inputs" in typings) (typings["inputs"] as Map<String, Any>).keys else emptySet()
-        val typingsOutputs = if ("outputs" in typings) (typings["outputs"] as Map<String, Any>).keys else emptySet()
+        val typingsInputs = typings.names("inputs")
+        val typingsOutputs = typings.names("outputs")
         val manifest = fetchManifest(action)
 
         if (manifest == null) {
@@ -213,33 +223,19 @@ private fun validateTypings(sha: String, baseRef: String?) {
             continue
         }
 
-        val manifestInputs = if ("inputs" in manifest) (manifest["inputs"] as Map<String, Any>).keys else emptySet()
-        val manifestOutputs = if ("outputs" in manifest) (manifest["outputs"] as Map<String, Any>).keys else emptySet()
+        val manifestInputs = manifest.names("inputs")
+        val manifestOutputs = manifest.names("outputs")
 
-        fun logTypeInferences(section: String, names: Set<String>, includeInputName: Boolean) {
-            names.forEach { name ->
-                val inference = TypingHeuristics.inferType(
-                    manifest.definition(section, name),
-                    if (includeInputName) name else null,
-                )
-                val actualTyping: Map<*, *> =
-                    (typings.definition(section, name) as? Map<*, *>) ?: emptyMap<Any?, Any?>()
-                val inferredTyping: Map<*, *> = inference.toTypingMap()
-                val warning = if (actualTyping == inferredTyping) "" else "\u26A0\uFE0F "
-                val reason = inference.reason?.let { " ($it)" } ?: ""
-                val label = if (section == "inputs") "Input" else "Output"
-                println(
-                    "  ${warning}$label `$name`: actual `${formatTyping(actualTyping)}`, " +
-                        "inferred `${formatTyping(inferredTyping)}`$reason"
-                )
-            }
+        val inferences = compareTypings(typings, manifest)
+        inferences.forEach { inference ->
+            val warning = if (inference.isMismatch) "\u26A0\uFE0F " else ""
+            val reason = inference.reason?.let { " ($it)" } ?: ""
+            val label = if (inference.section == "inputs") "Input" else "Output"
+            println(
+                "  ${warning}$label `${inference.name}`: actual `${formatTyping(inference.actual)}`, " +
+                    "inferred `${formatTyping(inference.inferred)}`$reason"
+            )
         }
-
-        // Input names feed boolean heuristics (e.g. `skip-cache`). Outputs have names too, but
-        // update-typings.main.kts currently omits passing them - that's a bug there. Mirror it for now
-        // so validation agrees with what the update workflow would actually generate.
-        logTypeInferences("inputs", manifestInputs, includeInputName = true)
-        logTypeInferences("outputs", manifestOutputs, includeInputName = false)
 
         if (typingsInputs != manifestInputs || typingsOutputs != manifestOutputs) {
             println("\uD83D\uDD34 Something is wrong with the typings!")
@@ -323,18 +319,20 @@ private fun listActionVersionsToValidate(sha: String, baseRef: String?): Stream<
         } else {
             println("Only validating changed typings")
             listAffectedActionManifestFiles(sha = sha, baseRef = baseRef)
-        }.map {
-            val (_, owner, name, version, pathAndYaml) = it.invariantSeparatorsPathString.split("/", limit = 5)
-            val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
-            ActionCoords(
-                owner = owner,
-                name = name,
-                version = version,
-                path = path,
-                pathToTypings = it.invariantSeparatorsPathString,
-            )
-        }
+        }.map { it.toActionCoords() }
     }
+
+private fun Path.toActionCoords(): ActionCoords {
+    val (_, owner, name, version, pathAndYaml) = invariantSeparatorsPathString.split("/", limit = 5)
+    val path = if ("/" in pathAndYaml) pathAndYaml.substringBeforeLast("/") else null
+    return ActionCoords(
+        owner = owner,
+        name = name,
+        version = version,
+        path = path,
+        pathToTypings = invariantSeparatorsPathString,
+    )
+}
 
 private fun listAllActionManifestFilesInRepo(): Stream<Path> {
     val actionsWithYamlExtension = Files.walk(Path("typings"))
@@ -414,6 +412,38 @@ private fun formatTypingValue(value: Any?): String = when (value) {
     is Map<*, *> -> "{${formatTyping(value)}}"
     is List<*> -> value.joinToString(", ", "[", "]") { formatTypingValue(it) }
     else -> value?.toString()?.replace("\n", "\\n") ?: "n/a"
+}
+
+private fun Map<*, *>.names(section: String): Set<String> =
+    (this[section] as? Map<*, *>)?.keys?.map { it.toString() }?.toSet() ?: emptySet()
+
+private fun compareTypings(typings: Map<*, *>, manifest: Map<*, *>): List<TypingInference> =
+    // Input names feed boolean heuristics (e.g. `skip-cache`). Outputs have names too, but
+    // update-typings.main.kts currently omits passing them - that's a bug there. Mirror it for now
+    // so validation agrees with what the update workflow would actually generate.
+    listOf("inputs" to true, "outputs" to false).flatMap { (section, includeName) ->
+        manifest.names(section).map { name ->
+            val inference = TypingHeuristics.inferType(
+                manifest.definition(section, name),
+                if (includeName) name else null,
+            )
+            TypingInference(
+                section = section,
+                name = name,
+                actual = (typings.definition(section, name) as? Map<*, *>)?.asTypingMap() ?: emptyMap(),
+                inferred = inference.toTypingMap().asTypingMap(),
+                reason = inference.reason,
+            )
+        }
+    }
+
+private fun Map<*, *>.asTypingMap(): Map<String, Any?> =
+    normalizeTyping(this) as Map<String, Any?>
+
+private fun normalizeTyping(value: Any?): Any? = when (value) {
+    is Map<*, *> -> value.entries.associate { (key, entryValue) -> key.toString() to normalizeTyping(entryValue) }
+    is List<*> -> value.map { normalizeTyping(it) }
+    else -> value
 }
 
 private fun fetchManifest(action: ActionCoords): Map<String, Any>? {
