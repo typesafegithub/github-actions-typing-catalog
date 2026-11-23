@@ -454,6 +454,81 @@ private class TypingHeuristicsTest : FunSpec({
         )
     }
 
+    withData(
+        nameFn = { (description, defaultValue) ->
+            "keeps string typing for boolean string default `$defaultValue` in `$description`"
+        },
+        listOf(
+            "Enable debug logging." to "true",
+            "Run the post step to save the cache even if another step before fails" to "false",
+        ),
+    ) { (description, defaultValue) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to description, "default" to defaultValue),
+        ) shouldBe HeuristicType(type = "string", reason = null, description = description)
+    }
+
+    withData(
+        nameFn = { (description, defaultValue, _) ->
+            "keeps string typing for numeric string default `$defaultValue` in `$description`"
+        },
+        listOf(
+            Triple(
+                "The configured value for the build.",
+                "10",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "The configured ratio for the build.",
+                "1.5",
+                HeuristicType(type = "string", reason = null),
+            ),
+        ),
+    ) { (description, defaultValue, expected) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to description, "default" to defaultValue),
+        ) shouldBe expected.copy(description = description)
+    }
+
+    withData(
+        nameFn = { description -> "keeps string typing for numeric wording in `$description`" },
+        listOf(
+            "The number of times to retry a request.",
+            "Retry the request on failure.",
+            "Cache for 12 hours.",
+            "Wait for 100 milliseconds.",
+            "Maximum upload size in bytes.",
+            "The number is stored as an integer.",
+        ),
+    ) { description ->
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+            type = "string",
+            reason = null,
+            description = description,
+        )
+    }
+
+    test("does not infer scalar types from misleading string defaults") {
+        val stringArgumentDescription =
+            "Whether to push the commit. It can also be used as git push arguments."
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to stringArgumentDescription, "default" to "true"),
+            inputName = "push",
+        ) shouldBe HeuristicType(type = "string", reason = null, description = stringArgumentDescription)
+
+        val forceDescription = "Force adding package suffix to Go benchmark names."
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to forceDescription, "default" to "false"),
+            inputName = "go-force-package-suffix",
+        ) shouldBe HeuristicType(type = "string", reason = null, description = forceDescription)
+
+        val versionDescription = "The Julia version to download (if necessary) and use."
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to versionDescription, "default" to "1"),
+            inputName = "version",
+        ) shouldBe HeuristicType(type = "string", reason = null, description = versionDescription)
+    }
+
     test("falls back to string without a reason") {
         TypingHeuristics.inferType(null) shouldBe HeuristicType(type = "string", reason = null)
         TypingHeuristics.inferType(linkedMapOf<String, Any?>()) shouldBe HeuristicType(type = "string", reason = null)
