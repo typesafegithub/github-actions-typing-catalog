@@ -1120,4 +1120,30 @@ private class TypingHeuristicsTest : FunSpec({
             "allowed-values" to listOf("regional-token", "global-token"),
         )
     }
+
+    test("maps each typing variant to YAML typing attributes") {
+        val primary = HeuristicType(
+            type = "list",
+            reason = "the input description mentions a list",
+            separator = "\n",
+            listItemType = "string",
+        )
+        val alternative = primary.copy(
+            reason = "the input description allows comma or newline separators",
+            separator = ",",
+        )
+
+        listOf(primary, alternative).map { it.toTypingMap() } shouldBe listOf(
+            mapOf(
+                "type" to "list",
+                "separator" to "\n",
+                "list-item" to mapOf("type" to "string"),
+            ),
+            mapOf(
+                "type" to "list",
+                "separator" to ",",
+                "list-item" to mapOf("type" to "string"),
+            ),
+        )
+    }
 })
