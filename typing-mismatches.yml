@@ -160,56 +160,6 @@ actions:
           type: integer
         inferred:
           type: string
-  actions/download-artifact@v4:
-    inputs:
-      artifact-ids:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/download-artifact@v5:
-    inputs:
-      artifact-ids:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/download-artifact@v6:
-    inputs:
-      artifact-ids:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/download-artifact@v7:
-    inputs:
-      artifact-ids:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/download-artifact@v8:
-    inputs:
-      artifact-ids:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
   actions/github-script@v6:
     inputs:
       result-encoding:
@@ -1094,355 +1044,34 @@ actions:
           - pip
           - pipenv
           - poetry
-  actions/stale@v5:
-    inputs:
-      close-issue-reason:
-        actual:
-          type: enum
-          allowed-values:
-          - completed
-          - not_planned
-        inferred:
-          type: string
-      days-before-issue-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-stale:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-    outputs:
-      closed-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      staled-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-  actions/stale@v6:
-    inputs:
-      close-issue-reason:
-        actual:
-          type: enum
-          allowed-values:
-          - completed
-          - not_planned
-        inferred:
-          type: string
-      days-before-issue-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-stale:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-    outputs:
-      closed-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      staled-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   actions/stale@v7:
     inputs:
-      close-issue-reason:
-        actual:
-          type: enum
-          allowed-values:
-          - completed
-          - not_planned
-        inferred:
-          type: string
-      days-before-issue-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-stale:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
       days-before-stale:
         actual:
           type: float
         inferred:
           type: integer
-      exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-    outputs:
-      closed-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      staled-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   actions/stale@v8:
     inputs:
-      close-issue-reason:
-        actual:
-          type: enum
-          allowed-values:
-          - completed
-          - not_planned
-        inferred:
-          type: string
-      days-before-issue-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-stale:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
       days-before-stale:
         actual:
           type: float
         inferred:
           type: integer
-      exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-    outputs:
-      closed-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      staled-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   actions/stale@v9:
     inputs:
-      close-issue-reason:
-        actual:
-          type: enum
-          allowed-values:
-          - completed
-          - not_planned
-        inferred:
-          type: string
-      days-before-issue-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-stale:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
       days-before-stale:
         actual:
           type: float
         inferred:
           type: integer
-      exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-    outputs:
-      closed-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      staled-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   actions/stale@v10:
     inputs:
-      close-issue-reason:
-        actual:
-          type: enum
-          allowed-values:
-          - completed
-          - not_planned
-        inferred:
-          type: string
-      days-before-issue-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-stale:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
       days-before-stale:
         actual:
           type: float
         inferred:
           type: integer
-      exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       sort-by:
         actual:
           type: enum
@@ -1452,69 +1081,13 @@ actions:
           - comments
         inferred:
           type: string
-    outputs:
-      closed-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      staled-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   actions/stale@v11:
     inputs:
-      close-issue-reason:
-        actual:
-          type: enum
-          allowed-values:
-          - completed
-          - not_planned
-        inferred:
-          type: string
-      days-before-issue-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-close:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
-      days-before-pr-stale:
-        actual:
-          type: integer
-          name: Days
-          named-values:
-            Never: -1
-        inferred:
-          type: string
       days-before-stale:
         actual:
           type: float
         inferred:
           type: integer
-      exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       sort-by:
         actual:
           type: enum
@@ -1524,37 +1097,8 @@ actions:
           - comments
         inferred:
           type: string
-    outputs:
-      closed-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      staled-issues-prs:
-        actual:
-          type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   actions/upload-artifact@v2:
     inputs:
-      if-no-files-found:
-        actual:
-          type: enum
-          name: BehaviorIfNoFilesFound
-          allowed-values:
-          - warn
-          - error
-          - ignore
-        inferred:
-          type: boolean
       retention-days:
         actual:
           type: integer
@@ -1565,16 +1109,6 @@ actions:
           type: integer
   actions/upload-artifact@v3:
     inputs:
-      if-no-files-found:
-        actual:
-          type: enum
-          name: BehaviorIfNoFilesFound
-          allowed-values:
-          - warn
-          - error
-          - ignore
-        inferred:
-          type: boolean
       retention-days:
         actual:
           type: integer
@@ -1596,16 +1130,6 @@ actions:
             BestCompression: 9
         inferred:
           type: integer
-      if-no-files-found:
-        actual:
-          type: enum
-          name: BehaviorIfNoFilesFound
-          allowed-values:
-          - warn
-          - error
-          - ignore
-        inferred:
-          type: boolean
       retention-days:
         actual:
           type: integer
@@ -1614,12 +1138,6 @@ actions:
             Default: 0
         inferred:
           type: integer
-    outputs:
-      artifact-id:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/upload-artifact@v5:
     inputs:
       compression-level:
@@ -1633,16 +1151,6 @@ actions:
             BestCompression: 9
         inferred:
           type: integer
-      if-no-files-found:
-        actual:
-          type: enum
-          name: BehaviorIfNoFilesFound
-          allowed-values:
-          - warn
-          - error
-          - ignore
-        inferred:
-          type: boolean
       retention-days:
         actual:
           type: integer
@@ -1651,12 +1159,6 @@ actions:
             Default: 0
         inferred:
           type: integer
-    outputs:
-      artifact-id:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/upload-artifact@v6:
     inputs:
       compression-level:
@@ -1670,16 +1172,6 @@ actions:
             BestCompression: 9
         inferred:
           type: integer
-      if-no-files-found:
-        actual:
-          type: enum
-          name: BehaviorIfNoFilesFound
-          allowed-values:
-          - warn
-          - error
-          - ignore
-        inferred:
-          type: boolean
       retention-days:
         actual:
           type: integer
@@ -1688,12 +1180,6 @@ actions:
             Default: 0
         inferred:
           type: integer
-    outputs:
-      artifact-id:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/upload-artifact@v7:
     inputs:
       compression-level:
@@ -1707,16 +1193,6 @@ actions:
             BestCompression: 9
         inferred:
           type: integer
-      if-no-files-found:
-        actual:
-          type: enum
-          name: BehaviorIfNoFilesFound
-          allowed-values:
-          - warn
-          - error
-          - ignore
-        inferred:
-          type: boolean
       retention-days:
         actual:
           type: integer
@@ -1725,33 +1201,6 @@ actions:
             Default: 0
         inferred:
           type: integer
-    outputs:
-      artifact-id:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  actions/upload-pages-artifact@v3:
-    outputs:
-      artifact_id:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  actions/upload-pages-artifact@v4:
-    outputs:
-      artifact_id:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  actions/upload-pages-artifact@v5:
-    outputs:
-      artifact_id:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions-rs/cargo@v1:
     inputs:
       args:
@@ -2090,14 +1539,6 @@ actions:
           type: string
   benchmark-action/github-action-benchmark@v1:
     inputs:
-      alert-comment-cc-users:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
       tool:
         actual:
           type: enum
@@ -2535,18 +1976,6 @@ actions:
 
           list-item:
             type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   docker/build-push-action@v3:
     inputs:
       attests:
@@ -2582,18 +2011,6 @@ actions:
         inferred:
           type: string
       outputs:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      platforms:
         actual:
           type: list
           separator: ','
@@ -2651,18 +2068,6 @@ actions:
 
           list-item:
             type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   docker/build-push-action@v5:
     inputs:
       attests:
@@ -2698,18 +2103,6 @@ actions:
         inferred:
           type: string
       outputs:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      platforms:
         actual:
           type: list
           separator: ','
@@ -2767,18 +2160,6 @@ actions:
 
           list-item:
             type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   docker/build-push-action@v7:
     inputs:
       attests:
@@ -2814,18 +2195,6 @@ actions:
         inferred:
           type: string
       outputs:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      platforms:
         actual:
           type: list
           separator: ','
@@ -2883,56 +2252,8 @@ actions:
             type: string
         inferred:
           type: string
-      images:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      tags:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   docker/metadata-action@v5:
     inputs:
-      annotations:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       context:
         actual:
           type: enum
@@ -2949,30 +2270,6 @@ actions:
             type: string
         inferred:
           type: string
-      images:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       sep-annotations:
         actual:
           type: list
@@ -2981,18 +2278,6 @@ actions:
             type: string
         inferred:
           type: string
-      tags:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
     outputs:
       tag-names:
         actual:
@@ -3004,18 +2289,6 @@ actions:
           type: string
   docker/metadata-action@v6:
     inputs:
-      annotations:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       context:
         actual:
           type: enum
@@ -3032,30 +2305,6 @@ actions:
             type: string
         inferred:
           type: string
-      images:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       sep-annotations:
         actual:
           type: list
@@ -3064,18 +2313,6 @@ actions:
             type: string
         inferred:
           type: string
-      tags:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
     outputs:
       tag-names:
         actual:
@@ -3095,148 +2332,32 @@ actions:
             type: string
         inferred:
           type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
   docker/setup-buildx-action@v2:
-    inputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
     outputs:
       flags:
         actual:
           type: list
           separator: ' '
-          list-item:
-            type: string
-        inferred:
-          type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
           list-item:
             type: string
         inferred:
           type: string
   docker/setup-buildx-action@v3:
-    inputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
     outputs:
       flags:
         actual:
           type: list
           separator: ' '
-          list-item:
-            type: string
-        inferred:
-          type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
           list-item:
             type: string
         inferred:
           type: string
   docker/setup-buildx-action@v4:
-    inputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
     outputs:
       flags:
         actual:
           type: list
           separator: ' '
-          list-item:
-            type: string
-        inferred:
-          type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-  docker/setup-qemu-action@v2:
-    inputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-  docker/setup-qemu-action@v3:
-    inputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-  docker/setup-qemu-action@v4:
-    inputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      platforms:
-        actual:
-          type: list
-          separator: ','
           list-item:
             type: string
         inferred:
@@ -3441,14 +2562,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
       snapshot:
         actual:
           type: boolean
@@ -3481,14 +2594,6 @@ actions:
       cache:
         actual:
           type: boolean
-        inferred:
-          type: string
-      platforms:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
         inferred:
           type: string
       snapshot:
@@ -3644,49 +2749,12 @@ actions:
           - '**'
           - '?'
           - '[]'
-      junit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      nunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
       pull_request_build:
         actual:
           type: enum
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: integer
-      trx_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      xunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
         inferred:
           type: string
   enricomi/publish-unit-test-result-action@v2/composite:
@@ -3747,49 +2815,12 @@ actions:
           - '**'
           - '?'
           - '[]'
-      junit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      nunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
       pull_request_build:
         actual:
           type: enum
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: integer
-      trx_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      xunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
         inferred:
           type: string
   enricomi/publish-unit-test-result-action@v2/linux:
@@ -3850,49 +2881,12 @@ actions:
           - '**'
           - '?'
           - '[]'
-      junit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      nunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
       pull_request_build:
         actual:
           type: enum
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: integer
-      trx_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      xunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
         inferred:
           type: string
   enricomi/publish-unit-test-result-action@v2/macos:
@@ -3953,49 +2947,12 @@ actions:
           - '**'
           - '?'
           - '[]'
-      junit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      nunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
       pull_request_build:
         actual:
           type: enum
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: integer
-      trx_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      xunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
         inferred:
           type: string
   enricomi/publish-unit-test-result-action@v2/windows:
@@ -4056,49 +3013,12 @@ actions:
           - '**'
           - '?'
           - '[]'
-      junit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      nunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
       pull_request_build:
         actual:
           type: enum
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: integer
-      trx_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      xunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
         inferred:
           type: string
   enricomi/publish-unit-test-result-action@v2/windows/bash:
@@ -4159,49 +3079,12 @@ actions:
           - '**'
           - '?'
           - '[]'
-      junit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      nunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
       pull_request_build:
         actual:
           type: enum
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: integer
-      trx_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
-        inferred:
-          type: string
-      xunit_files:
-        actual:
-          type: list
-          separator: \n
-          list-item:
-            type: string
         inferred:
           type: string
   gautamkrishnar/blog-post-workflow@v1:
@@ -4241,22 +3124,6 @@ actions:
 
           list-item:
             type: string
-      feed_names:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      readme_path:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
       remove_duplicates:
         actual:
           type: boolean
@@ -4858,18 +3725,6 @@ actions:
           - https://gradle.com/terms-of-service
         inferred:
           type: string
-      cache-cleanup:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - on-success
-          - always
-        inferred:
-          type: enum
-          allowed-values:
-          - never
-          - always
       dependency-resolution-task:
         actual:
           type: list
@@ -4904,18 +3759,6 @@ actions:
           - https://gradle.com/terms-of-service
         inferred:
           type: string
-      cache-cleanup:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - on-success
-          - always
-        inferred:
-          type: enum
-          allowed-values:
-          - never
-          - always
       develocity-capture-file-fingerprints:
         actual:
           type: boolean
@@ -4924,16 +3767,6 @@ actions:
       develocity-injection-enabled:
         actual:
           type: boolean
-        inferred:
-          type: string
-  gradle/actions@v4/wrapper-validation:
-    outputs:
-      failed-wrapper:
-        actual:
-          type: list
-          separator: '|'
-          list-item:
-            type: string
         inferred:
           type: string
   gradle/actions@v5/dependency-submission:
@@ -4962,18 +3795,6 @@ actions:
           - https://gradle.com/terms-of-service
         inferred:
           type: string
-      cache-cleanup:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - on-success
-          - always
-        inferred:
-          type: enum
-          allowed-values:
-          - never
-          - always
       dependency-resolution-task:
         actual:
           type: list
@@ -5008,18 +3829,6 @@ actions:
           - https://gradle.com/terms-of-service
         inferred:
           type: string
-      cache-cleanup:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - on-success
-          - always
-        inferred:
-          type: enum
-          allowed-values:
-          - never
-          - always
       develocity-capture-file-fingerprints:
         actual:
           type: boolean
@@ -5028,16 +3837,6 @@ actions:
       develocity-injection-enabled:
         actual:
           type: boolean
-        inferred:
-          type: string
-  gradle/actions@v5/wrapper-validation:
-    outputs:
-      failed-wrapper:
-        actual:
-          type: list
-          separator: '|'
-          list-item:
-            type: string
         inferred:
           type: string
   gradle/actions@v6/dependency-submission:
@@ -5066,18 +3865,6 @@ actions:
           - https://gradle.com/terms-of-service
         inferred:
           type: string
-      cache-cleanup:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - on-success
-          - always
-        inferred:
-          type: enum
-          allowed-values:
-          - never
-          - always
       cache-provider:
         actual:
           type: enum
@@ -5120,18 +3907,6 @@ actions:
           - https://gradle.com/terms-of-service
         inferred:
           type: string
-      cache-cleanup:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - on-success
-          - always
-        inferred:
-          type: enum
-          allowed-values:
-          - never
-          - always
       cache-provider:
         actual:
           type: enum
@@ -5148,16 +3923,6 @@ actions:
       develocity-injection-enabled:
         actual:
           type: boolean
-        inferred:
-          type: string
-  gradle/actions@v6/wrapper-validation:
-    outputs:
-      failed-wrapper:
-        actual:
-          type: list
-          separator: '|'
-          list-item:
-            type: string
         inferred:
           type: string
   gradle/gradle-build-action@v2:
@@ -5212,40 +3977,8 @@ actions:
             type: string
         inferred:
           type: string
-  gradle/wrapper-validation-action@v2:
-    outputs:
-      failed-wrapper:
-        actual:
-          type: list
-          separator: '|'
-          list-item:
-            type: string
-        inferred:
-          type: string
-  gradle/wrapper-validation-action@v3:
-    outputs:
-      failed-wrapper:
-        actual:
-          type: list
-          separator: '|'
-          list-item:
-            type: string
-        inferred:
-          type: string
   gradle-update/update-gradle-wrapper-action@v1:
     inputs:
-      labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       merge-method:
         actual:
           type: enum
@@ -5255,30 +3988,6 @@ actions:
           - SQUASH
         inferred:
           type: string
-      paths:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      paths-ignore:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       release-channel:
         actual:
           type: enum
@@ -5287,44 +3996,8 @@ actions:
           - release-candidate
         inferred:
           type: string
-      reviewers:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      team-reviewers:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   gradle-update/update-gradle-wrapper-action@v2:
     inputs:
-      labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       merge-method:
         actual:
           type: enum
@@ -5334,30 +4007,6 @@ actions:
           - SQUASH
         inferred:
           type: string
-      paths:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      paths-ignore:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       release-channel:
         actual:
           type: enum
@@ -5366,30 +4015,6 @@ actions:
           - release-candidate
         inferred:
           type: string
-      reviewers:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      team-reviewers:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
   jamesives/github-pages-deploy-action@v4:
     inputs:
       silent:
@@ -5414,22 +4039,6 @@ actions:
           type: string
   jasonetco/create-an-issue@v2:
     inputs:
-      assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      search_existing:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
       update_existing:
         actual:
           type: boolean
@@ -5532,31 +4141,6 @@ actions:
         inferred:
           type: string
   peter-evans/create-issue-from-file@v4:
-    inputs:
-      assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
     outputs:
       issue-number:
         actual:
@@ -5564,31 +4148,6 @@ actions:
         inferred:
           type: string
   peter-evans/create-issue-from-file@v5:
-    inputs:
-      assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
     outputs:
       issue-number:
         actual:
@@ -5596,31 +4155,6 @@ actions:
         inferred:
           type: string
   peter-evans/create-issue-from-file@v6:
-    inputs:
-      assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
     outputs:
       issue-number:
         actual:
