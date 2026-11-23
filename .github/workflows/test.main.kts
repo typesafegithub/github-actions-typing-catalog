@@ -189,11 +189,17 @@ private data class TypingInference(
     val section: String,
     val name: String,
     val actual: Map<String, Any?>,
-    val inferred: Map<String, Any?>,
-    val reason: String?,
+    val possibilities: List<TypingPossibility>,
 ) {
-    val isMismatch: Boolean get() = actual != inferred
+    val inferred: Map<String, Any?> get() = possibilities.first().typing
+    val reason: String? get() = possibilities.first().reason
+    val isMismatch: Boolean get() = actual !in possibilities.map { it.typing }
 }
+
+private data class TypingPossibility(
+    val typing: Map<String, Any?>,
+    val reason: String?,
+)
 
 private data class TypingMismatch(
     val action: ActionCoords,
@@ -510,8 +516,12 @@ private fun compareTypings(typings: Map<*, *>, manifest: Map<*, *>): List<Typing
                 section = section,
                 name = name,
                 actual = (typings.definition(section, name) as? Map<*, *>)?.asTypingMap() ?: emptyMap(),
-                inferred = inference.toTypingMap().asTypingMap(),
-                reason = inference.reason,
+                possibilities = inference.map { possibility ->
+                    TypingPossibility(
+                        typing = possibility.toTypingMap().asTypingMap(),
+                        reason = possibility.reason,
+                    )
+                },
             )
         }
     }
