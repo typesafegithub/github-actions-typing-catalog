@@ -788,6 +788,141 @@ private class TypingHeuristicsTest : FunSpec({
         ) shouldBe listOf(expected.copy(description = description))
     }
 
+    withData(
+        nameFn = { (description, _) -> "keeps no separator alternatives for `$description`" },
+        listOf(
+            "Comma or newline-separated list of labels." to HeuristicType(
+                type = "list",
+                reason = "the input description mentions a list",
+                separator = "\n",
+                listItemType = "string",
+            ),
+            "A list of Maven mirrors." to HeuristicType(
+                type = "list",
+                reason = "the input description mentions a list",
+                separator = "\n",
+                listItemType = "string",
+            ),
+            "Comma-separated list of labels to apply." to HeuristicType(
+                type = "list",
+                reason = "the input description mentions a comma-separated list",
+                separator = ",",
+                listItemType = "string",
+            ),
+        ),
+    ) { (description, expected) ->
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
+            listOf(expected.copy(description = description))
+    }
+
+    withData(
+        nameFn = { (inputName, description, _) ->
+            "keeps current typing for `${inputName ?: "outputs"}` in `$description`"
+        },
+        listOf<Triple<String?, String, HeuristicType>>(
+            Triple(
+                "platforms",
+                "Target platforms to build.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "platforms",
+                "List of target platforms for build.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input description mentions a list",
+                    separator = "\n",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                null,
+                "Comma separated GitHub user names.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                null,
+                "The name of the container or containers. If more than one container, add the names comma separated.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "xunit_files",
+                "Deprecated, use \"files\" option instead.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "days-before-pr-stale",
+                "The number of days old a pull request can be before marking it stale. Set to -1 to never mark it stale.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "artifact-id",
+                "A unique identifier for the artifact.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "artifact-ids",
+                "IDs of the artifacts to download.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                null,
+                "List of all closed issues and pull requests.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input description mentions a list",
+                    separator = "\n",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                "if-no-files-found",
+                "The desired behavior if no files are found. Available Options:\n  warn: Warn\n  error: Fail",
+                HeuristicType(type = "boolean", reason = "the input description uses boolean wording"),
+            ),
+            Triple(
+                "close-issue-reason",
+                "The reason to use when closing an issue.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                null,
+                "Exempt all pull requests with assignees from being marked as stale.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "exempt-all-pr-assignees",
+                "Some arbitrary text",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "cache-cleanup",
+                "By default ('on-success'), cleanup is performed. This behaviour can be disabled ('never'), " +
+                    "or configured to always run ('always'). Valid values are 'never', 'on-success' and 'always'.",
+                HeuristicType(
+                    type = "enum",
+                    reason = "the description lists quoted allowed values",
+                    allowedValues = listOf("never", "always"),
+                ),
+            ),
+            Triple(
+                "secondary-rate-limit-wait-seconds",
+                "Sets the number of seconds to wait before retrying secondary rate limit errors.",
+                HeuristicType(type = "integer", reason = "the input name specifies an integer amount"),
+            ),
+            Triple(
+                "failed-wrapper",
+                "The path of the Gradle Wrapper(s) JAR that failed validation. Multiple paths are separated by a | character.",
+                HeuristicType(type = "string", reason = null),
+            ),
+        ),
+    ) { (inputName, description, expected) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to description),
+            inputName = inputName,
+        ) shouldBe listOf(expected.copy(description = description))
+    }
+
     test("assumes newline separators for a list without a detected separator") {
         TypingHeuristics.inferType(
             linkedMapOf("description" to "A list of Maven mirrors."),
