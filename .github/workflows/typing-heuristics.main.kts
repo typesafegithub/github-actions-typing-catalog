@@ -518,6 +518,34 @@ private class TypingHeuristicsTest : FunSpec({
                 type = "boolean",
                 reason = "the input description uses boolean wording",
             ),
+            "Support for large files is enabled when set to \"true\"." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Caching is enabled when dependency caching is configured." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Value is \"true\" when the repository was dirty." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Skip session tagging during role assumption." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "The task uses role assumption for AWS." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Integrity checking will be bypassed." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Exempt all issues with milestones from being marked as stale." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
@@ -551,6 +579,44 @@ private class TypingHeuristicsTest : FunSpec({
             linkedMapOf("description" to "ifdef is not the word If"),
             inputName = "token",
         ) shouldBe HeuristicType(type = "string", reason = null, description = "ifdef is not the word If")
+    }
+
+    withData(
+        nameFn = { (inputName, _) -> "keeps expected typing for input `$inputName`" },
+        listOf(
+            "check_name" to HeuristicType(
+                type = "boolean",
+                reason = "the input name starts with `check`",
+            ),
+            "checkout_path" to HeuristicType(
+                type = "boolean",
+                reason = "the input name starts with `check`",
+            ),
+        ),
+    ) { (inputName, expected) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to "Some arbitrary text"),
+            inputName = inputName,
+        ) shouldBe expected.copy(description = "Some arbitrary text")
+    }
+
+    withData(
+        nameFn = { description -> "keeps expected typing for description `$description`" },
+        listOf(
+            "If provided, will be used to authenticate the calls to the GitHub API.",
+            "If you would like to push the contents into a specific directory you can specify it here.",
+            "If specified, a discussion of the specified category is created.",
+            "If present, and `url` is to a GitHub release asset, we will use this token.",
+        ),
+    ) { description ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to description),
+            inputName = "token",
+        ) shouldBe HeuristicType(
+            type = "boolean",
+            reason = "the input description starts with `If`",
+            description = description,
+        )
     }
 
     withData(
@@ -591,6 +657,38 @@ private class TypingHeuristicsTest : FunSpec({
                 reason = "the input description mentions a comma-separated list",
                 separator = ",",
                 listItemType = "string",
+            ),
+            "An ordered multiline string listing cache keys." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "A file, directory or wildcard pattern that describes what to upload." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Additional installer flags passed to the installer script." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Paths within Gradle User Home to cache." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Paths within Gradle User Home to exclude from cache." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "One or several sharable configurations for the build." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "You can also specify version ranges for the extra plugins." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Entries are line-separated." to HeuristicType(
+                type = "string",
+                reason = null,
             ),
         ),
     ) { (description, expected) ->
@@ -722,10 +820,49 @@ private class TypingHeuristicsTest : FunSpec({
                 type = "integer",
                 reason = "the input description specifies an integer amount",
             ),
+            "The build was reported as successful." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "The major version of the action." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Limits the number of concurrent jobs." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Run in CI." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
             expected.copy(description = description)
+    }
+
+    withData(
+        nameFn = { (inputName, _) -> "keeps expected typing for input `$inputName`" },
+        listOf(
+            "wait-seconds" to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "pr-number" to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "issue-number" to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+        ),
+    ) { (inputName, expected) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to "Some arbitrary text"),
+            inputName = inputName,
+        ) shouldBe expected.copy(description = "Some arbitrary text")
     }
 
     test("does not infer scalar types from misleading string defaults") {
@@ -810,6 +947,23 @@ private class TypingHeuristicsTest : FunSpec({
                     reason = "the description lists allowed values",
                     allowedValues = listOf("ignore", "info", "warn", "error"),
                 ),
+        ),
+    ) { (description, expected) ->
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
+            expected.copy(description = description)
+    }
+
+    withData(
+        nameFn = { (description, _) -> "keeps expected typing for description `$description`" },
+        listOf(
+            "Can be set to 'read'." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
+            "Specify success or failure or cancelled or custom." to HeuristicType(
+                type = "string",
+                reason = null,
+            ),
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
