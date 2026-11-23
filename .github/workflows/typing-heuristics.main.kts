@@ -35,14 +35,29 @@ object TypingHeuristics {
     private val listWordRegex = Regex("""\blist\b""", RegexOption.IGNORE_CASE)
     private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
     private val commaSeparatedRegex = Regex("""\bcomma[\s-]+separated\b""", RegexOption.IGNORE_CASE)
+    private val commaDelimitedValuesRegex = Regex(
+        """\b(?:with commas?|separated by commas?|comma[\s-]+delimited|csv|delimited by commas?)\b""",
+        RegexOption.IGNORE_CASE,
+    )
     private val optionsRegex = Regex("""\boptions\s*:\s*\[([^\]]+)\]""", RegexOption.IGNORE_CASE)
+    private val enumListCueRegex = Regex(
+        """\b(?:supported values|supported options|available options|options|possible values|valid values|one of)\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val enumValueTokenRegex = Regex("""^[\w][\w.+/+-]*$""")
+    private val enumValueDefaultSuffixRegex = Regex(
+        """\s*\((?:default[^)]*)\)\s*$""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val enumInlineSentenceRegex = Regex("""(?<=[\w`'"])\.""")
+    private val enumValuePrefixRegex = Regex("""^(?:are|is|:)\s*""", RegexOption.IGNORE_CASE)
     private val quotedValuesCueRegex = Regex(
         """\b(can be|valid values|values are|possible values|one of|supported|set to|supports)\b[^.;\n]{0,200}""",
         RegexOption.IGNORE_CASE,
     )
     private val quotedValueRegex = Regex("""'([^']+)'|"([^"]+)"|`([^`]+)`""")
     private val integerDescriptionRegex = Regex(
-        """\b(number of times|retry|hours|milliseconds|bytes|integer)\b""",
+        """\b(number of times|retry|hours|milliseconds|bytes|integer|retention|retain|threads?|memory|mb|timeout|minutes|count|amount)\b""",
         RegexOption.IGNORE_CASE,
     )
     private val stringIntegerDefaultRegex = Regex("""[+-]?\d+""")
@@ -50,6 +65,10 @@ object TypingHeuristics {
     private val booleanDescriptionPrefixRegex = Regex("""^\s*(whether|when)\b""", RegexOption.IGNORE_CASE)
     private val booleanDescriptionWordRegex = Regex(
         """\b(boolean|shorthand for|to false|disable|prevent)\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val booleanDescriptionPhraseRegex = Regex(
+        """^\s*(?:remove|enforce|enforces)\b|\ballow\b|\bfail\b|\bwhen set ["']?true\b""",
         RegexOption.IGNORE_CASE,
     )
     private val stringDescriptionRegex = Regex("""\barguments\b|\bvalid values\b""", RegexOption.IGNORE_CASE)
@@ -81,7 +100,7 @@ object TypingHeuristics {
                 type = "string",
                 reason = "the action manifest declares `type: $declaredType`",
             )
-            else -> enumHeuristic(map) ?: quotedValuesEnumHeuristic(map) ?: listHeuristic(map) ?: run {
+            else -> unquotedEnumHeuristic(map) ?: enumHeuristic(map) ?: quotedValuesEnumHeuristic(map) ?: listHeuristic(map) ?: run {
                 val heuristicReason = booleanHeuristicReason(inputName, map)
                 if (heuristicReason != null) {
                     HeuristicType(type = "boolean", reason = heuristicReason)
@@ -149,12 +168,80 @@ object TypingHeuristics {
         )
     }
 
+    private fun unquotedEnumHeuristic(definition: Map<*, *>): HeuristicType? {
+        val description = definition["description"] as? String ?: return null
+        val cue = enumListCueRegex.find(description) ?: return null
+        var rest = description.substring(cue.range.last + 1).trimStart()
+        if (cue.value.lowercase().endsWith("options") && rest.startsWith("are", ignoreCase = true)) {
+            return null
+        }
+        rest = enumValuePrefixRegex.replaceFirst(rest, "")
+
+        val bulletValues = mutableListOf<String>()
+        for (rawLine in rest.lineSequence()) {
+            val line = rawLine.trim()
+            if (line.isEmpty()) {
+                if (bulletValues.isNotEmpty()) break
+                continue
+            }
+            val isBullet = line.matches(Regex("""^[-*]\s+.*"""))
+            val isQuoted = line.startsWith("'") || line.startsWith("\"") || line.startsWith("`")
+            if (!isBullet && !isQuoted) {
+                if (bulletValues.isNotEmpty()) break
+                continue
+            }
+            val value = cleanEnumValue(line)
+            if (!enumValueTokenRegex.matches(value) ||
+                value.lowercase() in setOf("default", "example", "e.g")
+            ) {
+                break
+            }
+            bulletValues.add(value)
+        }
+        if (bulletValues.size >= 2) {
+            return HeuristicType(
+                type = "enum",
+                reason = "the description lists allowed values",
+                allowedValues = bulletValues.take(20),
+            )
+        }
+
+        val firstLine = rest.substringBefore('\n').trim()
+        val period = enumInlineSentenceRegex.find(firstLine)
+        val segment = (period?.let { firstLine.substring(0, it.range.first) } ?: firstLine)
+            .trimEnd(' ', '.', ';')
+        if (segment.isEmpty()) return null
+        val allowedValues = segment.split(',').map { cleanEnumValue(it) }
+        if (allowedValues.any { !enumValueTokenRegex.matches(it) } || allowedValues.size !in 2..20) {
+            return null
+        }
+        return HeuristicType(
+            type = "enum",
+            reason = "the description lists allowed values",
+            allowedValues = allowedValues,
+        )
+    }
+
+    private fun cleanEnumValue(text: String): String {
+        var value = text.trim()
+        Regex("""^[-*]\s+(.+)""").find(value)?.let { value = it.groupValues[1].trim() }
+        val colonIndex = value.indexOf(':')
+        if (colonIndex >= 0) value = value.substring(0, colonIndex).trim()
+        value = value.trim('\'', '"', '`').trim()
+        return enumValueDefaultSuffixRegex.replace(value, "").trim()
+    }
+
     private fun listHeuristic(definition: Map<*, *>): HeuristicType? {
         val description = definition["description"] as? String ?: return null
-        if (!listWordRegex.containsMatchIn(description)) return null
+        if (!listWordRegex.containsMatchIn(description) &&
+            !commaDelimitedValuesRegex.containsMatchIn(description)
+        ) {
+            return null
+        }
 
         return when {
-            commaSeparatedRegex.containsMatchIn(description) -> HeuristicType(
+            commaSeparatedRegex.containsMatchIn(description) ||
+                commaDelimitedValuesRegex.containsMatchIn(description) -> HeuristicType(
                 type = "list",
                 reason = "the input description mentions a comma-separated list",
                 separator = ",",
@@ -181,7 +268,8 @@ object TypingHeuristics {
         if (trimmedDescription != null &&
             !stringDescriptionRegex.containsMatchIn(trimmedDescription) &&
             (booleanDescriptionPrefixRegex.containsMatchIn(trimmedDescription) ||
-                booleanDescriptionWordRegex.containsMatchIn(trimmedDescription))
+                booleanDescriptionWordRegex.containsMatchIn(trimmedDescription) ||
+                booleanDescriptionPhraseRegex.containsMatchIn(trimmedDescription))
         ) {
             return "the input description uses boolean wording"
         }
@@ -411,24 +499,24 @@ private class TypingHeuristicsTest : FunSpec({
         nameFn = { (description, _) -> "infers booleans from phrase `$description`" },
         listOf(
             "Remove stale labels from issues when they are updated." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "boolean",
+                reason = "the input description uses boolean wording",
             ),
             "Enforce the configured Develocity URL." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "boolean",
+                reason = "the input description uses boolean wording",
             ),
             "Allow communication with an untrusted server." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "boolean",
+                reason = "the input description uses boolean wording",
             ),
             "Fail the action when the upload fails." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "boolean",
+                reason = "the input description uses boolean wording",
             ),
             "Reports all individual failures when set \"true\" or the first only otherwise." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "boolean",
+                reason = "the input description uses boolean wording",
             ),
         ),
     ) { (description, expected) ->
@@ -493,12 +581,16 @@ private class TypingHeuristicsTest : FunSpec({
                 listItemType = "string",
             ),
             "Exempt all issues with milestones with commas e.g. milestone1,milestone2." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "list",
+                reason = "the input description mentions a comma-separated list",
+                separator = ",",
+                listItemType = "string",
             ),
             "A comma delimited set of labels to apply." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "list",
+                reason = "the input description mentions a comma-separated list",
+                separator = ",",
+                listItemType = "string",
             ),
         ),
     ) { (description, expected) ->
@@ -611,24 +703,24 @@ private class TypingHeuristicsTest : FunSpec({
         nameFn = { (description, _) -> "infers integer from amount wording in `$description`" },
         listOf(
             "Specifies the number of days to retain any artifacts generated by the action." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "integer",
+                reason = "the input description specifies an integer amount",
             ),
             "The amount of memory in MB that can be used by the extractor." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "integer",
+                reason = "the input description specifies an integer amount",
             ),
             "The number of threads that can be used by CodeQL." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "integer",
+                reason = "the input description specifies an integer amount",
             ),
             "Count of passed tests." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "integer",
+                reason = "the input description specifies an integer amount",
             ),
             "A global timeout in seconds for the action." to HeuristicType(
-                type = "string",
-                reason = null,
+                type = "integer",
+                reason = "the input description specifies an integer amount",
             ),
         ),
     ) { (description, expected) ->
@@ -701,11 +793,23 @@ private class TypingHeuristicsTest : FunSpec({
         nameFn = { (description, _) -> "infers enum from unquoted choices in `$description`" },
         listOf(
             "Optional architecture for the .NET install. Supported values: x64, x86, arm64." to
-                HeuristicType(type = "string", reason = null),
+                HeuristicType(
+                    type = "enum",
+                    reason = "the description lists allowed values",
+                    allowedValues = listOf("x64", "x86", "arm64"),
+                ),
             "Supported options:\n  - all\n  - failed\n  - none" to
-                HeuristicType(type = "string", reason = null),
+                HeuristicType(
+                    type = "enum",
+                    reason = "the description lists allowed values",
+                    allowedValues = listOf("all", "failed", "none"),
+                ),
             "The behavior on digest mismatch. Options: ignore, info, warn, error." to
-                HeuristicType(type = "string", reason = null),
+                HeuristicType(
+                    type = "enum",
+                    reason = "the description lists allowed values",
+                    allowedValues = listOf("ignore", "info", "warn", "error"),
+                ),
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
