@@ -31,6 +31,8 @@ data class HeuristicType(
     }
 }
 
+fun List<HeuristicType>.toTypingMaps(): List<Map<String, Any>> = map { it.toTypingMap() }
+
 object TypingHeuristics {
     private val listWordRegex = Regex("""\blist\b""", RegexOption.IGNORE_CASE)
     private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
@@ -101,8 +103,8 @@ object TypingHeuristics {
         "keep", "clean", "reset",
     )
 
-    fun inferType(definition: Any?, inputName: String? = null): HeuristicType {
-        val map = definition as? Map<*, *> ?: return HeuristicType(type = "string", reason = null)
+    fun inferType(definition: Any?, inputName: String? = null): List<HeuristicType> {
+        val map = definition as? Map<*, *> ?: return listOf(HeuristicType(type = "string", reason = null))
         val description = (map["description"] as? String)?.trim()?.takeIf { it.isNotEmpty() }
         val declaredType = (map["type"] as? String)?.lowercase()
 
@@ -156,7 +158,7 @@ object TypingHeuristics {
                 }
             }
         }
-        return inference.copy(description = description)
+        return listOf(inference.copy(description = description))
     }
 
     private fun enumHeuristic(definition: Map<*, *>): HeuristicType? {
@@ -435,11 +437,11 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("type" to "string", "description" to "If true"),
             inputName = "skip-cache",
-        ) shouldBe HeuristicType(
+        ) shouldBe listOf(HeuristicType(
             type = "string",
             reason = "the action manifest declares `type: string`",
             description = "If true",
-        )
+        ))
     }
 
     withData(
@@ -483,7 +485,7 @@ private class TypingHeuristicsTest : FunSpec({
             ),
         ),
     ) { (declaredType, expected) ->
-        TypingHeuristics.inferType(linkedMapOf("type" to declaredType)) shouldBe expected
+        TypingHeuristics.inferType(linkedMapOf("type" to declaredType)) shouldBe listOf(expected)
     }
 
     withData(
@@ -510,7 +512,7 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to "Some arbitrary text"),
             inputName = inputName,
-        ) shouldBe expected.copy(description = "Some arbitrary text")
+        ) shouldBe listOf(expected.copy(description = "Some arbitrary text"))
     }
 
     withData(
@@ -538,11 +540,11 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to "Some arbitrary text"),
             inputName = inputName,
-        ) shouldBe HeuristicType(
+        ) shouldBe listOf(HeuristicType(
             type = "boolean",
             reason = "the input name starts with `$prefix`",
             description = "Some arbitrary text",
-        )
+        ))
     }
 
     withData(
@@ -559,11 +561,11 @@ private class TypingHeuristicsTest : FunSpec({
     ) { description ->
         listOf(null, "some-input").forEach { inputName ->
             TypingHeuristics.inferType(linkedMapOf("description" to description), inputName = inputName) shouldBe
-                HeuristicType(
+                listOf(HeuristicType(
                     type = "boolean",
                     reason = "the input description uses boolean wording",
                     description = description,
-                )
+                ))
         }
     }
 
@@ -621,7 +623,7 @@ private class TypingHeuristicsTest : FunSpec({
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
-            expected.copy(description = description)
+            listOf(expected.copy(description = description))
     }
 
     test("does not infer booleans from descriptions that explicitly accept strings") {
@@ -629,11 +631,11 @@ private class TypingHeuristicsTest : FunSpec({
             "Whether to push the commit. It can also be used as git push arguments.",
             "Whether to mask this value. Valid values are 'true' and 'false'.",
         ).forEach { description ->
-            TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+            TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe listOf(HeuristicType(
                 type = "string",
                 reason = null,
                 description = description,
-            )
+            ))
         }
     }
 
@@ -641,16 +643,16 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to "If the token is set, use it"),
             inputName = "token",
-        ) shouldBe HeuristicType(
+        ) shouldBe listOf(HeuristicType(
             type = "boolean",
             reason = "the input description starts with `If`",
             description = "If the token is set, use it",
-        )
+        ))
 
         TypingHeuristics.inferType(
             linkedMapOf("description" to "ifdef is not the word If"),
             inputName = "token",
-        ) shouldBe HeuristicType(type = "string", reason = null, description = "ifdef is not the word If")
+        ) shouldBe listOf(HeuristicType(type = "string", reason = null, description = "ifdef is not the word If"))
     }
 
     withData(
@@ -669,7 +671,7 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to "Some arbitrary text"),
             inputName = inputName,
-        ) shouldBe expected.copy(description = "Some arbitrary text")
+        ) shouldBe listOf(expected.copy(description = "Some arbitrary text"))
     }
 
     withData(
@@ -684,11 +686,11 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to description),
             inputName = "token",
-        ) shouldBe HeuristicType(
+        ) shouldBe listOf(HeuristicType(
             type = "string",
             reason = null,
             description = description,
-        )
+        ))
     }
 
     withData(
@@ -783,42 +785,42 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to description),
             inputName = "some-input",
-        ) shouldBe expected.copy(description = description)
+        ) shouldBe listOf(expected.copy(description = description))
     }
 
     test("assumes newline separators for a list without a detected separator") {
         TypingHeuristics.inferType(
             linkedMapOf("description" to "A list of Maven mirrors."),
             inputName = "mvn-mirrors",
-        ) shouldBe HeuristicType(
+        ) shouldBe listOf(HeuristicType(
             type = "list",
             reason = "the input description mentions a list",
             separator = "\n",
             listItemType = "string",
             description = "A list of Maven mirrors.",
-        )
+        ))
     }
 
     test("does not treat words containing `list` as a list") {
         TypingHeuristics.inferType(
             linkedMapOf("description" to "A holistic approach to Maven mirrors."),
             inputName = "mvn-mirrors",
-        ) shouldBe HeuristicType(type = "string", reason = null, description = "A holistic approach to Maven mirrors.")
+        ) shouldBe listOf(HeuristicType(type = "string", reason = null, description = "A holistic approach to Maven mirrors."))
     }
 
     test("infers types from default values") {
-        TypingHeuristics.inferType(linkedMapOf("default" to false)) shouldBe HeuristicType(
+        TypingHeuristics.inferType(linkedMapOf("default" to false)) shouldBe listOf(HeuristicType(
             type = "boolean",
             reason = "the action manifest does not declare a supported type, but its default value is `false`",
-        )
-        TypingHeuristics.inferType(linkedMapOf("default" to 42)) shouldBe HeuristicType(
+        ))
+        TypingHeuristics.inferType(linkedMapOf("default" to 42)) shouldBe listOf(HeuristicType(
             type = "integer",
             reason = "the action manifest does not declare a supported type, but its default value is `42`",
-        )
-        TypingHeuristics.inferType(linkedMapOf("default" to 1.5)) shouldBe HeuristicType(
+        ))
+        TypingHeuristics.inferType(linkedMapOf("default" to 1.5)) shouldBe listOf(HeuristicType(
             type = "float",
             reason = "the action manifest does not declare a supported type, but its default value is `1.5`",
-        )
+        ))
     }
 
     withData(
@@ -832,11 +834,11 @@ private class TypingHeuristicsTest : FunSpec({
     ) { (description, defaultValue) ->
         TypingHeuristics.inferType(
             linkedMapOf("description" to description, "default" to defaultValue),
-        ) shouldBe HeuristicType(
+        ) shouldBe listOf(HeuristicType(
             type = "boolean",
             reason = "the action manifest declares a boolean string default of `$defaultValue`",
             description = description,
-        )
+        ))
     }
 
     withData(
@@ -864,7 +866,7 @@ private class TypingHeuristicsTest : FunSpec({
     ) { (description, defaultValue, expected) ->
         TypingHeuristics.inferType(
             linkedMapOf("description" to description, "default" to defaultValue),
-        ) shouldBe expected.copy(description = description)
+        ) shouldBe listOf(expected.copy(description = description))
     }
 
     withData(
@@ -878,11 +880,11 @@ private class TypingHeuristicsTest : FunSpec({
             "The number is stored as an integer.",
         ),
     ) { description ->
-        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe listOf(HeuristicType(
             type = "integer",
             reason = "the input description specifies an integer amount",
             description = description,
-        )
+        ))
     }
 
     withData(
@@ -927,7 +929,7 @@ private class TypingHeuristicsTest : FunSpec({
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
-            expected.copy(description = description)
+            listOf(expected.copy(description = description))
     }
 
     withData(
@@ -950,7 +952,7 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to "Some arbitrary text"),
             inputName = inputName,
-        ) shouldBe expected.copy(description = "Some arbitrary text")
+        ) shouldBe listOf(expected.copy(description = "Some arbitrary text"))
     }
 
     test("does not infer scalar types from misleading string defaults") {
@@ -959,26 +961,26 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to stringArgumentDescription, "default" to "true"),
             inputName = "push",
-        ) shouldBe HeuristicType(type = "string", reason = null, description = stringArgumentDescription)
+        ) shouldBe listOf(HeuristicType(type = "string", reason = null, description = stringArgumentDescription))
 
         val forceDescription = "Force adding package suffix to Go benchmark names."
         TypingHeuristics.inferType(
             linkedMapOf("description" to forceDescription, "default" to "false"),
             inputName = "go-force-package-suffix",
-        ) shouldBe HeuristicType(type = "string", reason = null, description = forceDescription)
+        ) shouldBe listOf(HeuristicType(type = "string", reason = null, description = forceDescription))
 
         val versionDescription = "The Julia version to download (if necessary) and use."
         TypingHeuristics.inferType(
             linkedMapOf("description" to versionDescription, "default" to "1"),
             inputName = "version",
-        ) shouldBe HeuristicType(type = "string", reason = null, description = versionDescription)
+        ) shouldBe listOf(HeuristicType(type = "string", reason = null, description = versionDescription))
     }
 
     test("falls back to string without a reason") {
-        TypingHeuristics.inferType(null) shouldBe HeuristicType(type = "string", reason = null)
-        TypingHeuristics.inferType(linkedMapOf<String, Any?>()) shouldBe HeuristicType(type = "string", reason = null)
+        TypingHeuristics.inferType(null) shouldBe listOf(HeuristicType(type = "string", reason = null))
+        TypingHeuristics.inferType(linkedMapOf<String, Any?>()) shouldBe listOf(HeuristicType(type = "string", reason = null))
         TypingHeuristics.inferType(linkedMapOf("description" to "Some description")) shouldBe
-            HeuristicType(type = "string", reason = null, description = "Some description")
+            listOf(HeuristicType(type = "string", reason = null, description = "Some description"))
     }
 
     test("infers an enum from options listed in the description") {
@@ -987,7 +989,7 @@ private class TypingHeuristicsTest : FunSpec({
         val inference = TypingHeuristics.inferType(
             linkedMapOf("description" to description, "default" to "regional-token"),
             inputName = "ecr-private-token-type",
-        )
+        ).single()
 
         inference.type shouldBe "enum"
         inference.reason shouldBe "the input description lists options"
@@ -1006,12 +1008,12 @@ private class TypingHeuristicsTest : FunSpec({
             "The log level can be 'debug', 'info', or 'warn'." to listOf("debug", "info", "warn"),
         ),
     ) { (description, allowedValues) ->
-        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe listOf(HeuristicType(
             type = "enum",
             reason = "the description lists quoted allowed values",
             allowedValues = allowedValues,
             description = description,
-        )
+        ))
     }
 
     withData(
@@ -1038,7 +1040,7 @@ private class TypingHeuristicsTest : FunSpec({
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
-            expected.copy(description = description)
+            listOf(expected.copy(description = description))
     }
 
     withData(
@@ -1057,7 +1059,7 @@ private class TypingHeuristicsTest : FunSpec({
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
-            expected.copy(description = description)
+            listOf(expected.copy(description = description))
     }
 
     withData(
@@ -1069,11 +1071,11 @@ private class TypingHeuristicsTest : FunSpec({
                 "\"pr-base-picking\", \"send-notifications\".",
         ),
     ) { description ->
-        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe listOf(HeuristicType(
             type = "string",
             reason = null,
             description = description,
-        )
+        ))
     }
 
     test("enum options take precedence over name heuristics and default values") {
@@ -1083,7 +1085,7 @@ private class TypingHeuristicsTest : FunSpec({
                 "default" to true,
             ),
             inputName = "skip-token-type",
-        )
+        ).single()
 
         inference.type shouldBe "enum"
         inference.reason shouldBe "the input description lists options"
@@ -1093,31 +1095,57 @@ private class TypingHeuristicsTest : FunSpec({
         TypingHeuristics.inferType(
             linkedMapOf("description" to "Choose the token type from the available options."),
             inputName = "token-type",
-        ) shouldBe HeuristicType(
+        ) shouldBe listOf(HeuristicType(
             type = "string",
             reason = null,
             description = "Choose the token type from the available options.",
-        )
+        ))
     }
 
     test("maps a list inference to YAML typing attributes") {
         TypingHeuristics.inferType(
             linkedMapOf("description" to "Comma-separated list of labels to apply."),
             inputName = "labels",
-        ).toTypingMap() shouldBe mapOf(
+        ).toTypingMaps() shouldBe listOf(mapOf(
             "type" to "list",
             "separator" to ",",
             "list-item" to mapOf("type" to "string"),
-        )
+        ))
     }
 
     test("maps an enum inference to YAML typing attributes") {
         TypingHeuristics.inferType(
             linkedMapOf("description" to "Options: [regional-token, global-token]"),
             inputName = "token-type",
-        ).toTypingMap() shouldBe mapOf(
+        ).toTypingMaps() shouldBe listOf(mapOf(
             "type" to "enum",
             "allowed-values" to listOf("regional-token", "global-token"),
+        ))
+    }
+
+    test("maps each typing variant to YAML typing attributes") {
+        val primary = HeuristicType(
+            type = "list",
+            reason = "the input description mentions a list",
+            separator = "\n",
+            listItemType = "string",
+        )
+        val alternative = primary.copy(
+            reason = "the input description allows comma or newline separators",
+            separator = ",",
+        )
+
+        listOf(primary, alternative).map { it.toTypingMap() } shouldBe listOf(
+            mapOf(
+                "type" to "list",
+                "separator" to "\n",
+                "list-item" to mapOf("type" to "string"),
+            ),
+            mapOf(
+                "type" to "list",
+                "separator" to ",",
+                "list-item" to mapOf("type" to "string"),
+            ),
         )
     }
 })

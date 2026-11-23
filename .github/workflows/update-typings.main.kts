@@ -485,9 +485,9 @@ private fun Map<String, Any?>.definition(section: String, name: String): Any? =
     (this[section] as? Map<*, *>)?.get(name)
 
 // Kotlin's script imports cannot safely expose their types in the importing script's declarations,
-// so the imported heuristics return HeuristicType and it's converted here.
+// so the imported heuristics return a list of HeuristicType possibilities and it's converted here.
 private fun inferType(definition: Any?, inputName: String? = null): TypeInference {
-    val heuristic = TypingHeuristics.inferType(definition, inputName)
+    val heuristic = TypingHeuristics.inferType(definition, inputName).single()
     return TypeInference(
         type = heuristic.type,
         reason = heuristic.reason,
