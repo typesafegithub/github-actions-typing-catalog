@@ -4,14 +4,6 @@
 actions:
   8398a7/action-slack@v3:
     inputs:
-      fields:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
       if_mention:
         actual:
           type: list
@@ -26,7 +18,10 @@ actions:
             - custom
             - always
         inferred:
-          type: string
+          type: list
+          separator: ','
+          list-item:
+            type: string
       status:
         actual:
           type: enum
@@ -352,16 +347,6 @@ actions:
             type: string
         inferred:
           type: string
-      digest-mismatch:
-        actual:
-          type: enum
-          allowed-values:
-          - ignore
-          - info
-          - warn
-          - error
-        inferred:
-          type: string
   actions/github-script@v6:
     inputs:
       result-encoding:
@@ -524,20 +509,6 @@ actions:
           type: string
   actions/setup-dotnet@v5:
     inputs:
-      architecture:
-        actual:
-          type: enum
-          allowed-values:
-          - x64
-          - x86
-          - arm64
-          - amd64
-          - arm
-          - s390x
-          - ppc64le
-          - riscv64
-        inferred:
-          type: string
       dotnet-quality:
         actual:
           type: enum
@@ -560,20 +531,6 @@ actions:
           type: string
   actions/setup-dotnet@v6:
     inputs:
-      architecture:
-        actual:
-          type: enum
-          allowed-values:
-          - x64
-          - x86
-          - arm64
-          - amd64
-          - arm
-          - s390x
-          - ppc64le
-          - riscv64
-        inferred:
-          type: string
       dotnet-quality:
         actual:
           type: enum
@@ -1044,7 +1001,11 @@ actions:
           - yarn
           - pnpm
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - npm
+          - yarn
+          - pnpm
   actions/setup-node@v3:
     inputs:
       cache:
@@ -1056,7 +1017,11 @@ actions:
           - yarn
           - pnpm
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - npm
+          - yarn
+          - pnpm
   actions/setup-node@v4:
     inputs:
       cache:
@@ -1068,7 +1033,11 @@ actions:
           - yarn
           - pnpm
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - npm
+          - yarn
+          - pnpm
   actions/setup-node@v5:
     inputs:
       cache:
@@ -1080,7 +1049,11 @@ actions:
           - yarn
           - pnpm
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - npm
+          - yarn
+          - pnpm
   actions/setup-node@v6:
     inputs:
       cache:
@@ -1092,7 +1065,11 @@ actions:
           - yarn
           - pnpm
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - npm
+          - yarn
+          - pnpm
   actions/setup-node@v7:
     inputs:
       cache:
@@ -1104,7 +1081,11 @@ actions:
           - yarn
           - pnpm
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - npm
+          - yarn
+          - pnpm
   actions/setup-python@v2:
     inputs:
       architecture:
@@ -1123,7 +1104,10 @@ actions:
           - pip
           - pipenv
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - pip
+          - pipenv
   actions/setup-python@v3:
     inputs:
       architecture:
@@ -1143,7 +1127,11 @@ actions:
           - pipenv
           - poetry
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - pip
+          - pipenv
+          - poetry
   actions/setup-python@v4:
     inputs:
       architecture:
@@ -1163,7 +1151,11 @@ actions:
           - pipenv
           - poetry
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - pip
+          - pipenv
+          - poetry
   actions/setup-python@v5:
     inputs:
       architecture:
@@ -1183,7 +1175,11 @@ actions:
           - pipenv
           - poetry
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - pip
+          - pipenv
+          - poetry
   actions/setup-python@v6:
     inputs:
       architecture:
@@ -1203,7 +1199,11 @@ actions:
           - pipenv
           - poetry
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - pip
+          - pipenv
+          - poetry
       pip-install:
         actual:
           type: list
@@ -1231,7 +1231,11 @@ actions:
           - pipenv
           - poetry
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - pip
+          - pipenv
+          - poetry
   actions/stale@v5:
     inputs:
       close-issue-reason:
@@ -1277,104 +1281,6 @@ actions:
         inferred:
           type: string
       exempt-all-pr-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      labels-to-add-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      remove-issue-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-pr-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -1443,104 +1349,6 @@ actions:
         inferred:
           type: string
       exempt-all-pr-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      labels-to-add-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      remove-issue-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-pr-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -1618,104 +1426,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      exempt-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      labels-to-add-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      remove-issue-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
     outputs:
       closed-issues-prs:
         actual:
@@ -1785,116 +1495,6 @@ actions:
         inferred:
           type: string
       exempt-all-pr-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      labels-to-add-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-stale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      remove-issue-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-pr-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -1972,116 +1572,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      exempt-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      labels-to-add-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-stale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      remove-issue-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
     outputs:
       closed-issues-prs:
         actual:
@@ -2151,116 +1641,6 @@ actions:
         inferred:
           type: string
       exempt-all-pr-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      labels-to-add-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-stale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      remove-issue-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-pr-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -2347,116 +1727,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      exempt-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-issue-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-assignees:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-labels:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      exempt-pr-milestones:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
-      labels-to-add-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-stale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      labels-to-remove-when-unstale:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      remove-issue-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       sort-by:
         actual:
           type: enum
@@ -2496,7 +1766,7 @@ actions:
           - error
           - ignore
         inferred:
-          type: string
+          type: boolean
       path:
         actual:
           type: list
@@ -2513,7 +1783,7 @@ actions:
           named-values:
             Default: 0
         inferred:
-          type: string
+          type: integer
   actions/upload-artifact@v3:
     inputs:
       if-no-files-found:
@@ -2525,7 +1795,7 @@ actions:
           - error
           - ignore
         inferred:
-          type: string
+          type: boolean
       path:
         actual:
           type: list
@@ -2542,7 +1812,7 @@ actions:
           named-values:
             Default: 0
         inferred:
-          type: string
+          type: integer
   actions/upload-artifact@v4:
     inputs:
       compression-level:
@@ -2565,7 +1835,7 @@ actions:
           - error
           - ignore
         inferred:
-          type: string
+          type: boolean
       path:
         actual:
           type: list
@@ -2582,7 +1852,7 @@ actions:
           named-values:
             Default: 0
         inferred:
-          type: string
+          type: integer
     outputs:
       artifact-id:
         actual:
@@ -2611,7 +1881,7 @@ actions:
           - error
           - ignore
         inferred:
-          type: string
+          type: boolean
       path:
         actual:
           type: list
@@ -2628,7 +1898,7 @@ actions:
           named-values:
             Default: 0
         inferred:
-          type: string
+          type: integer
     outputs:
       artifact-id:
         actual:
@@ -2657,7 +1927,7 @@ actions:
           - error
           - ignore
         inferred:
-          type: string
+          type: boolean
       path:
         actual:
           type: list
@@ -2674,7 +1944,7 @@ actions:
           named-values:
             Default: 0
         inferred:
-          type: string
+          type: integer
     outputs:
       artifact-id:
         actual:
@@ -2703,7 +1973,7 @@ actions:
           - error
           - ignore
         inferred:
-          type: string
+          type: boolean
       path:
         actual:
           type: list
@@ -2720,7 +1990,7 @@ actions:
           named-values:
             Default: 0
         inferred:
-          type: string
+          type: integer
     outputs:
       artifact-id:
         actual:
@@ -2872,18 +2142,6 @@ actions:
           allowed-values:
           - '''true'''
           - '''false'''
-      registries:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       skip-logout:
         actual:
           type: boolean
@@ -2902,18 +2160,6 @@ actions:
           allowed-values:
           - '''true'''
           - '''false'''
-      registries:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       skip-logout:
         actual:
           type: boolean
@@ -2960,11 +2206,6 @@ actions:
           allowed-values:
           - FARGATE
           - EC2
-      wait-max-delay-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
   aws-actions/amazon-ecs-render-task-definition@v1:
     inputs:
       docker-labels:
@@ -3067,23 +2308,6 @@ actions:
           type: string
   aws-actions/configure-aws-credentials@v5:
     inputs:
-      action-timeout-s:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      allowed-account-ids:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       role-chaining:
         actual:
           type: boolean
@@ -3101,23 +2325,6 @@ actions:
           type: string
   aws-actions/configure-aws-credentials@v6:
     inputs:
-      action-timeout-s:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      allowed-account-ids:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
       role-chaining:
         actual:
           type: boolean
@@ -3164,69 +2371,8 @@ actions:
           type: string
         inferred:
           type: boolean
-  azure/login@v1:
-    inputs:
-      auth-type:
-        actual:
-          type: enum
-          allowed-values:
-          - SERVICE_PRINCIPAL
-          - IDENTITY
-        inferred:
-          type: string
-      environment:
-        actual:
-          type: enum
-          allowed-values:
-          - azurecloud
-          - azurestack
-          - azureusgovernment
-          - azurechinacloud
-          - azuregermancloud
-        inferred:
-          type: string
-  azure/login@v2:
-    inputs:
-      auth-type:
-        actual:
-          type: enum
-          allowed-values:
-          - SERVICE_PRINCIPAL
-          - IDENTITY
-        inferred:
-          type: string
-      environment:
-        actual:
-          type: enum
-          allowed-values:
-          - azurecloud
-          - azurestack
-          - azureusgovernment
-          - azurechinacloud
-          - azuregermancloud
-        inferred:
-          type: string
   azure/login@v3:
     inputs:
-      auth-type:
-        actual:
-          type: enum
-          allowed-values:
-          - SERVICE_PRINCIPAL
-          - IDENTITY
-        inferred:
-          type: string
-      environment:
-        actual:
-          type: enum
-          allowed-values:
-          - azurecloud
-          - azurestack
-          - azureusgovernment
-          - azurechinacloud
-          - azuregermancloud
-        inferred:
-          type: string
       max-context-population:
         actual:
           type: integer
@@ -3511,11 +2657,6 @@ actions:
             type: string
         inferred:
           type: string
-      fail_ci_if_error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       flags:
         actual:
           type: list
@@ -3623,11 +2764,6 @@ actions:
             type: string
         inferred:
           type: string
-      fail_ci_if_error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       flags:
         actual:
           type: list
@@ -3668,7 +2804,11 @@ actions:
             - gcov
             - pycoverage
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - xcode
+          - gcov
+          - pycoverage
       plugins:
         actual:
           type: list
@@ -4880,8 +4020,7 @@ actions:
           - escape
         inferred:
           type: list
-          separator: |2+
-
+          separator: ','
           list-item:
             type: string
   dorny/paths-filter@v3:
@@ -4897,8 +4036,7 @@ actions:
           - escape
         inferred:
           type: list
-          separator: |2+
-
+          separator: ','
           list-item:
             type: string
       predicate-quantifier:
@@ -4922,8 +4060,7 @@ actions:
           - escape
         inferred:
           type: list
-          separator: |2+
-
+          separator: ','
           list-item:
             type: string
       predicate-quantifier:
@@ -4944,25 +4081,11 @@ actions:
           - always
           - auto
         inferred:
-          type: string
-      list-suites:
-        actual:
           type: enum
           allowed-values:
-          - all
-          - failed
-          - none
-        inferred:
-          type: string
-      list-tests:
-        actual:
-          type: enum
-          allowed-values:
-          - all
-          - failed
-          - none
-        inferred:
-          type: string
+          - auto
+          - always
+          - never
       reporter:
         actual:
           type: enum
@@ -4977,7 +4100,21 @@ actions:
           - rspec-json
           - swift-xunit
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - dart-json
+          - dotnet-nunit
+          - dotnet-trx
+          - flutter-json
+          - golang-json
+          - java-junit
+          - jest-junit
+          - mocha-json
+          - tester-junit
+          - phpunit-junit
+          - python-xunit
+          - rspec-json
+          - swift-xunit
     outputs:
       conclusion:
         actual:
@@ -4985,21 +4122,6 @@ actions:
           allowed-values:
           - success
           - failure
-        inferred:
-          type: string
-      failed:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      passed:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      skipped:
-        actual:
-          type: integer
         inferred:
           type: string
       time:
@@ -5017,34 +4139,11 @@ actions:
           - always
           - auto
         inferred:
-          type: string
-      list-files:
-        actual:
           type: enum
           allowed-values:
-          - all
-          - failed
-          - none
-        inferred:
-          type: string
-      list-suites:
-        actual:
-          type: enum
-          allowed-values:
-          - all
-          - failed
-          - none
-        inferred:
-          type: string
-      list-tests:
-        actual:
-          type: enum
-          allowed-values:
-          - all
-          - failed
-          - none
-        inferred:
-          type: string
+          - auto
+          - always
+          - never
       reporter:
         actual:
           type: enum
@@ -5059,7 +4158,22 @@ actions:
           - rspec-json
           - swift-xunit
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - dart-json
+          - dotnet-nunit
+          - dotnet-trx
+          - flutter-json
+          - golang-json
+          - java-junit
+          - jest-junit
+          - mocha-json
+          - tester-junit
+          - phpunit-junit
+          - python-xunit
+          - rspec-json
+          - swift-xunit
+          - unreal-json
     outputs:
       conclusion:
         actual:
@@ -5067,21 +4181,6 @@ actions:
           allowed-values:
           - success
           - failure
-        inferred:
-          type: string
-      failed:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      passed:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      skipped:
-        actual:
-          type: integer
         inferred:
           type: string
       time:
@@ -5131,14 +4230,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      tags:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-        inferred:
-          type: string
   elgohr/publish-docker-github-action@v5:
     inputs:
       buildargs:
@@ -5179,14 +4270,6 @@ actions:
       tag_semver:
         actual:
           type: boolean
-        inferred:
-          type: string
-      tags:
-        actual:
-          type: list
-          separator: ','
-          list-item:
-            type: string
         inferred:
           type: string
   endbug/add-and-commit@v8:
@@ -5307,11 +4390,6 @@ actions:
           allowed-values:
           - always
           - changes
-      deduplicate_classes_by_file_name:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       fail_on:
         actual:
           type: enum
@@ -5364,11 +4442,6 @@ actions:
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      report_individual_runs:
-        actual:
-          type: boolean
         inferred:
           type: string
       secondary_rate_limit_wait_seconds:
@@ -5435,11 +4508,6 @@ actions:
           allowed-values:
           - always
           - changes
-      deduplicate_classes_by_file_name:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       fail_on:
         actual:
           type: enum
@@ -5492,11 +4560,6 @@ actions:
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      report_individual_runs:
-        actual:
-          type: boolean
         inferred:
           type: string
       secondary_rate_limit_wait_seconds:
@@ -5563,11 +4626,6 @@ actions:
           allowed-values:
           - always
           - changes
-      deduplicate_classes_by_file_name:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       fail_on:
         actual:
           type: enum
@@ -5620,11 +4678,6 @@ actions:
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      report_individual_runs:
-        actual:
-          type: boolean
         inferred:
           type: string
       secondary_rate_limit_wait_seconds:
@@ -5691,11 +4744,6 @@ actions:
           allowed-values:
           - always
           - changes
-      deduplicate_classes_by_file_name:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       fail_on:
         actual:
           type: enum
@@ -5748,11 +4796,6 @@ actions:
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      report_individual_runs:
-        actual:
-          type: boolean
         inferred:
           type: string
       secondary_rate_limit_wait_seconds:
@@ -5819,11 +4862,6 @@ actions:
           allowed-values:
           - always
           - changes
-      deduplicate_classes_by_file_name:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       fail_on:
         actual:
           type: enum
@@ -5876,11 +4914,6 @@ actions:
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      report_individual_runs:
-        actual:
-          type: boolean
         inferred:
           type: string
       secondary_rate_limit_wait_seconds:
@@ -5947,11 +4980,6 @@ actions:
           allowed-values:
           - always
           - changes
-      deduplicate_classes_by_file_name:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       fail_on:
         actual:
           type: enum
@@ -6004,11 +5032,6 @@ actions:
           allowed-values:
           - commit
           - merge
-        inferred:
-          type: string
-      report_individual_runs:
-        actual:
-          type: boolean
         inferred:
           type: string
       secondary_rate_limit_wait_seconds:
@@ -6140,16 +5163,6 @@ actions:
           - light
         inferred:
           type: boolean
-      ram:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      threads:
-        actual:
-          type: integer
-        inferred:
-          type: string
       upload:
         actual:
           type: enum
@@ -6170,11 +5183,6 @@ actions:
           - manual
         inferred:
           type: string
-      ram:
-        actual:
-          type: integer
-        inferred:
-          type: string
       registries:
         actual:
           type: string
@@ -6187,11 +5195,6 @@ actions:
       setup-python-dependencies:
         actual:
           type: boolean
-        inferred:
-          type: string
-      threads:
-        actual:
-          type: integer
         inferred:
           type: string
   github/codeql-action@v2/upload-sarif:
@@ -6228,16 +5231,6 @@ actions:
           - light
         inferred:
           type: boolean
-      ram:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      threads:
-        actual:
-          type: integer
-        inferred:
-          type: string
       upload:
         actual:
           type: enum
@@ -6277,11 +5270,6 @@ actions:
           type: integer
         inferred:
           type: boolean
-      ram:
-        actual:
-          type: integer
-        inferred:
-          type: string
       registries:
         actual:
           type: string
@@ -6294,11 +5282,6 @@ actions:
       setup-python-dependencies:
         actual:
           type: boolean
-        inferred:
-          type: string
-      threads:
-        actual:
-          type: integer
         inferred:
           type: string
   github/codeql-action@v3/upload-sarif:
@@ -6335,16 +5318,6 @@ actions:
           - light
         inferred:
           type: boolean
-      ram:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      threads:
-        actual:
-          type: integer
-        inferred:
-          type: string
       upload:
         actual:
           type: enum
@@ -6384,11 +5357,6 @@ actions:
           type: integer
         inferred:
           type: boolean
-      ram:
-        actual:
-          type: integer
-        inferred:
-          type: string
       registries:
         actual:
           type: string
@@ -6401,11 +5369,6 @@ actions:
       setup-python-dependencies:
         actual:
           type: boolean
-        inferred:
-          type: string
-      threads:
-        actual:
-          type: integer
         inferred:
           type: string
   github/codeql-action@v4/upload-sarif:
@@ -6743,11 +5706,6 @@ actions:
             type: string
   gradle/actions@v3/setup-gradle:
     inputs:
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       dependency-graph:
         actual:
           type: enum
@@ -6766,17 +5724,7 @@ actions:
           - generate-and-upload
           - download-and-submit
           - clear
-      develocity-allow-untrusted-server:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       develocity-capture-file-fingerprints:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      develocity-enforce-url:
         actual:
           type: boolean
         inferred:
@@ -6819,11 +5767,6 @@ actions:
             type: string
         inferred:
           type: string
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       build-scan-terms-of-use-agree:
         actual:
           type: enum
@@ -6852,16 +5795,6 @@ actions:
           allowed-values:
           - never
           - always
-      dependency-graph:
-        actual:
-          type: enum
-          allowed-values:
-          - generate-and-submit
-          - generate-submit-and-upload
-          - generate-and-upload
-          - download-and-submit
-        inferred:
-          type: string
       dependency-resolution-task:
         actual:
           type: list
@@ -6898,11 +5831,6 @@ actions:
             type: string
         inferred:
           type: string
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       build-scan-terms-of-use-agree:
         actual:
           type: enum
@@ -6931,17 +5859,7 @@ actions:
           allowed-values:
           - never
           - always
-      develocity-allow-untrusted-server:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       develocity-capture-file-fingerprints:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      develocity-enforce-url:
         actual:
           type: boolean
         inferred:
@@ -6989,11 +5907,6 @@ actions:
             type: string
         inferred:
           type: string
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       build-scan-terms-of-use-agree:
         actual:
           type: enum
@@ -7022,16 +5935,6 @@ actions:
           allowed-values:
           - never
           - always
-      dependency-graph:
-        actual:
-          type: enum
-          allowed-values:
-          - generate-and-submit
-          - generate-submit-and-upload
-          - generate-and-upload
-          - download-and-submit
-        inferred:
-          type: string
       dependency-resolution-task:
         actual:
           type: list
@@ -7068,11 +5971,6 @@ actions:
             type: string
         inferred:
           type: string
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       build-scan-terms-of-use-agree:
         actual:
           type: enum
@@ -7101,17 +5999,7 @@ actions:
           allowed-values:
           - never
           - always
-      develocity-allow-untrusted-server:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       develocity-capture-file-fingerprints:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      develocity-enforce-url:
         actual:
           type: boolean
         inferred:
@@ -7159,11 +6047,6 @@ actions:
             type: string
         inferred:
           type: string
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       build-scan-terms-of-use-agree:
         actual:
           type: enum
@@ -7198,16 +6081,6 @@ actions:
           allowed-values:
           - enhanced
           - basic
-        inferred:
-          type: string
-      dependency-graph:
-        actual:
-          type: enum
-          allowed-values:
-          - generate-and-submit
-          - generate-submit-and-upload
-          - generate-and-upload
-          - download-and-submit
         inferred:
           type: string
       dependency-resolution-task:
@@ -7246,11 +6119,6 @@ actions:
             type: string
         inferred:
           type: string
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       build-scan-terms-of-use-agree:
         actual:
           type: enum
@@ -7287,17 +6155,7 @@ actions:
           - basic
         inferred:
           type: string
-      develocity-allow-untrusted-server:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       develocity-capture-file-fingerprints:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      develocity-enforce-url:
         actual:
           type: boolean
         inferred:
@@ -7337,11 +6195,6 @@ actions:
           type: string
   gradle/gradle-build-action@v2:
     inputs:
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -7367,11 +6220,6 @@ actions:
           type: boolean
   gradle/gradle-build-action@v3:
     inputs:
-      artifact-retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
       dependency-graph:
         actual:
           type: enum
@@ -7390,17 +6238,7 @@ actions:
           - generate-and-upload
           - download-and-submit
           - clear
-      develocity-allow-untrusted-server:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       develocity-capture-file-fingerprints:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      develocity-enforce-url:
         actual:
           type: boolean
         inferred:
@@ -7637,11 +6475,6 @@ actions:
           type: string
         inferred:
           type: boolean
-      lfs:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       silent:
         actual:
           type: boolean
@@ -8155,13 +6988,6 @@ actions:
       PUB-CACHE-HIT:
         actual:
           type: boolean
-        inferred:
-          type: string
-  testlens-app/setup-testlens@v1:
-    inputs:
-      session-timeout-seconds:
-        actual:
-          type: integer
         inferred:
           type: string
   wandalen/wretry.action@v3:
