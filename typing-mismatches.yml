@@ -37,27 +37,6 @@ actions:
           - custom
         inferred:
           type: string
-  actions/cache@v2:
-    inputs:
-      upload-chunk-size:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  actions/cache@v3:
-    inputs:
-      upload-chunk-size:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  actions/cache@v3/save:
-    inputs:
-      upload-chunk-size:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/cache@v4:
     inputs:
       restore-keys:
@@ -67,16 +46,6 @@ actions:
 
           list-item:
             type: string
-        inferred:
-          type: string
-      save-always:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      upload-chunk-size:
-        actual:
-          type: integer
         inferred:
           type: string
   actions/cache@v4/restore:
@@ -90,13 +59,6 @@ actions:
             type: string
         inferred:
           type: string
-  actions/cache@v4/save:
-    inputs:
-      upload-chunk-size:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/cache@v5:
     inputs:
       restore-keys:
@@ -106,16 +68,6 @@ actions:
 
           list-item:
             type: string
-        inferred:
-          type: string
-      save-always:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      upload-chunk-size:
-        actual:
-          type: integer
         inferred:
           type: string
   actions/cache@v5/restore:
@@ -129,13 +81,6 @@ actions:
             type: string
         inferred:
           type: string
-  actions/cache@v5/save:
-    inputs:
-      upload-chunk-size:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/cache@v6:
     inputs:
       restore-keys:
@@ -147,16 +92,6 @@ actions:
             type: string
         inferred:
           type: string
-      save-always:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      upload-chunk-size:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/cache@v6/restore:
     inputs:
       restore-keys:
@@ -166,13 +101,6 @@ actions:
 
           list-item:
             type: string
-        inferred:
-          type: string
-  actions/cache@v6/save:
-    inputs:
-      upload-chunk-size:
-        actual:
-          type: integer
         inferred:
           type: string
   actions/checkout@v2:
@@ -374,50 +302,6 @@ actions:
           type: integer
         inferred:
           type: string
-  actions/deploy-pages@v4:
-    inputs:
-      error_count:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      preview:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      reporting_interval:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      timeout:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  actions/deploy-pages@v5:
-    inputs:
-      error_count:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      preview:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      reporting_interval:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      timeout:
-        actual:
-          type: integer
-        inferred:
-          type: string
   actions/download-artifact@v4:
     inputs:
       artifact-ids:
@@ -489,11 +373,6 @@ actions:
           - json
         inferred:
           type: string
-      retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
       retry-exempt-status-codes:
         actual:
           type: list
@@ -514,11 +393,6 @@ actions:
           allowed-values:
           - string
           - json
-        inferred:
-          type: string
-      retries:
-        actual:
-          type: integer
         inferred:
           type: string
       retry-exempt-status-codes:
@@ -543,11 +417,6 @@ actions:
           - json
         inferred:
           type: string
-      retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
       retry-exempt-status-codes:
         actual:
           type: list
@@ -568,11 +437,6 @@ actions:
           allowed-values:
           - string
           - json
-        inferred:
-          type: string
-      retries:
-        actual:
-          type: integer
         inferred:
           type: string
       retry-exempt-status-codes:
@@ -1378,11 +1242,6 @@ actions:
           - not_planned
         inferred:
           type: string
-      days-before-close:
-        actual:
-          type: integer
-        inferred:
-          type: string
       days-before-issue-close:
         actual:
           type: integer
@@ -1405,11 +1264,6 @@ actions:
           name: Days
           named-values:
             Never: -1
-        inferred:
-          type: string
-      days-before-stale:
-        actual:
-          type: integer
         inferred:
           type: string
       exempt-all-issue-milestones:
@@ -1515,22 +1369,12 @@ actions:
 
           list-item:
             type: string
-      operations-per-run:
-        actual:
-          type: integer
-        inferred:
-          type: string
       remove-issue-stale-when-updated:
         actual:
           type: boolean
         inferred:
           type: string
       remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -1564,11 +1408,6 @@ actions:
           - not_planned
         inferred:
           type: string
-      days-before-close:
-        actual:
-          type: integer
-        inferred:
-          type: string
       days-before-issue-close:
         actual:
           type: integer
@@ -1591,11 +1430,6 @@ actions:
           name: Days
           named-values:
             Never: -1
-        inferred:
-          type: string
-      days-before-stale:
-        actual:
-          type: integer
         inferred:
           type: string
       exempt-all-issue-milestones:
@@ -1701,22 +1535,12 @@ actions:
 
           list-item:
             type: string
-      operations-per-run:
-        actual:
-          type: integer
-        inferred:
-          type: string
       remove-issue-stale-when-updated:
         actual:
           type: boolean
         inferred:
           type: string
       remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -1750,11 +1574,6 @@ actions:
           - not_planned
         inferred:
           type: string
-      days-before-close:
-        actual:
-          type: integer
-        inferred:
-          type: string
       days-before-issue-close:
         actual:
           type: integer
@@ -1783,7 +1602,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
+          type: integer
       exempt-all-issue-milestones:
         actual:
           type: boolean
@@ -1887,22 +1706,12 @@ actions:
 
           list-item:
             type: string
-      operations-per-run:
-        actual:
-          type: integer
-        inferred:
-          type: string
       remove-issue-stale-when-updated:
         actual:
           type: boolean
         inferred:
           type: string
       remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -1936,11 +1745,6 @@ actions:
           - not_planned
         inferred:
           type: string
-      days-before-close:
-        actual:
-          type: integer
-        inferred:
-          type: string
       days-before-issue-close:
         actual:
           type: integer
@@ -1969,7 +1773,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
+          type: integer
       exempt-all-issue-milestones:
         actual:
           type: boolean
@@ -2085,22 +1889,12 @@ actions:
 
           list-item:
             type: string
-      operations-per-run:
-        actual:
-          type: integer
-        inferred:
-          type: string
       remove-issue-stale-when-updated:
         actual:
           type: boolean
         inferred:
           type: string
       remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -2134,11 +1928,6 @@ actions:
           - not_planned
         inferred:
           type: string
-      days-before-close:
-        actual:
-          type: integer
-        inferred:
-          type: string
       days-before-issue-close:
         actual:
           type: integer
@@ -2167,7 +1956,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
+          type: integer
       exempt-all-issue-milestones:
         actual:
           type: boolean
@@ -2283,22 +2072,12 @@ actions:
 
           list-item:
             type: string
-      operations-per-run:
-        actual:
-          type: integer
-        inferred:
-          type: string
       remove-issue-stale-when-updated:
         actual:
           type: boolean
         inferred:
           type: string
       remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -2332,11 +2111,6 @@ actions:
           - not_planned
         inferred:
           type: string
-      days-before-close:
-        actual:
-          type: integer
-        inferred:
-          type: string
       days-before-issue-close:
         actual:
           type: integer
@@ -2365,7 +2139,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
+          type: integer
       exempt-all-issue-milestones:
         actual:
           type: boolean
@@ -2481,22 +2255,12 @@ actions:
 
           list-item:
             type: string
-      operations-per-run:
-        actual:
-          type: integer
-        inferred:
-          type: string
       remove-issue-stale-when-updated:
         actual:
           type: boolean
         inferred:
           type: string
       remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -2539,11 +2303,6 @@ actions:
           - not_planned
         inferred:
           type: string
-      days-before-close:
-        actual:
-          type: integer
-        inferred:
-          type: string
       days-before-issue-close:
         actual:
           type: integer
@@ -2572,7 +2331,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
+          type: integer
       exempt-all-issue-milestones:
         actual:
           type: boolean
@@ -2688,22 +2447,12 @@ actions:
 
           list-item:
             type: string
-      operations-per-run:
-        actual:
-          type: integer
-        inferred:
-          type: string
       remove-issue-stale-when-updated:
         actual:
           type: boolean
         inferred:
           type: string
       remove-pr-stale-when-updated:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      remove-stale-when-updated:
         actual:
           type: boolean
         inferred:
@@ -2806,7 +2555,7 @@ actions:
             DefaultCompression: 6
             BestCompression: 9
         inferred:
-          type: string
+          type: integer
       if-no-files-found:
         actual:
           type: enum
@@ -2852,7 +2601,7 @@ actions:
             DefaultCompression: 6
             BestCompression: 9
         inferred:
-          type: string
+          type: integer
       if-no-files-found:
         actual:
           type: enum
@@ -2898,7 +2647,7 @@ actions:
             DefaultCompression: 6
             BestCompression: 9
         inferred:
-          type: string
+          type: integer
       if-no-files-found:
         actual:
           type: enum
@@ -2944,7 +2693,7 @@ actions:
             DefaultCompression: 6
             BestCompression: 9
         inferred:
-          type: string
+          type: integer
       if-no-files-found:
         actual:
           type: enum
@@ -2979,12 +2728,6 @@ actions:
         inferred:
           type: string
   actions/upload-pages-artifact@v3:
-    inputs:
-      retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       artifact_id:
         actual:
@@ -2992,12 +2735,6 @@ actions:
         inferred:
           type: string
   actions/upload-pages-artifact@v4:
-    inputs:
-      retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       artifact_id:
         actual:
@@ -3005,12 +2742,6 @@ actions:
         inferred:
           type: string
   actions/upload-pages-artifact@v5:
-    inputs:
-      retention-days:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       artifact_id:
         actual:
@@ -3077,11 +2808,6 @@ actions:
           type: string
   anmol098/waka-readme-stats@v4:
     inputs:
-      COMMIT_BY_ME:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       IGNORED_REPOS:
         actual:
           type: list
@@ -3110,16 +2836,6 @@ actions:
             type: string
   anmol098/waka-readme-stats@v5:
     inputs:
-      COMMIT_BY_ME:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      COMMIT_SINGLE:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       IGNORED_REPOS:
         actual:
           type: list
@@ -3213,19 +2929,9 @@ actions:
           type: integer
         inferred:
           type: string
-      wait-for-minutes:
-        actual:
-          type: integer
-        inferred:
-          type: string
   aws-actions/amazon-ecs-deploy-task-definition@v2:
     inputs:
       desired-count:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      max-retries:
         actual:
           type: integer
         inferred:
@@ -3254,11 +2960,6 @@ actions:
           allowed-values:
           - FARGATE
           - EC2
-      wait-for-minutes:
-        actual:
-          type: integer
-        inferred:
-          type: string
       wait-max-delay-seconds:
         actual:
           type: integer
@@ -3313,11 +3014,6 @@ actions:
           type: string
   aws-actions/configure-aws-credentials@v1:
     inputs:
-      role-duration-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
       role-skip-session-tagging:
         actual:
           type: boolean
@@ -3330,11 +3026,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      role-duration-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
       role-skip-session-tagging:
         actual:
           type: boolean
@@ -3342,11 +3033,6 @@ actions:
           type: string
   aws-actions/configure-aws-credentials@v3:
     inputs:
-      retry-max-attempts:
-        actual:
-          type: integer
-        inferred:
-          type: string
       role-chaining:
         actual:
           type: boolean
@@ -3364,11 +3050,6 @@ actions:
           type: string
   aws-actions/configure-aws-credentials@v4:
     inputs:
-      retry-max-attempts:
-        actual:
-          type: integer
-        inferred:
-          type: string
       role-chaining:
         actual:
           type: boolean
@@ -3403,11 +3084,6 @@ actions:
 
           list-item:
             type: string
-      retry-max-attempts:
-        actual:
-          type: integer
-        inferred:
-          type: string
       role-chaining:
         actual:
           type: boolean
@@ -3442,11 +3118,6 @@ actions:
 
           list-item:
             type: string
-      retry-max-attempts:
-        actual:
-          type: integer
-        inferred:
-          type: string
       role-chaining:
         actual:
           type: boolean
@@ -3562,7 +3233,7 @@ actions:
           named-values:
             load-all: -1
         inferred:
-          type: string
+          type: integer
   azure/webapps-deploy@v2:
     inputs:
       images:
@@ -3634,11 +3305,6 @@ actions:
           separator: ','
           list-item:
             type: string
-        inferred:
-          type: string
-      max-items-in-chart:
-        actual:
-          type: integer
         inferred:
           type: string
       tool:
@@ -4049,11 +3715,6 @@ actions:
             type: string
         inferred:
           type: string
-      fail_ci_if_error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       gcov_ignore:
         actual:
           type: list
@@ -4112,26 +3773,6 @@ actions:
           allowed-values:
           - test_results
           - coverage
-      use_legacy_upload_endpoint:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      use_oidc:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      use_pypi:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      verbose:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   codecov/codecov-action@v6:
     inputs:
       binary:
@@ -4147,11 +3788,6 @@ actions:
             type: string
         inferred:
           type: string
-      fail_ci_if_error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       gcov_ignore:
         actual:
           type: list
@@ -4210,26 +3846,6 @@ actions:
           allowed-values:
           - test_results
           - coverage
-      use_legacy_upload_endpoint:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      use_oidc:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      use_pypi:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      verbose:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   codecov/codecov-action@v7:
     inputs:
       binary:
@@ -4245,11 +3861,6 @@ actions:
             type: string
         inferred:
           type: string
-      fail_ci_if_error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       gcov_ignore:
         actual:
           type: list
@@ -4308,26 +3919,6 @@ actions:
           allowed-values:
           - test_results
           - coverage
-      use_legacy_upload_endpoint:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      use_oidc:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      use_pypi:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      verbose:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   cycjimmy/semantic-release-action@v3:
     inputs:
       extends:
@@ -4558,11 +4149,6 @@ actions:
 
           list-item:
             type: string
-      no-cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       outputs:
         actual:
           type: list
@@ -4587,11 +4173,6 @@ actions:
 
           list-item:
             type: string
-      pull:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/build-push-action@v3:
     inputs:
       attests:
@@ -4618,11 +4199,6 @@ actions:
 
           list-item:
             type: string
-      no-cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       no-cache-filters:
         actual:
           type: list
@@ -4655,11 +4231,6 @@ actions:
 
           list-item:
             type: string
-      pull:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/build-push-action@v4:
     inputs:
       attests:
@@ -4686,11 +4257,6 @@ actions:
 
           list-item:
             type: string
-      no-cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       no-cache-filters:
         actual:
           type: list
@@ -4723,11 +4289,6 @@ actions:
 
           list-item:
             type: string
-      pull:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/build-push-action@v5:
     inputs:
       attests:
@@ -4754,11 +4315,6 @@ actions:
 
           list-item:
             type: string
-      no-cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       no-cache-filters:
         actual:
           type: list
@@ -4791,11 +4347,6 @@ actions:
 
           list-item:
             type: string
-      pull:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/build-push-action@v6:
     inputs:
       attests:
@@ -4822,11 +4373,6 @@ actions:
 
           list-item:
             type: string
-      no-cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       no-cache-filters:
         actual:
           type: list
@@ -4859,11 +4405,6 @@ actions:
 
           list-item:
             type: string
-      pull:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/build-push-action@v7:
     inputs:
       attests:
@@ -4890,11 +4431,6 @@ actions:
 
           list-item:
             type: string
-      no-cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       no-cache-filters:
         actual:
           type: list
@@ -4927,19 +4463,9 @@ actions:
 
           list-item:
             type: string
-      pull:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/login-action@v1:
     inputs:
       ecr:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      logout:
         actual:
           type: boolean
         inferred:
@@ -4951,11 +4477,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      logout:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/login-action@v3:
     inputs:
       ecr:
@@ -4963,19 +4484,9 @@ actions:
           type: boolean
         inferred:
           type: string
-      logout:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   docker/login-action@v4:
     inputs:
       ecr:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      logout:
         actual:
           type: boolean
         inferred:
@@ -5201,17 +4712,6 @@ actions:
         inferred:
           type: string
   docker/setup-buildx-action@v1:
-    inputs:
-      install:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      use:
-        actual:
-          type: boolean
-        inferred:
-          type: string
     outputs:
       flags:
         actual:
@@ -5231,22 +4731,12 @@ actions:
           type: string
   docker/setup-buildx-action@v2:
     inputs:
-      install:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       platforms:
         actual:
           type: list
           separator: ','
           list-item:
             type: string
-        inferred:
-          type: string
-      use:
-        actual:
-          type: boolean
         inferred:
           type: string
     outputs:
@@ -5268,27 +4758,12 @@ actions:
           type: string
   docker/setup-buildx-action@v3:
     inputs:
-      cache-binary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      install:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       platforms:
         actual:
           type: list
           separator: ','
           list-item:
             type: string
-        inferred:
-          type: string
-      use:
-        actual:
-          type: boolean
         inferred:
           type: string
     outputs:
@@ -5310,22 +4785,12 @@ actions:
           type: string
   docker/setup-buildx-action@v4:
     inputs:
-      cache-binary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       platforms:
         actual:
           type: list
           separator: ','
           list-item:
             type: string
-        inferred:
-          type: string
-      use:
-        actual:
-          type: boolean
         inferred:
           type: string
     outputs:
@@ -5366,11 +4831,6 @@ actions:
           type: string
   docker/setup-qemu-action@v3:
     inputs:
-      cache-image:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       platforms:
         actual:
           type: list
@@ -5390,11 +4850,6 @@ actions:
           type: string
   docker/setup-qemu-action@v4:
     inputs:
-      cache-image:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       platforms:
         actual:
           type: list
@@ -5414,11 +4869,6 @@ actions:
           type: string
   dorny/paths-filter@v2:
     inputs:
-      initial-fetch-depth:
-        actual:
-          type: integer
-        inferred:
-          type: string
       list-files:
         actual:
           type: enum
@@ -5436,11 +4886,6 @@ actions:
             type: string
   dorny/paths-filter@v3:
     inputs:
-      initial-fetch-depth:
-        actual:
-          type: integer
-        inferred:
-          type: string
       list-files:
         actual:
           type: enum
@@ -5466,11 +4911,6 @@ actions:
           type: string
   dorny/paths-filter@v4:
     inputs:
-      initial-fetch-depth:
-        actual:
-          type: integer
-        inferred:
-          type: string
       list-files:
         actual:
           type: enum
@@ -5523,16 +4963,6 @@ actions:
           - none
         inferred:
           type: string
-      max-annotations:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      path-replace-backslashes:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       reporter:
         actual:
           type: enum
@@ -5546,11 +4976,6 @@ actions:
           - mocha-json
           - rspec-json
           - swift-xunit
-        inferred:
-          type: string
-      use-actions-summary:
-        actual:
-          type: boolean
         inferred:
           type: string
     outputs:
@@ -5620,16 +5045,6 @@ actions:
           - none
         inferred:
           type: string
-      max-annotations:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      path-replace-backslashes:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       reporter:
         actual:
           type: enum
@@ -5643,11 +5058,6 @@ actions:
           - mocha-json
           - rspec-json
           - swift-xunit
-        inferred:
-          type: string
-      use-actions-summary:
-        actual:
-          type: boolean
         inferred:
           type: string
     outputs:
@@ -5859,11 +5269,6 @@ actions:
           - exitAtEnd
         inferred:
           type: string
-      push_attempts:
-        actual:
-          type: integer
-        inferred:
-          type: string
   enricomi/publish-unit-test-result-action@v2:
     inputs:
       check_name:
@@ -5932,26 +5337,6 @@ actions:
           - '**'
           - '?'
           - '[]'
-      github_retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      job_summary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_suite_details:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_test_case_results:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       junit_files:
         actual:
           type: list
@@ -5986,22 +5371,7 @@ actions:
           type: boolean
         inferred:
           type: string
-      search_pull_requests:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_reads:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_writes:
         actual:
           type: float
         inferred:
@@ -6095,26 +5465,6 @@ actions:
           - '**'
           - '?'
           - '[]'
-      github_retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      job_summary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_suite_details:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_test_case_results:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       junit_files:
         actual:
           type: list
@@ -6149,22 +5499,7 @@ actions:
           type: boolean
         inferred:
           type: string
-      search_pull_requests:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_reads:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_writes:
         actual:
           type: float
         inferred:
@@ -6258,26 +5593,6 @@ actions:
           - '**'
           - '?'
           - '[]'
-      github_retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      job_summary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_suite_details:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_test_case_results:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       junit_files:
         actual:
           type: list
@@ -6312,22 +5627,7 @@ actions:
           type: boolean
         inferred:
           type: string
-      search_pull_requests:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_reads:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_writes:
         actual:
           type: float
         inferred:
@@ -6421,26 +5721,6 @@ actions:
           - '**'
           - '?'
           - '[]'
-      github_retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      job_summary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_suite_details:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_test_case_results:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       junit_files:
         actual:
           type: list
@@ -6475,22 +5755,7 @@ actions:
           type: boolean
         inferred:
           type: string
-      search_pull_requests:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_reads:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_writes:
         actual:
           type: float
         inferred:
@@ -6584,26 +5849,6 @@ actions:
           - '**'
           - '?'
           - '[]'
-      github_retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      job_summary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_suite_details:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_test_case_results:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       junit_files:
         actual:
           type: list
@@ -6638,22 +5883,7 @@ actions:
           type: boolean
         inferred:
           type: string
-      search_pull_requests:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_reads:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_writes:
         actual:
           type: float
         inferred:
@@ -6747,26 +5977,6 @@ actions:
           - '**'
           - '?'
           - '[]'
-      github_retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      job_summary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_suite_details:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      json_test_case_results:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       junit_files:
         actual:
           type: list
@@ -6801,22 +6011,7 @@ actions:
           type: boolean
         inferred:
           type: string
-      search_pull_requests:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       secondary_rate_limit_wait_seconds:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_reads:
-        actual:
-          type: float
-        inferred:
-          type: string
-      seconds_between_github_writes:
         actual:
           type: float
         inferred:
@@ -6887,11 +6082,6 @@ actions:
             type: string
         inferred:
           type: string
-      max_post_count:
-        actual:
-          type: integer
-        inferred:
-          type: string
       readme_path:
         actual:
           type: list
@@ -6901,21 +6091,6 @@ actions:
         inferred:
           type: string
       remove_duplicates:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      retry_count:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      retry_wait_time:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      reverse_order:
         actual:
           type: boolean
         inferred:
@@ -6945,11 +6120,6 @@ actions:
             type: string
   github/codeql-action@v2/analyze:
     inputs:
-      add-snippets:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       check_name:
         actual:
           type: string
@@ -6970,11 +6140,6 @@ actions:
           - light
         inferred:
           type: boolean
-      expect-error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       ram:
         actual:
           type: integer
@@ -7003,11 +6168,6 @@ actions:
           - none
           - autobuild
           - manual
-        inferred:
-          type: string
-      debug:
-        actual:
-          type: boolean
         inferred:
           type: string
       ram:
@@ -7068,11 +6228,6 @@ actions:
           - light
         inferred:
           type: boolean
-      expect-error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       ram:
         actual:
           type: integer
@@ -7122,11 +6277,6 @@ actions:
           type: integer
         inferred:
           type: boolean
-      debug:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       ram:
         actual:
           type: integer
@@ -7185,11 +6335,6 @@ actions:
           - light
         inferred:
           type: boolean
-      expect-error:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       ram:
         actual:
           type: integer
@@ -7239,11 +6384,6 @@ actions:
           type: integer
         inferred:
           type: boolean
-      debug:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       ram:
         actual:
           type: integer
@@ -7289,16 +6429,6 @@ actions:
 
           list-item:
             type: string
-      backoff:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      backoff_limit:
-        actual:
-          type: integer
-        inferred:
-          type: string
       delegates:
         actual:
           type: list
@@ -7311,11 +6441,6 @@ actions:
 
           list-item:
             type: string
-      retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
       token_format:
         actual:
           type: enum
@@ -7338,16 +6463,6 @@ actions:
 
           list-item:
             type: string
-      backoff:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      backoff_limit:
-        actual:
-          type: integer
-        inferred:
-          type: string
       delegates:
         actual:
           type: list
@@ -7360,11 +6475,6 @@ actions:
 
           list-item:
             type: string
-      retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
       token_format:
         actual:
           type: enum
@@ -7387,16 +6497,6 @@ actions:
 
           list-item:
             type: string
-      backoff:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      backoff_limit:
-        actual:
-          type: integer
-        inferred:
-          type: string
       delegates:
         actual:
           type: list
@@ -7409,16 +6509,6 @@ actions:
 
           list-item:
             type: string
-      id_token_include_email:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      retries:
-        actual:
-          type: integer
-        inferred:
-          type: string
       token_format:
         actual:
           type: enum
@@ -7453,11 +6543,6 @@ actions:
 
           list-item:
             type: string
-      id_token_include_email:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       token_format:
         actual:
           type: enum
@@ -7701,11 +6786,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -7790,11 +6870,6 @@ actions:
             type: string
         inferred:
           type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -7876,11 +6951,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -7900,12 +6970,6 @@ actions:
         inferred:
           type: string
   gradle/actions@v4/wrapper-validation:
-    inputs:
-      min-wrapper-count:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       failed-wrapper:
         actual:
@@ -7974,11 +7038,6 @@ actions:
           separator: ' '
           list-item:
             type: string
-        inferred:
-          type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
         inferred:
           type: string
       gradle-home-cache-excludes:
@@ -8062,11 +7121,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -8086,12 +7140,6 @@ actions:
         inferred:
           type: string
   gradle/actions@v5/wrapper-validation:
-    inputs:
-      min-wrapper-count:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       failed-wrapper:
         actual:
@@ -8168,11 +7216,6 @@ actions:
           separator: ' '
           list-item:
             type: string
-        inferred:
-          type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
         inferred:
           type: string
       gradle-home-cache-excludes:
@@ -8264,11 +7307,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -8288,12 +7326,6 @@ actions:
         inferred:
           type: string
   gradle/actions@v6/wrapper-validation:
-    inputs:
-      min-wrapper-count:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       failed-wrapper:
         actual:
@@ -8378,11 +7410,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      develocity-token-expiry:
-        actual:
-          type: integer
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -8407,12 +7434,6 @@ actions:
         inferred:
           type: boolean
   gradle/wrapper-validation-action@v1:
-    inputs:
-      min-wrapper-count:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       failed-wrapper:
         actual:
@@ -8423,12 +7444,6 @@ actions:
         inferred:
           type: string
   gradle/wrapper-validation-action@v2:
-    inputs:
-      min-wrapper-count:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       failed-wrapper:
         actual:
@@ -8439,12 +7454,6 @@ actions:
         inferred:
           type: string
   gradle/wrapper-validation-action@v3:
-    inputs:
-      min-wrapper-count:
-        actual:
-          type: integer
-        inferred:
-          type: string
     outputs:
       failed-wrapper:
         actual:
@@ -8725,16 +7734,6 @@ actions:
           type: string
   mxschmitt/action-tmate@v3:
     inputs:
-      connect-timeout-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      detached:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       tmate-server-port:
         actual:
           type: integer
@@ -8742,11 +7741,6 @@ actions:
           type: string
   owenthereal/action-upterm@v2:
     inputs:
-      detached:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       limit-access-to-users:
         actual:
           type: list
@@ -8755,18 +7749,8 @@ actions:
             type: string
         inferred:
           type: boolean
-      wait-timeout-minutes:
-        actual:
-          type: integer
-        inferred:
-          type: string
   owenthereal/action-upterm@v2/detached:
     inputs:
-      detached:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       limit-access-to-users:
         actual:
           type: list
@@ -8775,11 +7759,6 @@ actions:
             type: string
         inferred:
           type: boolean
-      wait-timeout-minutes:
-        actual:
-          type: integer
-        inferred:
-          type: string
   pbrisbin/setup-tool-action@v2:
     inputs:
       github-token:
@@ -8810,20 +7789,6 @@ actions:
           separator: ','
           list-item:
             type: string
-        inferred:
-          type: string
-  peaceiris/actions-hugo@v2:
-    inputs:
-      extended:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-  peaceiris/actions-hugo@v3:
-    inputs:
-      extended:
-        actual:
-          type: boolean
         inferred:
           type: string
   peter-evans/create-issue-from-file@v4:
@@ -9032,11 +7997,6 @@ actions:
           type: string
   ruby/setup-ruby@v1:
     inputs:
-      bundler-cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       self-hosted:
         actual:
           type: boolean
@@ -9080,11 +8040,6 @@ actions:
           type: string
         inferred:
           type: boolean
-      overwrite_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       preserve_order:
         actual:
           type: boolean
@@ -9108,11 +8063,6 @@ actions:
           type: string
         inferred:
           type: boolean
-      overwrite_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       preserve_order:
         actual:
           type: boolean
@@ -9180,11 +8130,6 @@ actions:
           - arm64
         inferred:
           type: string
-      cache:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       channel:
         actual:
           type: enum
@@ -9217,16 +8162,6 @@ actions:
       session-timeout-seconds:
         actual:
           type: integer
-        inferred:
-          type: string
-      use-oidc:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      write-log-files:
-        actual:
-          type: boolean
         inferred:
           type: string
   wandalen/wretry.action@v3:

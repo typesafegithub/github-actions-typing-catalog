@@ -41,6 +41,12 @@ object TypingHeuristics {
         RegexOption.IGNORE_CASE,
     )
     private val quotedValueRegex = Regex("""'([^']+)'|"([^"]+)"|`([^`]+)`""")
+    private val integerDescriptionRegex = Regex(
+        """\b(number of times|retry|hours|milliseconds|bytes|integer)\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val stringIntegerDefaultRegex = Regex("""[+-]?\d+""")
+    private val stringFloatDefaultRegex = Regex("""[+-]?(?:\d+\.\d*|\.\d+)""")
     private val booleanDescriptionPrefixRegex = Regex("""^\s*(whether|when)\b""", RegexOption.IGNORE_CASE)
     private val booleanDescriptionWordRegex = Regex(
         """\b(boolean|shorthand for|to false|disable|prevent)\b""",
@@ -80,7 +86,9 @@ object TypingHeuristics {
                 if (heuristicReason != null) {
                     HeuristicType(type = "boolean", reason = heuristicReason)
                 } else {
-                    when (val defaultValue = map["default"]) {
+                    integerDescriptionHeuristic(map)?.let { reason ->
+                        HeuristicType(type = "integer", reason = reason)
+                    } ?: when (val defaultValue = map["default"]) {
                         is Boolean -> HeuristicType(
                             type = "boolean",
                             reason = defaultValueReason(defaultValue),
@@ -93,6 +101,7 @@ object TypingHeuristics {
                             type = "float",
                             reason = defaultValueReason(defaultValue),
                         )
+                        is String -> stringDefaultHeuristic(defaultValue, description, inputName)
                         else -> HeuristicType(type = "string", reason = null)
                     }
                 }
@@ -192,6 +201,49 @@ object TypingHeuristics {
         } else {
             null
         }
+    }
+
+    private fun integerDescriptionHeuristic(definition: Map<*, *>): String? {
+        val description = definition["description"] as? String ?: return null
+        return if (integerDescriptionRegex.containsMatchIn(description)) {
+            "the input description specifies an integer amount"
+        } else {
+            null
+        }
+    }
+
+    private fun stringDefaultHeuristic(
+        defaultValue: String,
+        description: String?,
+        inputName: String?,
+    ): HeuristicType {
+        val text = defaultValue.trim()
+        val safeDescription = description.orEmpty()
+        val looksBoolean = text.equals("true", ignoreCase = true) || text.equals("false", ignoreCase = true)
+        val booleanDefaultAllowed = !stringDescriptionRegex.containsMatchIn(safeDescription) &&
+            !safeDescription.startsWith("force", ignoreCase = true)
+        if (looksBoolean && booleanDefaultAllowed) {
+            return HeuristicType(
+                type = "boolean",
+                reason = "the action manifest declares a boolean string default of `$text`",
+            )
+        }
+
+        val numericDefaultAllowed = inputName?.contains("version", ignoreCase = true) != true
+        if (numericDefaultAllowed && stringIntegerDefaultRegex.matches(text)) {
+            return HeuristicType(
+                type = "integer",
+                reason = "the action manifest declares an integer string default of `$text`",
+            )
+        }
+        if (numericDefaultAllowed && stringFloatDefaultRegex.matches(text)) {
+            return HeuristicType(
+                type = "float",
+                reason = "the action manifest declares a float string default of `$text`",
+            )
+        }
+
+        return HeuristicType(type = "string", reason = null)
     }
 
     private fun defaultValueReason(value: Any): String =
@@ -456,7 +508,7 @@ private class TypingHeuristicsTest : FunSpec({
 
     withData(
         nameFn = { (description, defaultValue) ->
-            "keeps string typing for boolean string default `$defaultValue` in `$description`"
+            "infers boolean from boolean string default `$defaultValue` in `$description`"
         },
         listOf(
             "Enable debug logging." to "true",
@@ -465,23 +517,33 @@ private class TypingHeuristicsTest : FunSpec({
     ) { (description, defaultValue) ->
         TypingHeuristics.inferType(
             linkedMapOf("description" to description, "default" to defaultValue),
-        ) shouldBe HeuristicType(type = "string", reason = null, description = description)
+        ) shouldBe HeuristicType(
+            type = "boolean",
+            reason = "the action manifest declares a boolean string default of `$defaultValue`",
+            description = description,
+        )
     }
 
     withData(
-        nameFn = { (description, defaultValue, _) ->
-            "keeps string typing for numeric string default `$defaultValue` in `$description`"
+        nameFn = { (description, defaultValue, expected) ->
+            "infers ${expected.type} from numeric string default `$defaultValue` in `$description`"
         },
         listOf(
             Triple(
                 "The configured value for the build.",
                 "10",
-                HeuristicType(type = "string", reason = null),
+                HeuristicType(
+                    type = "integer",
+                    reason = "the action manifest declares an integer string default of `10`",
+                ),
             ),
             Triple(
                 "The configured ratio for the build.",
                 "1.5",
-                HeuristicType(type = "string", reason = null),
+                HeuristicType(
+                    type = "float",
+                    reason = "the action manifest declares a float string default of `1.5`",
+                ),
             ),
         ),
     ) { (description, defaultValue, expected) ->
@@ -491,7 +553,7 @@ private class TypingHeuristicsTest : FunSpec({
     }
 
     withData(
-        nameFn = { description -> "keeps string typing for numeric wording in `$description`" },
+        nameFn = { description -> "infers integer from numeric wording in `$description`" },
         listOf(
             "The number of times to retry a request.",
             "Retry the request on failure.",
@@ -502,8 +564,8 @@ private class TypingHeuristicsTest : FunSpec({
         ),
     ) { description ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
-            type = "string",
-            reason = null,
+            type = "integer",
+            reason = "the input description specifies an integer amount",
             description = description,
         )
     }
