@@ -19,12 +19,16 @@ data class HeuristicType(
     val separator: String? = null,
     val listItemType: String? = null,
     val allowedValues: List<String>? = null,
+    val name: String? = null,
+    val namedValues: Map<String, Any?>? = null,
     val description: String? = null,
 ) {
     // Only attributes written to action-types.yml are included. `reason` explains the inference,
     // and `description` is used in PR bodies - neither is a typing attribute.
     fun toTypingMap(): Map<String, Any> = buildMap {
         put("type", type)
+        name?.let { put("name", it) }
+        namedValues?.let { put("named-values", it) }
         separator?.let { put("separator", it) }
         listItemType?.let { put("list-item", mapOf("type" to it)) }
         allowedValues?.let { put("allowed-values", it) }
@@ -43,6 +47,34 @@ object TypingHeuristics {
     )
     private val listCueRegex = Regex(
         """\b(?:multiline string|additional installer flags|flags passed|paths within|exclude from cache|wildcard pattern|one or several|you can also specify|line[\s-]+separated)\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val eitherSeparatorRegex = Regex(
+        """\bcomma\b[^.;\n]{0,30}\b(?:or|/)\b[^.;\n]{0,30}\b(?:newline|line|multiline)\b|\b(?:newline|line|multiline)\b[^.;\n]{0,30}\b(?:or|/)\b[^.;\n]{0,30}\bcomma\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val commaSeparatedFalsePositiveRegex = Regex(
+        """\bif more than one\b|\bor containers\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val staleIssuesOutputRegex = Regex(
+        """^list of all (?:staled|closed) issues and pull requests\.?$""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val availableOptionsRegex = Regex(
+        """\bavailable options\s*:\s*\n([\s\S]*?)(?:\n\s*\n|$)""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val namedOptionRegex = Regex("""^\s*([\w][\w.+/+-]*)\s*:""")
+    private val behaviorIfNoFilesFoundRegex = Regex(
+        """^the desired behavior if no files are found\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val validValuesRegex = Regex("""\bvalid values are\b[^.;\n]{0,200}""", RegexOption.IGNORE_CASE)
+    private val pipeSeparatorRegex = Regex("""\bseparated by a \| character\b""", RegexOption.IGNORE_CASE)
+    private val builderPlatformsDescriptionRegex = Regex("""\bbuilder node platforms\b""", RegexOption.IGNORE_CASE)
+    private val artifactDescriptionRegex = Regex(
+        """\b(?:unique identifier for the artifact|ID of the artifact)\b""",
         RegexOption.IGNORE_CASE,
     )
     private val optionsRegex = Regex("""\boptions\s*:\s*\[([^\]]+)\]""", RegexOption.IGNORE_CASE)
@@ -73,6 +105,18 @@ object TypingHeuristics {
         RegexOption.IGNORE_CASE,
     )
     private val integerNameRegex = Regex("""(?:seconds|number|issue-number)$""", RegexOption.IGNORE_CASE)
+    private val platformsNameRegex = Regex("""(?:^|[-_])platforms$""", RegexOption.IGNORE_CASE)
+    private val artifactIdsNameRegex = Regex("""(?:^|[-_])artifact[-_]ids$""", RegexOption.IGNORE_CASE)
+    private val artifactIdNameRegex = Regex("""(?:^|[-_])artifact[-_]id$""", RegexOption.IGNORE_CASE)
+    private val testResultFilesNameRegex = Regex("""^(?:xunit|trx|nunit|junit)[-_]files$""", RegexOption.IGNORE_CASE)
+    private val daysBeforeNameRegex = Regex(
+        """^days-before-(?:pr-(?:stale|close)|issue-close)$""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val closeIssueReasonNameRegex = Regex("""^close[-_]issue[-_]reason$""", RegexOption.IGNORE_CASE)
+    private val exemptPrNameRegex = Regex("""^exempt[-_]all[-_]pr[-_]assignees$""", RegexOption.IGNORE_CASE)
+    private val rateLimitSecondsNameRegex = Regex("""rate[-_]limit.*[-_]seconds$""", RegexOption.IGNORE_CASE)
+    private val failedWrapperNameRegex = Regex("""^failed[-_]wrapper$""", RegexOption.IGNORE_CASE)
     private val stringIntegerDefaultRegex = Regex("""[+-]?\d+""")
     private val stringFloatDefaultRegex = Regex("""[+-]?(?:\d+\.\d*|\.\d+)""")
     private val booleanDescriptionPrefixRegex = Regex("""^\s*(whether|when)\b""", RegexOption.IGNORE_CASE)
@@ -85,7 +129,7 @@ object TypingHeuristics {
         RegexOption.IGNORE_CASE,
     )
     private val booleanDescriptionWordingRegex = Regex(
-        """\bwhen set to ["']?true\b|\benabled when\b|\bvalue is ["']?true\b|\bskip session tagging\b|\brole assumption\b|\bsupport for large files\b|\bbypassed\b|^\s*exempt all\b[^\n]*\bmilestones\b""",
+        """\bwhen set to ["']?true\b|\benabled when\b|\bvalue is ["']?true\b|\bskip session tagging\b|\brole assumption\b|\bsupport for large files\b|\bbypassed\b|^\s*exempt all\b[^\n]*\b(?:milestones|pull requests)\b""",
         RegexOption.IGNORE_CASE,
     )
     private val stringDescriptionRegex = Regex("""\barguments\b|\bvalid values\b""", RegexOption.IGNORE_CASE)
@@ -125,21 +169,30 @@ object TypingHeuristics {
                 type = "string",
                 reason = "the action manifest declares `type: $declaredType`",
             )
-            else -> singleQuotedValueEnumHeuristic(map)
+            else -> closeIssueReasonEnumHeuristic(inputName)
+                ?: singleQuotedValueEnumHeuristic(map)
                 ?: specifyOrEnumHeuristic(map)
                 ?: unquotedEnumHeuristic(map)
                 ?: enumHeuristic(map)
+                ?: validValuesEnumHeuristic(map)
+                ?: namedOptionsEnumHeuristic(map)
                 ?: quotedValuesEnumHeuristic(map)
-                ?: listHeuristic(map) ?: run {
+                ?: nameBasedListHeuristic(map, inputName)
+                ?: descriptionBasedListHeuristic(map)
+                ?: listHeuristic(map, inputName) ?: run {
                 val heuristicReason = booleanHeuristicReason(inputName, map)
                 if (heuristicReason != null) {
                     HeuristicType(type = "boolean", reason = heuristicReason)
                 } else {
-                    integerDescriptionHeuristic(map)?.let { reason ->
-                        HeuristicType(type = "integer", reason = reason)
-                    } ?: integerNameHeuristic(inputName)?.let { reason ->
-                        HeuristicType(type = "integer", reason = reason)
-                    } ?: when (val defaultValue = map["default"]) {
+                    rateLimitSecondsHeuristic(inputName)?.let { it }
+                        ?: daysBeforeNameHeuristic(inputName)?.let { it }
+                        ?: artifactIdNameHeuristic(inputName)?.let { it }
+                        ?: artifactDescriptionHeuristic(map)?.let { it }
+                        ?: integerDescriptionHeuristic(map)?.let { reason ->
+                            HeuristicType(type = "integer", reason = reason)
+                        } ?: integerNameHeuristic(inputName)?.let { reason ->
+                            HeuristicType(type = "integer", reason = reason)
+                        } ?: when (val defaultValue = map["default"]) {
                         is Boolean -> HeuristicType(
                             type = "boolean",
                             reason = defaultValueReason(defaultValue),
@@ -158,7 +211,12 @@ object TypingHeuristics {
                 }
             }
         }
-        return listOf(inference.copy(description = description))
+        val possibilities = if (inference.type == "list") {
+            listPossibilities(inference, description)
+        } else {
+            listOf(inference)
+        }
+        return possibilities.map { it.copy(description = description) }
     }
 
     private fun enumHeuristic(definition: Map<*, *>): HeuristicType? {
@@ -174,6 +232,56 @@ object TypingHeuristics {
             type = "enum",
             reason = "the input description lists options",
             allowedValues = allowedValues,
+        )
+    }
+
+    private fun closeIssueReasonEnumHeuristic(inputName: String?): HeuristicType? {
+        if (inputName == null || !closeIssueReasonNameRegex.matches(inputName)) return null
+        return HeuristicType(
+            type = "enum",
+            reason = "the input name describes a close reason",
+            allowedValues = listOf("completed", "not_planned"),
+        )
+    }
+
+    private fun validValuesEnumHeuristic(definition: Map<*, *>): HeuristicType? {
+        val description = definition["description"] as? String ?: return null
+        val snippet = validValuesRegex.find(description)?.value ?: return null
+        val allowedValues = quotedValueRegex.findAll(snippet)
+            .map { match -> match.groupValues.drop(1).first { it.isNotEmpty() }.trim() }
+            .toList()
+            .takeIf { it.size in 2..12 }
+            ?: return null
+        val loweredValues = allowedValues.map { it.lowercase() }.toSet()
+        if (loweredValues == setOf("true", "false") ||
+            loweredValues == setOf("true", "always-true", "false")
+        ) {
+            return null
+        }
+
+        return HeuristicType(
+            type = "enum",
+            reason = "the description lists quoted allowed values",
+            allowedValues = allowedValues,
+        )
+    }
+
+    private fun namedOptionsEnumHeuristic(definition: Map<*, *>): HeuristicType? {
+        val description = definition["description"] as? String ?: return null
+        val block = availableOptionsRegex.find(description)?.groupValues?.get(1) ?: return null
+        val allowedValues = block.lineSequence()
+            .mapNotNull { line -> namedOptionRegex.find(line)?.groupValues?.get(1) }
+            .take(12)
+            .toList()
+            .takeIf { it.size in 2..12 }
+            ?: return null
+        if (!behaviorIfNoFilesFoundRegex.containsMatchIn(description.trimStart())) return null
+
+        return HeuristicType(
+            type = "enum",
+            reason = "the description lists allowed values",
+            allowedValues = allowedValues,
+            name = "BehaviorIfNoFilesFound",
         )
     }
 
@@ -297,18 +405,73 @@ object TypingHeuristics {
         return enumValueDefaultSuffixRegex.replace(value, "").trim()
     }
 
-    private fun listHeuristic(definition: Map<*, *>): HeuristicType? {
+    private fun nameBasedListHeuristic(definition: Map<*, *>, inputName: String?): HeuristicType? {
+        val name = inputName ?: return null
+        val description = definition["description"] as? String ?: ""
+        return when {
+            name.matches(platformsNameRegex) -> HeuristicType(
+                type = "list",
+                reason = "the input name describes multiple platforms",
+                separator = ",",
+                listItemType = "string",
+            )
+            name.matches(artifactIdsNameRegex) -> HeuristicType(
+                type = "list",
+                reason = "the input name describes multiple artifact IDs",
+                separator = ",",
+                listItemType = "string",
+            )
+            name.matches(testResultFilesNameRegex) && description.contains("deprecated", ignoreCase = true) ->
+                HeuristicType(
+                    type = "list",
+                    reason = "the input name describes test result files",
+                    separator = "\\n",
+                    listItemType = "string",
+                )
+            name.matches(failedWrapperNameRegex) && pipeSeparatorRegex.containsMatchIn(description) -> HeuristicType(
+                type = "list",
+                reason = "the input name describes paths separated by `|`",
+                separator = "|",
+                listItemType = "string",
+            )
+            else -> null
+        }
+    }
+
+    private fun descriptionBasedListHeuristic(definition: Map<*, *>): HeuristicType? {
         val description = definition["description"] as? String ?: return null
+        return when {
+            builderPlatformsDescriptionRegex.containsMatchIn(description) -> HeuristicType(
+                type = "list",
+                reason = "the description describes builder node platforms",
+                separator = ",",
+                listItemType = "string",
+            )
+            pipeSeparatorRegex.containsMatchIn(description) -> HeuristicType(
+                type = "list",
+                reason = "the description describes paths separated by `|`",
+                separator = "|",
+                listItemType = "string",
+            )
+            else -> null
+        }
+    }
+
+    private fun listHeuristic(definition: Map<*, *>, inputName: String?): HeuristicType? {
+        val description = definition["description"] as? String ?: return null
+        if (inputName == null && staleIssuesOutputRegex.matches(description.trim())) return null
+        val commaSeparated = commaSeparatedRegex.containsMatchIn(description) &&
+            !commaSeparatedFalsePositiveRegex.containsMatchIn(description)
         if (!listWordRegex.containsMatchIn(description) &&
             !commaDelimitedValuesRegex.containsMatchIn(description) &&
-            !listCueRegex.containsMatchIn(description)
+            !listCueRegex.containsMatchIn(description) &&
+            !commaSeparated
         ) {
             return null
         }
 
         return when {
-            commaSeparatedRegex.containsMatchIn(description) ||
-                commaDelimitedValuesRegex.containsMatchIn(description) -> HeuristicType(
+            commaSeparated || commaDelimitedValuesRegex.containsMatchIn(description) -> HeuristicType(
                 type = "list",
                 reason = "the input description mentions a comma-separated list",
                 separator = ",",
@@ -329,6 +492,28 @@ object TypingHeuristics {
         }
     }
 
+    private fun listPossibilities(inference: HeuristicType, description: String?): List<HeuristicType> {
+        if (inference.type != "list" || inference.separator != "\n") return listOf(inference)
+        val text = description.orEmpty()
+        return buildList {
+            add(inference)
+            if (eitherSeparatorRegex.containsMatchIn(text)) {
+                add(
+                    inference.copy(
+                        reason = "the input description allows comma or newline separators",
+                        separator = ",",
+                    ),
+                )
+            }
+            add(
+                inference.copy(
+                    reason = "the newline separator may be written as `\\n`",
+                    separator = "\\n",
+                ),
+            )
+        }
+    }
+
     private fun booleanHeuristicReason(inputName: String?, definition: Map<*, *>): String? {
         val description = definition["description"] as? String
         val trimmedDescription = description?.trimStart()
@@ -344,6 +529,7 @@ object TypingHeuristics {
 
         val lowerName = inputName?.lowercase() ?: return null
         if (lowerName.matches(booleanNameExcludeRegex)) return null
+        if (lowerName.matches(exemptPrNameRegex)) return "the input name describes exempted PR assignees"
         val matchedPrefix = booleanNamePrefixes.firstOrNull { lowerName.startsWith(it) }
         if (matchedPrefix != null) {
             return "the input name starts with `$matchedPrefix`"
@@ -367,6 +553,41 @@ object TypingHeuristics {
         } else {
             null
         }
+    }
+
+    private fun rateLimitSecondsHeuristic(inputName: String?): HeuristicType? {
+        if (inputName == null || !rateLimitSecondsNameRegex.containsMatchIn(inputName)) return null
+        return HeuristicType(
+            type = "float",
+            reason = "the input name specifies a fractional number of seconds",
+        )
+    }
+
+    private fun daysBeforeNameHeuristic(inputName: String?): HeuristicType? {
+        if (inputName == null || !daysBeforeNameRegex.matches(inputName)) return null
+        return HeuristicType(
+            type = "integer",
+            reason = "the input name specifies a day count",
+            name = "Days",
+            namedValues = mapOf("Never" to -1),
+        )
+    }
+
+    private fun artifactIdNameHeuristic(inputName: String?): HeuristicType? {
+        if (inputName == null || !artifactIdNameRegex.containsMatchIn(inputName)) return null
+        return HeuristicType(
+            type = "integer",
+            reason = "the input name identifies an artifact ID",
+        )
+    }
+
+    private fun artifactDescriptionHeuristic(definition: Map<*, *>): HeuristicType? {
+        val description = definition["description"] as? String ?: return null
+        if (!artifactDescriptionRegex.containsMatchIn(description)) return null
+        return HeuristicType(
+            type = "integer",
+            reason = "the description identifies an artifact ID",
+        )
     }
 
     private fun integerNameHeuristic(inputName: String?): String? {
@@ -433,6 +654,20 @@ private fun runTypingHeuristicsTests() {
 }
 
 private class TypingHeuristicsTest : FunSpec({
+    fun newlineListPossibility() = HeuristicType(
+        type = "list",
+        reason = "the newline separator may be written as `\\n`",
+        separator = "\\n",
+        listItemType = "string",
+    )
+
+    fun commaListPossibility() = HeuristicType(
+        type = "list",
+        reason = "the input description allows comma or newline separators",
+        separator = ",",
+        listItemType = "string",
+    )
+
     test("manifest type takes precedence over name and description heuristics") {
         TypingHeuristics.inferType(
             linkedMapOf("type" to "string", "description" to "If true"),
@@ -696,95 +931,303 @@ private class TypingHeuristicsTest : FunSpec({
     withData(
         nameFn = { (description, _) -> "infers a list from description `$description`" },
         listOf(
-            "Multiline list of Maven mirrors in the format `mirror-id:mirror-url:mirror-of`." to HeuristicType(
+            "Multiline list of Maven mirrors in the format `mirror-id:mirror-url:mirror-of`." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a multiline list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "MULTILINE LIST of Maven mirrors." to HeuristicType(
+            ), newlineListPossibility()),
+            "MULTILINE LIST of Maven mirrors." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a multiline list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "Comma-separated list of labels to apply." to HeuristicType(
+            ), newlineListPossibility()),
+            "Comma-separated list of labels to apply." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a comma-separated list",
                 separator = ",",
                 listItemType = "string",
-            ),
-            "Comma separated list of labels to apply." to HeuristicType(
+            )),
+            "Comma separated list of labels to apply." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a comma-separated list",
                 separator = ",",
                 listItemType = "string",
-            ),
-            "Exempt all issues with milestones with commas e.g. milestone1,milestone2." to HeuristicType(
+            )),
+            "Exempt all issues with milestones with commas e.g. milestone1,milestone2." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a comma-separated list",
                 separator = ",",
                 listItemType = "string",
-            ),
-            "A comma delimited set of labels to apply." to HeuristicType(
+            )),
+            "A comma delimited set of labels to apply." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a comma-separated list",
                 separator = ",",
                 listItemType = "string",
-            ),
-            "An ordered multiline string listing cache keys." to HeuristicType(
+            )),
+            "An ordered multiline string listing cache keys." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a multiline list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "A file, directory or wildcard pattern that describes what to upload." to HeuristicType(
+            ), newlineListPossibility()),
+            "A file, directory or wildcard pattern that describes what to upload." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "Additional installer flags passed to the installer script." to HeuristicType(
+            ), newlineListPossibility()),
+            "Additional installer flags passed to the installer script." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "Paths within Gradle User Home to cache." to HeuristicType(
+            ), newlineListPossibility()),
+            "Paths within Gradle User Home to cache." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "Paths within Gradle User Home to exclude from cache." to HeuristicType(
+            ), newlineListPossibility()),
+            "Paths within Gradle User Home to exclude from cache." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "One or several sharable configurations for the build." to HeuristicType(
+            ), newlineListPossibility()),
+            "One or several sharable configurations for the build." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "You can also specify version ranges for the extra plugins." to HeuristicType(
+            ), newlineListPossibility()),
+            "You can also specify version ranges for the extra plugins." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a list",
                 separator = "\n",
                 listItemType = "string",
-            ),
-            "Entries are line-separated." to HeuristicType(
+            ), newlineListPossibility()),
+            "Entries are line-separated." to listOf(HeuristicType(
                 type = "list",
                 reason = "the input description mentions a list",
                 separator = "\n",
                 listItemType = "string",
-            ),
+            ), newlineListPossibility()),
         ),
     ) { (description, expected) ->
         TypingHeuristics.inferType(
             linkedMapOf("description" to description),
             inputName = "some-input",
+        ) shouldBe expected.map { it.copy(description = description) }
+    }
+
+    withData(
+        nameFn = { (description, _) -> "uses separator possibilities for `$description`" },
+        listOf(
+            "Comma or newline-separated list of labels." to listOf(HeuristicType(
+                type = "list",
+                reason = "the input description mentions a list",
+                separator = "\n",
+                listItemType = "string",
+            ), commaListPossibility(), newlineListPossibility()),
+            "A list of Maven mirrors." to listOf(HeuristicType(
+                type = "list",
+                reason = "the input description mentions a list",
+                separator = "\n",
+                listItemType = "string",
+            ), newlineListPossibility()),
+            "Comma-separated list of labels to apply." to listOf(HeuristicType(
+                type = "list",
+                reason = "the input description mentions a comma-separated list",
+                separator = ",",
+                listItemType = "string",
+            )),
+        ),
+    ) { (description, expected) ->
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe
+            expected.map { it.copy(description = description) }
+    }
+
+    withData(
+        nameFn = { (inputName, description, _) ->
+            "infers typing for `${inputName ?: "outputs"}` in `$description`"
+        },
+        listOf<Triple<String?, String, HeuristicType>>(
+            Triple(
+                "platforms",
+                "Target platforms to build.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input name describes multiple platforms",
+                    separator = ",",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                "platforms",
+                "List of target platforms for build.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input name describes multiple platforms",
+                    separator = ",",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                null,
+                "Comma separated GitHub user names.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input description mentions a comma-separated list",
+                    separator = ",",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                null,
+                "The name of the container or containers. If more than one container, add the names comma separated.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "xunit_files",
+                "Deprecated, use \"files\" option instead.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input name describes test result files",
+                    separator = "\\n",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                "days-before-pr-stale",
+                "The number of days old a pull request can be before marking it stale. Set to -1 to never mark it stale.",
+                HeuristicType(
+                    type = "integer",
+                    reason = "the input name specifies a day count",
+                    name = "Days",
+                    namedValues = mapOf("Never" to -1),
+                ),
+            ),
+            Triple(
+                "artifact-id",
+                "A unique identifier for the artifact.",
+                HeuristicType(
+                    type = "integer",
+                    reason = "the input name identifies an artifact ID",
+                ),
+            ),
+            Triple(
+                "artifact-ids",
+                "IDs of the artifacts to download.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input name describes multiple artifact IDs",
+                    separator = ",",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                null,
+                "List of all closed issues and pull requests.",
+                HeuristicType(type = "string", reason = null),
+            ),
+            Triple(
+                "if-no-files-found",
+                "The desired behavior if no files are found. Available Options:\n  warn: Warn\n  error: Fail",
+                HeuristicType(
+                    type = "enum",
+                    reason = "the description lists allowed values",
+                    allowedValues = listOf("warn", "error"),
+                    name = "BehaviorIfNoFilesFound",
+                ),
+            ),
+            Triple(
+                "close-issue-reason",
+                "The reason to use when closing an issue.",
+                HeuristicType(
+                    type = "enum",
+                    reason = "the input name describes a close reason",
+                    allowedValues = listOf("completed", "not_planned"),
+                ),
+            ),
+            Triple(
+                null,
+                "Exempt all pull requests with assignees from being marked as stale.",
+                HeuristicType(type = "boolean", reason = "the input description uses boolean wording"),
+            ),
+            Triple(
+                "exempt-all-pr-assignees",
+                "Some arbitrary text",
+                HeuristicType(
+                    type = "boolean",
+                    reason = "the input name describes exempted PR assignees",
+                ),
+            ),
+            Triple(
+                "cache-cleanup",
+                "By default ('on-success'), cleanup is performed. This behaviour can be disabled ('never'), " +
+                    "or configured to always run ('always'). Valid values are 'never', 'on-success' and 'always'.",
+                HeuristicType(
+                    type = "enum",
+                    reason = "the description lists quoted allowed values",
+                    allowedValues = listOf("never", "on-success", "always"),
+                ),
+            ),
+            Triple(
+                "secondary-rate-limit-wait-seconds",
+                "Sets the number of seconds to wait before retrying secondary rate limit errors.",
+                HeuristicType(
+                    type = "float",
+                    reason = "the input name specifies a fractional number of seconds",
+                ),
+            ),
+            Triple(
+                "failed-wrapper",
+                "The path of the Gradle Wrapper(s) JAR that failed validation. Multiple paths are separated by a | character.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the input name describes paths separated by `|`",
+                    separator = "|",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                null,
+                "Builder node platforms (preferred or available)",
+                HeuristicType(
+                    type = "list",
+                    reason = "the description describes builder node platforms",
+                    separator = ",",
+                    listItemType = "string",
+                ),
+            ),
+            Triple(
+                null,
+                "The ID of the artifact that was uploaded.",
+                HeuristicType(
+                    type = "integer",
+                    reason = "the description identifies an artifact ID",
+                ),
+            ),
+            Triple(
+                null,
+                "The path of the Gradle Wrapper(s) JAR that failed validation. " +
+                    "Path is a platform-dependent relative path to git repository root. " +
+                    "Multiple paths are separated by a | character.",
+                HeuristicType(
+                    type = "list",
+                    reason = "the description describes paths separated by `|`",
+                    separator = "|",
+                    listItemType = "string",
+                ),
+            ),
+        ),
+    ) { (inputName, description, expected) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to description),
+            inputName = inputName,
         ) shouldBe listOf(expected.copy(description = description))
     }
 
@@ -798,7 +1241,7 @@ private class TypingHeuristicsTest : FunSpec({
             separator = "\n",
             listItemType = "string",
             description = "A list of Maven mirrors.",
-        ))
+        ), newlineListPossibility().copy(description = "A list of Maven mirrors."))
     }
 
     test("does not treat words containing `list` as a list") {

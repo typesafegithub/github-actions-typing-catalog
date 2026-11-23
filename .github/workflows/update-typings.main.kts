@@ -487,13 +487,15 @@ private fun Map<String, Any?>.definition(section: String, name: String): Any? =
 // Kotlin's script imports cannot safely expose their types in the importing script's declarations,
 // so the imported heuristics return a list of HeuristicType possibilities and it's converted here.
 private fun inferType(definition: Any?, inputName: String? = null): TypeInference {
-    val heuristic = TypingHeuristics.inferType(definition, inputName).single()
+    val heuristic = TypingHeuristics.inferType(definition, inputName).first()
     return TypeInference(
         type = heuristic.type,
         reason = heuristic.reason,
         separator = heuristic.separator,
         listItemType = heuristic.listItemType,
         allowedValues = heuristic.allowedValues,
+        name = heuristic.name,
+        namedValues = heuristic.namedValues,
         description = heuristic.description,
     )
 }
@@ -565,6 +567,11 @@ private fun addEntries(text: String, sectionName: String, entries: Map<String, T
 private fun renderEntry(name: String, inference: TypeInference): List<String> = buildList {
     add("  $name:")
     add("    type: ${inference.type}")
+    inference.name?.let { inferredName -> add("    name: $inferredName") }
+    inference.namedValues?.let { namedValues ->
+        add("    named-values:")
+        namedValues.forEach { (valueName, value) -> add("      $valueName: $value") }
+    }
     inference.separator?.let { separator ->
         add("    separator: ${renderSeparator(separator)}")
     }
@@ -687,6 +694,8 @@ private data class TypeInference(
     val separator: String? = null,
     val listItemType: String? = null,
     val allowedValues: List<String>? = null,
+    val name: String? = null,
+    val namedValues: Map<String, Any?>? = null,
     val description: String? = null,
 )
 
