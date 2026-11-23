@@ -446,6 +446,39 @@ private class TypingHeuristicsTest : FunSpec({
         inference.allowedValues shouldBe listOf("regional-token", "global-token")
     }
 
+    withData(
+        nameFn = { (description, _) -> "keeps string typing for quoted choices in `$description`" },
+        listOf(
+            "Can be set to 'read' or 'write'." to listOf("read", "write"),
+            "It can be \"maven\", \"gradle\" or \"sbt\"." to listOf("maven", "gradle", "sbt"),
+            "Valid values are `never`, `on-success`, or `always`." to
+                listOf("never", "on-success", "always"),
+            "The deployment target supports 'production' and 'staging'." to
+                listOf("production", "staging"),
+            "The log level can be 'debug', 'info', or 'warn'." to listOf("debug", "info", "warn"),
+        ),
+    ) { (description, _) ->
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+            type = "string",
+            reason = null,
+            description = description,
+        )
+    }
+
+    withData(
+        nameFn = { description -> "keeps string typing for boolean-looking values in `$description`" },
+        listOf(
+            "Valid values are 'true' and 'false'.",
+            "Valid values are `true`, `always-true`, and `false`.",
+        ),
+    ) { description ->
+        TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+            type = "string",
+            reason = null,
+            description = description,
+        )
+    }
+
     test("enum options take precedence over name heuristics and default values") {
         val inference = TypingHeuristics.inferType(
             linkedMapOf(
