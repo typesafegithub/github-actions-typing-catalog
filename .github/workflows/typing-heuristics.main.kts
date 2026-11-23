@@ -36,6 +36,17 @@ object TypingHeuristics {
     private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
     private val commaSeparatedRegex = Regex("""\bcomma[\s-]+separated\b""", RegexOption.IGNORE_CASE)
     private val optionsRegex = Regex("""\boptions\s*:\s*\[([^\]]+)\]""", RegexOption.IGNORE_CASE)
+    private val booleanDescriptionPrefixRegex = Regex("""^\s*(whether|when)\b""", RegexOption.IGNORE_CASE)
+    private val booleanDescriptionWordRegex = Regex(
+        """\b(boolean|shorthand for|to false|disable|prevent)\b""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val stringDescriptionRegex = Regex("""\barguments\b|\bvalid values\b""", RegexOption.IGNORE_CASE)
+    private val booleanNamePrefixes = listOf(
+        "skip", "check", "allow", "ignore", "show", "enable", "disable", "include", "dry",
+        "fail-on", "force", "lookup", "ascending", "delete", "only", "debug-only", "always",
+        "keep", "clean", "reset",
+    )
 
     fun inferType(definition: Any?, inputName: String? = null): HeuristicType {
         val map = definition as? Map<*, *> ?: return HeuristicType(type = "string", reason = null)
@@ -60,7 +71,7 @@ object TypingHeuristics {
                 reason = "the action manifest declares `type: $declaredType`",
             )
             else -> enumHeuristic(map) ?: listHeuristic(map) ?: run {
-                val heuristicReason = inputName?.let { booleanHeuristicReason(it, map) }
+                val heuristicReason = booleanHeuristicReason(inputName, map)
                 if (heuristicReason != null) {
                     HeuristicType(type = "boolean", reason = heuristicReason)
                 } else {
@@ -127,15 +138,24 @@ object TypingHeuristics {
         }
     }
 
-    private fun booleanHeuristicReason(inputName: String, definition: Map<*, *>): String? {
-        val lowerName = inputName.lowercase()
-        val matchedPrefix = listOf("skip", "check", "allow").firstOrNull { lowerName.startsWith(it) }
+    private fun booleanHeuristicReason(inputName: String?, definition: Map<*, *>): String? {
+        val description = definition["description"] as? String
+        val trimmedDescription = description?.trimStart()
+        if (trimmedDescription != null &&
+            !stringDescriptionRegex.containsMatchIn(trimmedDescription) &&
+            (booleanDescriptionPrefixRegex.containsMatchIn(trimmedDescription) ||
+                booleanDescriptionWordRegex.containsMatchIn(trimmedDescription))
+        ) {
+            return "the input description uses boolean wording"
+        }
+
+        val lowerName = inputName?.lowercase() ?: return null
+        val matchedPrefix = booleanNamePrefixes.firstOrNull { lowerName.startsWith(it) }
         if (matchedPrefix != null) {
             return "the input name starts with `$matchedPrefix`"
         }
 
-        val description = definition["description"] as? String ?: return null
-        val trimmedDescription = description.trimStart()
+        if (trimmedDescription == null) return null
         val startsWithIfWord = trimmedDescription.startsWith("if", ignoreCase = true) &&
             (trimmedDescription.length == 2 || !trimmedDescription[2].isLetterOrDigit())
 
@@ -248,9 +268,76 @@ private class TypingHeuristicsTest : FunSpec({
         ),
     ) { (inputName, expected) ->
         TypingHeuristics.inferType(
-            linkedMapOf("description" to "Not a boolean description"),
+            linkedMapOf("description" to "Some arbitrary text"),
             inputName = inputName,
-        ) shouldBe expected.copy(description = "Not a boolean description")
+        ) shouldBe expected.copy(description = "Some arbitrary text")
+    }
+
+    withData(
+        nameFn = { (inputName, _) -> "infers boolean for input `$inputName`" },
+        listOf(
+            "ignore-cache" to "ignore",
+            "show-progress" to "show",
+            "enable-cache" to "enable",
+            "disable-cache" to "disable",
+            "include-paths" to "include",
+            "dry-run" to "dry",
+            "fail-on-warnings" to "fail-on",
+            "force-push" to "force",
+            "lookup-only" to "lookup",
+            "ascending-order" to "ascending",
+            "delete-branch" to "delete",
+            "only-changed" to "only",
+            "debug-only" to "debug-only",
+            "always-publish" to "always",
+            "keep-files" to "keep",
+            "clean-workspace" to "clean",
+            "reset-cache" to "reset",
+        ),
+    ) { (inputName, prefix) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to "Some arbitrary text"),
+            inputName = inputName,
+        ) shouldBe HeuristicType(
+            type = "boolean",
+            reason = "the input name starts with `$prefix`",
+            description = "Some arbitrary text",
+        )
+    }
+
+    withData(
+        nameFn = { description -> "infers booleans for description `$description`" },
+        listOf(
+            "Whether to cache dependencies.",
+            "When enabled, publish the artifact.",
+            "A boolean flag controlling caching.",
+            "This is a shorthand for skipping tests.",
+            "Set the flag to false to opt out.",
+            "Disable caching for this step.",
+            "Prevent the deployment from continuing.",
+        ),
+    ) { description ->
+        listOf(null, "some-input").forEach { inputName ->
+            TypingHeuristics.inferType(linkedMapOf("description" to description), inputName = inputName) shouldBe
+                HeuristicType(
+                    type = "boolean",
+                    reason = "the input description uses boolean wording",
+                    description = description,
+                )
+        }
+    }
+
+    test("does not infer booleans from descriptions that explicitly accept strings") {
+        listOf(
+            "Whether to push the commit. It can also be used as git push arguments.",
+            "Whether to mask this value. Valid values are 'true' and 'false'.",
+        ).forEach { description ->
+            TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+                type = "string",
+                reason = null,
+                description = description,
+            )
+        }
     }
 
     test("infers booleans from descriptions starting with the word If") {
