@@ -18,86 +18,13 @@ actions:
             - custom
             - always
         inferred:
-          type: list
-          separator: ','
-          list-item:
-            type: string
-      status:
-        actual:
           type: enum
           allowed-values:
           - success
           - failure
           - cancelled
           - custom
-        inferred:
-          type: string
-  actions/cache@v4:
-    inputs:
-      restore-keys:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/cache@v4/restore:
-    inputs:
-      restore-keys:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/cache@v5:
-    inputs:
-      restore-keys:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/cache@v5/restore:
-    inputs:
-      restore-keys:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/cache@v6:
-    inputs:
-      restore-keys:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  actions/cache@v6/restore:
-    inputs:
-      restore-keys:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
+          - always
   actions/checkout@v2:
     inputs:
       fetch-depth:
@@ -202,42 +129,6 @@ actions:
         inferred:
           type: string
   actions/create-github-app-token@v2:
-    inputs:
-      permission-organization-copilot-seat-management:
-        actual:
-          type: enum
-          allowed-values:
-          - write
-        inferred:
-          type: string
-      permission-organization-events:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-        inferred:
-          type: string
-      permission-organization-plan:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-        inferred:
-          type: string
-      permission-profile:
-        actual:
-          type: enum
-          allowed-values:
-          - write
-        inferred:
-          type: string
-      permission-workflows:
-        actual:
-          type: enum
-          allowed-values:
-          - write
-        inferred:
-          type: string
     outputs:
       installation-id:
         actual:
@@ -256,34 +147,6 @@ actions:
           allowed-values:
           - read
           - write
-      permission-organization-events:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-        inferred:
-          type: string
-      permission-organization-plan:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-        inferred:
-          type: string
-      permission-profile:
-        actual:
-          type: enum
-          allowed-values:
-          - write
-        inferred:
-          type: string
-      permission-workflows:
-        actual:
-          type: enum
-          allowed-values:
-          - write
-        inferred:
-          type: string
     outputs:
       installation-id:
         actual:
@@ -445,7 +308,7 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: integer
   actions/labeler@v5:
     inputs:
       pr-number:
@@ -456,7 +319,7 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: integer
   actions/labeler@v6:
     inputs:
       pr-number:
@@ -467,7 +330,7 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: integer
   actions/labeler@v7:
     inputs:
       pr-number:
@@ -478,7 +341,7 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: integer
   actions/setup-dotnet@v3:
     inputs:
       dotnet-quality:
@@ -876,11 +739,6 @@ actions:
 
           list-item:
             type: string
-      cache-jdk:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       cache-path:
         actual:
           type: string
@@ -1270,17 +1128,7 @@ actions:
             Never: -1
         inferred:
           type: string
-      exempt-all-issue-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-all-pr-milestones:
         actual:
           type: boolean
         inferred:
@@ -1338,17 +1186,7 @@ actions:
             Never: -1
         inferred:
           type: string
-      exempt-all-issue-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-all-pr-milestones:
         actual:
           type: boolean
         inferred:
@@ -1411,17 +1249,7 @@ actions:
           type: float
         inferred:
           type: integer
-      exempt-all-issue-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-all-pr-milestones:
         actual:
           type: boolean
         inferred:
@@ -1484,17 +1312,7 @@ actions:
           type: float
         inferred:
           type: integer
-      exempt-all-issue-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-all-pr-milestones:
         actual:
           type: boolean
         inferred:
@@ -1557,17 +1375,7 @@ actions:
           type: float
         inferred:
           type: integer
-      exempt-all-issue-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-all-pr-milestones:
         actual:
           type: boolean
         inferred:
@@ -1630,17 +1438,7 @@ actions:
           type: float
         inferred:
           type: integer
-      exempt-all-issue-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-all-pr-milestones:
         actual:
           type: boolean
         inferred:
@@ -1712,17 +1510,7 @@ actions:
           type: float
         inferred:
           type: integer
-      exempt-all-issue-milestones:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       exempt-all-pr-assignees:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      exempt-all-pr-milestones:
         actual:
           type: boolean
         inferred:
@@ -1767,15 +1555,6 @@ actions:
           - ignore
         inferred:
           type: boolean
-      path:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       retention-days:
         actual:
           type: integer
@@ -1796,15 +1575,6 @@ actions:
           - ignore
         inferred:
           type: boolean
-      path:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       retention-days:
         actual:
           type: integer
@@ -1836,15 +1606,6 @@ actions:
           - ignore
         inferred:
           type: boolean
-      path:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       retention-days:
         actual:
           type: integer
@@ -1882,15 +1643,6 @@ actions:
           - ignore
         inferred:
           type: boolean
-      path:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       retention-days:
         actual:
           type: integer
@@ -1928,15 +1680,6 @@ actions:
           - ignore
         inferred:
           type: boolean
-      path:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       retention-days:
         actual:
           type: integer
@@ -1974,15 +1717,6 @@ actions:
           - ignore
         inferred:
           type: boolean
-      path:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       retention-days:
         actual:
           type: integer
@@ -2253,21 +1987,9 @@ actions:
             type: string
         inferred:
           type: string
-  aws-actions/configure-aws-credentials@v1:
-    inputs:
-      role-skip-session-tagging:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   aws-actions/configure-aws-credentials@v2:
     inputs:
       role-chaining:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      role-skip-session-tagging:
         actual:
           type: boolean
         inferred:
@@ -2279,29 +2001,9 @@ actions:
           type: boolean
         inferred:
           type: string
-      role-duration-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      role-skip-session-tagging:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   aws-actions/configure-aws-credentials@v4:
     inputs:
       role-chaining:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      role-duration-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      role-skip-session-tagging:
         actual:
           type: boolean
         inferred:
@@ -2313,29 +2015,9 @@ actions:
           type: boolean
         inferred:
           type: string
-      role-duration-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      role-skip-session-tagging:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   aws-actions/configure-aws-credentials@v6:
     inputs:
       role-chaining:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      role-duration-seconds:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      role-skip-session-tagging:
         actual:
           type: boolean
         inferred:
@@ -2352,25 +2034,6 @@ actions:
 
           list-item:
             type: string
-  axel-op/googlejavaformat-action@v3:
-    inputs:
-      github-token:
-        actual:
-          type: string
-        inferred:
-          type: boolean
-      githubToken:
-        actual:
-          type: string
-        inferred:
-          type: boolean
-  axel-op/googlejavaformat-action@v4:
-    inputs:
-      github-token:
-        actual:
-          type: string
-        inferred:
-          type: boolean
   azure/login@v3:
     inputs:
       max-context-population:
@@ -2382,15 +2045,6 @@ actions:
           type: integer
   azure/webapps-deploy@v2:
     inputs:
-      images:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       sitecontainers-config:
         actual:
           type: string
@@ -2402,15 +2056,6 @@ actions:
             type: string
   azure/webapps-deploy@v3:
     inputs:
-      images:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       restart:
         actual:
           type: boolean
@@ -2482,171 +2127,6 @@ actions:
           - benchmarkdotnet
           - customBiggerIsBetter
           - customSmallerIsBetter
-  cachix/install-nix-action@v17:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v18:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v19:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v20:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v21:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v22:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v23:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v24:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v25:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v26:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v27:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v29:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v30:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v31:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-  cachix/install-nix-action@v32:
-    inputs:
-      install_options:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
   codecov/codecov-action@v3:
     inputs:
       env_vars:
@@ -2842,11 +2322,6 @@ actions:
           type: string
   codecov/codecov-action@v5:
     inputs:
-      binary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       env_vars:
         actual:
           type: list
@@ -2879,11 +2354,6 @@ actions:
           - linux
           - macos
           - windows
-        inferred:
-          type: string
-      override_pr:
-        actual:
-          type: integer
         inferred:
           type: string
       plugins:
@@ -2915,11 +2385,6 @@ actions:
           - coverage
   codecov/codecov-action@v6:
     inputs:
-      binary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       env_vars:
         actual:
           type: list
@@ -2952,11 +2417,6 @@ actions:
           - linux
           - macos
           - windows
-        inferred:
-          type: string
-      override_pr:
-        actual:
-          type: integer
         inferred:
           type: string
       plugins:
@@ -2988,11 +2448,6 @@ actions:
           - coverage
   codecov/codecov-action@v7:
     inputs:
-      binary:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       env_vars:
         actual:
           type: list
@@ -3027,11 +2482,6 @@ actions:
           - windows
         inferred:
           type: string
-      override_pr:
-        actual:
-          type: integer
-        inferred:
-          type: string
       plugins:
         actual:
           type: list
@@ -3059,222 +2509,6 @@ actions:
           allowed-values:
           - test_results
           - coverage
-  cycjimmy/semantic-release-action@v3:
-    inputs:
-      extends:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      extra_plugins:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      new_release_major_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_minor_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_patch_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  cycjimmy/semantic-release-action@v4:
-    inputs:
-      extends:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      extra_plugins:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      new_release_major_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_minor_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_patch_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  cycjimmy/semantic-release-action@v5:
-    inputs:
-      extends:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      extra_plugins:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      new_release_major_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_minor_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_patch_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  cycjimmy/semantic-release-action@v6:
-    inputs:
-      extends:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      extra_plugins:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      new_release_major_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_minor_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_patch_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  cycjimmy/semantic-release-action@v7:
-    inputs:
-      extends:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      extra_plugins:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      new_release_major_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_minor_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_patch_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-  cycjimmy/semantic-release-action@v8:
-    inputs:
-      extends:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      extra_plugins:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-    outputs:
-      new_release_major_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_minor_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
-      new_release_patch_version:
-        actual:
-          type: integer
-        inferred:
-          type: string
   docker/build-push-action@v2:
     inputs:
       labels:
@@ -4354,11 +3588,6 @@ actions:
           type: string
   enricomi/publish-unit-test-result-action@v2:
     inputs:
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       check_run_annotations:
         actual:
           type: list
@@ -4423,11 +3652,6 @@ actions:
             type: string
         inferred:
           type: string
-      large_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       nunit_files:
         actual:
           type: list
@@ -4448,12 +3672,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
-      test_changes_limit:
-        actual:
           type: integer
-        inferred:
-          type: string
       trx_files:
         actual:
           type: list
@@ -4472,11 +3691,6 @@ actions:
           type: string
   enricomi/publish-unit-test-result-action@v2/composite:
     inputs:
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       check_run_annotations:
         actual:
           type: list
@@ -4541,11 +3755,6 @@ actions:
             type: string
         inferred:
           type: string
-      large_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       nunit_files:
         actual:
           type: list
@@ -4566,12 +3775,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
-      test_changes_limit:
-        actual:
           type: integer
-        inferred:
-          type: string
       trx_files:
         actual:
           type: list
@@ -4590,11 +3794,6 @@ actions:
           type: string
   enricomi/publish-unit-test-result-action@v2/linux:
     inputs:
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       check_run_annotations:
         actual:
           type: list
@@ -4659,11 +3858,6 @@ actions:
             type: string
         inferred:
           type: string
-      large_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       nunit_files:
         actual:
           type: list
@@ -4684,12 +3878,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
-      test_changes_limit:
-        actual:
           type: integer
-        inferred:
-          type: string
       trx_files:
         actual:
           type: list
@@ -4708,11 +3897,6 @@ actions:
           type: string
   enricomi/publish-unit-test-result-action@v2/macos:
     inputs:
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       check_run_annotations:
         actual:
           type: list
@@ -4777,11 +3961,6 @@ actions:
             type: string
         inferred:
           type: string
-      large_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       nunit_files:
         actual:
           type: list
@@ -4802,12 +3981,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
-      test_changes_limit:
-        actual:
           type: integer
-        inferred:
-          type: string
       trx_files:
         actual:
           type: list
@@ -4826,11 +4000,6 @@ actions:
           type: string
   enricomi/publish-unit-test-result-action@v2/windows:
     inputs:
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       check_run_annotations:
         actual:
           type: list
@@ -4895,11 +4064,6 @@ actions:
             type: string
         inferred:
           type: string
-      large_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       nunit_files:
         actual:
           type: list
@@ -4920,12 +4084,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
-      test_changes_limit:
-        actual:
           type: integer
-        inferred:
-          type: string
       trx_files:
         actual:
           type: list
@@ -4944,11 +4103,6 @@ actions:
           type: string
   enricomi/publish-unit-test-result-action@v2/windows/bash:
     inputs:
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       check_run_annotations:
         actual:
           type: list
@@ -5013,11 +4167,6 @@ actions:
             type: string
         inferred:
           type: string
-      large_files:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       nunit_files:
         actual:
           type: list
@@ -5038,12 +4187,7 @@ actions:
         actual:
           type: float
         inferred:
-          type: string
-      test_changes_limit:
-        actual:
           type: integer
-        inferred:
-          type: string
       trx_files:
         actual:
           type: list
@@ -5143,16 +4287,6 @@ actions:
             type: string
   github/codeql-action@v2/analyze:
     inputs:
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
-      checkout_path:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       cleanup-level:
         actual:
           type: enum
@@ -5197,13 +4331,6 @@ actions:
           type: boolean
         inferred:
           type: string
-  github/codeql-action@v2/upload-sarif:
-    inputs:
-      checkout_path:
-        actual:
-          type: string
-        inferred:
-          type: boolean
   github/codeql-action@v3/analyze:
     inputs:
       add-snippets:
@@ -5211,16 +4338,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
-      checkout_path:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       cleanup-level:
         actual:
           type: enum
@@ -5284,13 +4401,6 @@ actions:
           type: boolean
         inferred:
           type: string
-  github/codeql-action@v3/upload-sarif:
-    inputs:
-      checkout_path:
-        actual:
-          type: string
-        inferred:
-          type: boolean
   github/codeql-action@v4/analyze:
     inputs:
       add-snippets:
@@ -5298,16 +4408,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      check_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
-      checkout_path:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       cleanup-level:
         actual:
           type: enum
@@ -5371,13 +4471,6 @@ actions:
           type: boolean
         inferred:
           type: string
-  github/codeql-action@v4/upload-sarif:
-    inputs:
-      checkout_path:
-        actual:
-          type: string
-        inferred:
-          type: boolean
   google-github-actions/auth@v0:
     inputs:
       access_token_scopes:
@@ -5734,24 +4827,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       gradle-home-cache-strict-match:
         actual:
           type: string
@@ -5803,24 +4878,6 @@ actions:
             type: string
         inferred:
           type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
   gradle/actions@v4/setup-gradle:
     inputs:
       arguments:
@@ -5867,24 +4924,6 @@ actions:
       develocity-injection-enabled:
         actual:
           type: boolean
-        inferred:
-          type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
         inferred:
           type: string
   gradle/actions@v4/wrapper-validation:
@@ -5943,24 +4982,6 @@ actions:
             type: string
         inferred:
           type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
   gradle/actions@v5/setup-gradle:
     inputs:
       arguments:
@@ -6007,24 +5028,6 @@ actions:
       develocity-injection-enabled:
         actual:
           type: boolean
-        inferred:
-          type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
         inferred:
           type: string
   gradle/actions@v5/wrapper-validation:
@@ -6091,24 +5094,6 @@ actions:
             type: string
         inferred:
           type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
   gradle/actions@v6/setup-gradle:
     inputs:
       arguments:
@@ -6165,24 +5150,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
   gradle/actions@v6/wrapper-validation:
     outputs:
       failed-wrapper:
@@ -6195,24 +5162,6 @@ actions:
           type: string
   gradle/gradle-build-action@v2:
     inputs:
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
       gradle-home-cache-strict-match:
         actual:
           type: string
@@ -6246,24 +5195,6 @@ actions:
       develocity-injection-enabled:
         actual:
           type: boolean
-        inferred:
-          type: string
-      gradle-home-cache-excludes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: string
-      gradle-home-cache-includes:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
         inferred:
           type: string
       gradle-home-cache-strict-match:
@@ -6461,20 +5392,6 @@ actions:
             type: string
   jamesives/github-pages-deploy-action@v4:
     inputs:
-      clean-exclude:
-        actual:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-        inferred:
-          type: boolean
-      commit-message:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       silent:
         actual:
           type: boolean
@@ -6485,11 +5402,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      target-folder:
-        actual:
-          type: string
-        inferred:
-          type: boolean
     outputs:
       deployment-status:
         actual:
@@ -6594,11 +5506,6 @@ actions:
           type: boolean
   pbrisbin/setup-tool-action@v2:
     inputs:
-      github-token:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       no-extract:
         actual:
           type: boolean
@@ -6638,11 +5545,6 @@ actions:
 
           list-item:
             type: string
-      issue-number:
-        actual:
-          type: integer
-        inferred:
-          type: string
       labels:
         actual:
           type: list
@@ -6675,11 +5577,6 @@ actions:
 
           list-item:
             type: string
-      issue-number:
-        actual:
-          type: integer
-        inferred:
-          type: string
       labels:
         actual:
           type: list
@@ -6712,11 +5609,6 @@ actions:
 
           list-item:
             type: string
-      issue-number:
-        actual:
-          type: integer
-        inferred:
-          type: string
       labels:
         actual:
           type: list
@@ -6850,11 +5742,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      discussion_category_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
     outputs:
       id:
         actual:
@@ -6868,11 +5755,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      discussion_category_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       preserve_order:
         actual:
           type: boolean
@@ -6891,11 +5773,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      discussion_category_name:
-        actual:
-          type: string
-        inferred:
-          type: boolean
       preserve_order:
         actual:
           type: boolean
@@ -6907,44 +5784,8 @@ actions:
           type: integer
         inferred:
           type: string
-  stefanzweifel/git-auto-commit-action@v4:
-    outputs:
-      changes_detected:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-  stefanzweifel/git-auto-commit-action@v5:
-    outputs:
-      changes_detected:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      create_git_tag_only:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-  stefanzweifel/git-auto-commit-action@v6:
-    outputs:
-      changes_detected:
-        actual:
-          type: boolean
-        inferred:
-          type: string
-      create_git_tag_only:
-        actual:
-          type: boolean
-        inferred:
-          type: string
   stefanzweifel/git-auto-commit-action@v7:
     outputs:
-      changes_detected:
-        actual:
-          type: boolean
-        inferred:
-          type: string
       create_git_tag_only:
         actual:
           type: boolean
