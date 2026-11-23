@@ -280,204 +280,10 @@ actions:
           type: string
   actions/create-github-app-token@v2:
     inputs:
-      permission-actions:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-administration:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-checks:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-codespaces:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      permission-contents:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-custom-properties-for-organizations:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-dependabot-secrets:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-deployments:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-email-addresses:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-enterprise-custom-properties-for-organizations:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-environments:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-followers:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-git-ssh-keys:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-gpg-keys:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-interaction-limits:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-issues:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-members:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-metadata:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      permission-organization-administration:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-announcement-banners:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
       permission-organization-copilot-seat-management:
         actual:
           type: enum
           allowed-values:
-          - write
-        inferred:
-          type: string
-      permission-organization-custom-org-roles:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-custom-properties:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-organization-custom-roles:
-        actual:
-          type: enum
-          allowed-values:
-          - read
           - write
         inferred:
           type: string
@@ -488,38 +294,6 @@ actions:
           - read
         inferred:
           type: string
-      permission-organization-hooks:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-packages:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-personal-access-token-requests:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-personal-access-tokens:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
       permission-organization-plan:
         actual:
           type: enum
@@ -527,160 +301,10 @@ actions:
           - read
         inferred:
           type: string
-      permission-organization-projects:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-organization-secrets:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-self-hosted-runners:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-user-blocking:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-packages:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-pages:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
       permission-profile:
         actual:
           type: enum
           allowed-values:
-          - write
-        inferred:
-          type: string
-      permission-pull-requests:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-repository-custom-properties:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-repository-hooks:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-repository-projects:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-secret-scanning-alerts:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-secrets:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-security-events:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-single-file:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-starring:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      permission-statuses:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-team-discussions:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-vulnerability-alerts:
-        actual:
-          type: enum
-          allowed-values:
-          - read
           - write
         inferred:
           type: string
@@ -699,301 +323,21 @@ actions:
           type: string
   actions/create-github-app-token@v3:
     inputs:
-      permission-actions:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-administration:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-artifact-metadata:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-attestations:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-checks:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-code-quality:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-codespaces:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      permission-contents:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-custom-properties-for-organizations:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-dependabot-secrets:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-deployments:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-discussions:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-email-addresses:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-enterprise-custom-properties-for-organizations:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-environments:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-followers:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-git-ssh-keys:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-gpg-keys:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-interaction-limits:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-issues:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-members:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-merge-queues:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-metadata:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      permission-organization-administration:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-announcement-banners:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-copilot-agent-settings:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
       permission-organization-copilot-seat-management:
         actual:
           type: enum
           allowed-values:
           - write
         inferred:
-          type: string
-      permission-organization-custom-org-roles:
-        actual:
           type: enum
           allowed-values:
           - read
           - write
-        inferred:
-          type: string
-      permission-organization-custom-properties:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-organization-custom-roles:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
       permission-organization-events:
         actual:
           type: enum
           allowed-values:
           - read
-        inferred:
-          type: string
-      permission-organization-external-properties-for-repos:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-organization-hooks:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-packages:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-personal-access-token-requests:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-personal-access-tokens:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
         inferred:
           type: string
       permission-organization-plan:
@@ -1003,152 +347,10 @@ actions:
           - read
         inferred:
           type: string
-      permission-organization-projects:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-organization-secrets:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-self-hosted-runners:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-organization-user-blocking:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-packages:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-pages:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
       permission-profile:
         actual:
           type: enum
           allowed-values:
-          - write
-        inferred:
-          type: string
-      permission-pull-requests:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-repository-custom-properties:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-repository-hooks:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-repository-projects:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-          - admin
-        inferred:
-          type: string
-      permission-secret-scanning-alerts:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-secrets:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-security-events:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-single-file:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-starring:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: list
-          separator: |2+
-
-          list-item:
-            type: string
-      permission-statuses:
-        actual:
-          type: enum
-          allowed-values:
-          - read
-          - write
-        inferred:
-          type: string
-      permission-vulnerability-alerts:
-        actual:
-          type: enum
-          allowed-values:
-          - read
           - write
         inferred:
           type: string
@@ -1588,7 +790,10 @@ actions:
           - maven
           - gradle
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - maven
+          - gradle
       distribution:
         actual:
           type: enum
@@ -1641,7 +846,11 @@ actions:
           - gradle
           - sbt
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - maven
+          - gradle
+          - sbt
       distribution:
         actual:
           type: enum
@@ -1696,7 +905,11 @@ actions:
           - gradle
           - sbt
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - maven
+          - gradle
+          - sbt
       cache-dependency-path:
         actual:
           type: string
@@ -1760,7 +973,11 @@ actions:
           - gradle
           - sbt
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - maven
+          - gradle
+          - sbt
       cache-dependency-path:
         actual:
           type: string
@@ -1824,7 +1041,11 @@ actions:
           - gradle
           - sbt
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - maven
+          - gradle
+          - sbt
       cache-dependency-path:
         actual:
           type: string
@@ -4029,7 +3250,10 @@ actions:
           - EC2
           - FARGATE
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - FARGATE
+          - EC2
       wait-for-minutes:
         actual:
           type: integer
@@ -4434,7 +3658,18 @@ actions:
           - customBiggerIsBetter
           - customSmallerIsBetter
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - cargo
+          - go
+          - benchmarkjs
+          - pytest
+          - googlecpp
+          - catch2
+          - julia
+          - benchmarkdotnet
+          - customBiggerIsBetter
+          - customSmallerIsBetter
   cachix/install-nix-action@v17:
     inputs:
       install_options:
@@ -4873,7 +4108,10 @@ actions:
           - coverage
           - test_results
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - test_results
+          - coverage
       use_legacy_upload_endpoint:
         actual:
           type: boolean
@@ -4968,7 +4206,10 @@ actions:
           - coverage
           - test_results
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - test_results
+          - coverage
       use_legacy_upload_endpoint:
         actual:
           type: boolean
@@ -5063,7 +4304,10 @@ actions:
           - coverage
           - test_results
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - test_results
+          - coverage
       use_legacy_upload_endpoint:
         actual:
           type: boolean
@@ -6654,7 +5898,10 @@ actions:
           - errors
           - off
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - always
+          - changes
       deduplicate_classes_by_file_name:
         actual:
           type: boolean
@@ -6668,7 +5915,10 @@ actions:
           - errors
           - test failures
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - nothing
+          - errors
       files:
         actual:
           type: list
@@ -6676,7 +5926,12 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - '*'
+          - '**'
+          - '?'
+          - '[]'
       github_retries:
         actual:
           type: integer
@@ -6731,16 +5986,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      report_suite_logs:
-        actual:
-          type: enum
-          allowed-values:
-          - info
-          - error
-          - any
-          - none
-        inferred:
-          type: string
       search_pull_requests:
         actual:
           type: boolean
@@ -6764,14 +6009,6 @@ actions:
       test_changes_limit:
         actual:
           type: integer
-        inferred:
-          type: string
-      time_unit:
-        actual:
-          type: enum
-          allowed-values:
-          - seconds
-          - milliseconds
         inferred:
           type: string
       trx_files:
@@ -6824,7 +6061,10 @@ actions:
           - errors
           - off
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - always
+          - changes
       deduplicate_classes_by_file_name:
         actual:
           type: boolean
@@ -6838,7 +6078,10 @@ actions:
           - errors
           - test failures
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - nothing
+          - errors
       files:
         actual:
           type: list
@@ -6846,7 +6089,12 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - '*'
+          - '**'
+          - '?'
+          - '[]'
       github_retries:
         actual:
           type: integer
@@ -6901,16 +6149,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      report_suite_logs:
-        actual:
-          type: enum
-          allowed-values:
-          - info
-          - error
-          - any
-          - none
-        inferred:
-          type: string
       search_pull_requests:
         actual:
           type: boolean
@@ -6934,14 +6172,6 @@ actions:
       test_changes_limit:
         actual:
           type: integer
-        inferred:
-          type: string
-      time_unit:
-        actual:
-          type: enum
-          allowed-values:
-          - seconds
-          - milliseconds
         inferred:
           type: string
       trx_files:
@@ -6994,7 +6224,10 @@ actions:
           - errors
           - off
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - always
+          - changes
       deduplicate_classes_by_file_name:
         actual:
           type: boolean
@@ -7008,7 +6241,10 @@ actions:
           - errors
           - test failures
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - nothing
+          - errors
       files:
         actual:
           type: list
@@ -7016,7 +6252,12 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - '*'
+          - '**'
+          - '?'
+          - '[]'
       github_retries:
         actual:
           type: integer
@@ -7071,16 +6312,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      report_suite_logs:
-        actual:
-          type: enum
-          allowed-values:
-          - info
-          - error
-          - any
-          - none
-        inferred:
-          type: string
       search_pull_requests:
         actual:
           type: boolean
@@ -7104,14 +6335,6 @@ actions:
       test_changes_limit:
         actual:
           type: integer
-        inferred:
-          type: string
-      time_unit:
-        actual:
-          type: enum
-          allowed-values:
-          - seconds
-          - milliseconds
         inferred:
           type: string
       trx_files:
@@ -7164,7 +6387,10 @@ actions:
           - errors
           - off
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - always
+          - changes
       deduplicate_classes_by_file_name:
         actual:
           type: boolean
@@ -7178,7 +6404,10 @@ actions:
           - errors
           - test failures
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - nothing
+          - errors
       files:
         actual:
           type: list
@@ -7186,7 +6415,12 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - '*'
+          - '**'
+          - '?'
+          - '[]'
       github_retries:
         actual:
           type: integer
@@ -7241,16 +6475,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      report_suite_logs:
-        actual:
-          type: enum
-          allowed-values:
-          - info
-          - error
-          - any
-          - none
-        inferred:
-          type: string
       search_pull_requests:
         actual:
           type: boolean
@@ -7274,14 +6498,6 @@ actions:
       test_changes_limit:
         actual:
           type: integer
-        inferred:
-          type: string
-      time_unit:
-        actual:
-          type: enum
-          allowed-values:
-          - seconds
-          - milliseconds
         inferred:
           type: string
       trx_files:
@@ -7334,7 +6550,10 @@ actions:
           - errors
           - off
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - always
+          - changes
       deduplicate_classes_by_file_name:
         actual:
           type: boolean
@@ -7348,7 +6567,10 @@ actions:
           - errors
           - test failures
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - nothing
+          - errors
       files:
         actual:
           type: list
@@ -7356,7 +6578,12 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - '*'
+          - '**'
+          - '?'
+          - '[]'
       github_retries:
         actual:
           type: integer
@@ -7411,16 +6638,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      report_suite_logs:
-        actual:
-          type: enum
-          allowed-values:
-          - info
-          - error
-          - any
-          - none
-        inferred:
-          type: string
       search_pull_requests:
         actual:
           type: boolean
@@ -7444,14 +6661,6 @@ actions:
       test_changes_limit:
         actual:
           type: integer
-        inferred:
-          type: string
-      time_unit:
-        actual:
-          type: enum
-          allowed-values:
-          - seconds
-          - milliseconds
         inferred:
           type: string
       trx_files:
@@ -7504,7 +6713,10 @@ actions:
           - errors
           - off
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - always
+          - changes
       deduplicate_classes_by_file_name:
         actual:
           type: boolean
@@ -7518,7 +6730,10 @@ actions:
           - errors
           - test failures
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - nothing
+          - errors
       files:
         actual:
           type: list
@@ -7526,7 +6741,12 @@ actions:
           list-item:
             type: string
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - '*'
+          - '**'
+          - '?'
+          - '[]'
       github_retries:
         actual:
           type: integer
@@ -7581,16 +6801,6 @@ actions:
           type: boolean
         inferred:
           type: string
-      report_suite_logs:
-        actual:
-          type: enum
-          allowed-values:
-          - info
-          - error
-          - any
-          - none
-        inferred:
-          type: string
       search_pull_requests:
         actual:
           type: boolean
@@ -7614,14 +6824,6 @@ actions:
       test_changes_limit:
         actual:
           type: integer
-        inferred:
-          type: string
-      time_unit:
-        actual:
-          type: enum
-          allowed-values:
-          - seconds
-          - milliseconds
         inferred:
           type: string
       trx_files:
@@ -7716,14 +6918,6 @@ actions:
       reverse_order:
         actual:
           type: boolean
-        inferred:
-          type: string
-      sort_order:
-        actual:
-          type: enum
-          allowed-values:
-          - asc
-          - desc
         inferred:
           type: string
       tag_post_pre_newline:
@@ -8464,24 +7658,6 @@ actions:
             type: string
   gradle/actions@v3/setup-gradle:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       artifact-retention-days:
         actual:
           type: integer
@@ -8497,7 +7673,14 @@ actions:
           - download-and-submit
           - clear
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - disabled
+          - generate
+          - generate-and-submit
+          - generate-and-upload
+          - download-and-submit
+          - clear
       develocity-allow-untrusted-server:
         actual:
           type: boolean
@@ -8548,24 +7731,6 @@ actions:
           type: boolean
   gradle/actions@v4/dependency-submission:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       additional-arguments:
         actual:
           type: list
@@ -8603,7 +7768,10 @@ actions:
           - on-success
           - always
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - never
+          - always
       dependency-graph:
         actual:
           type: enum
@@ -8647,24 +7815,6 @@ actions:
           type: string
   gradle/actions@v4/setup-gradle:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       arguments:
         actual:
           type: list
@@ -8702,19 +7852,10 @@ actions:
           - on-success
           - always
         inferred:
-          type: string
-      dependency-graph:
-        actual:
           type: enum
           allowed-values:
-          - disabled
-          - generate
-          - generate-and-submit
-          - generate-submit-and-upload
-          - generate-and-upload
-          - download-and-submit
-        inferred:
-          type: string
+          - never
+          - always
       develocity-allow-untrusted-server:
         actual:
           type: boolean
@@ -8776,24 +7917,6 @@ actions:
           type: string
   gradle/actions@v5/dependency-submission:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       additional-arguments:
         actual:
           type: list
@@ -8831,7 +7954,10 @@ actions:
           - on-success
           - always
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - never
+          - always
       dependency-graph:
         actual:
           type: enum
@@ -8875,24 +8001,6 @@ actions:
           type: string
   gradle/actions@v5/setup-gradle:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       arguments:
         actual:
           type: list
@@ -8930,19 +8038,10 @@ actions:
           - on-success
           - always
         inferred:
-          type: string
-      dependency-graph:
-        actual:
           type: enum
           allowed-values:
-          - disabled
-          - generate
-          - generate-and-submit
-          - generate-submit-and-upload
-          - generate-and-upload
-          - download-and-submit
-        inferred:
-          type: string
+          - never
+          - always
       develocity-allow-untrusted-server:
         actual:
           type: boolean
@@ -9004,24 +8103,6 @@ actions:
           type: string
   gradle/actions@v6/dependency-submission:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       additional-arguments:
         actual:
           type: list
@@ -9059,7 +8140,10 @@ actions:
           - on-success
           - always
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - never
+          - always
       cache-provider:
         actual:
           type: enum
@@ -9111,24 +8195,6 @@ actions:
           type: string
   gradle/actions@v6/setup-gradle:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       arguments:
         actual:
           type: list
@@ -9166,25 +8232,16 @@ actions:
           - on-success
           - always
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - never
+          - always
       cache-provider:
         actual:
           type: enum
           allowed-values:
           - enhanced
           - basic
-        inferred:
-          type: string
-      dependency-graph:
-        actual:
-          type: enum
-          allowed-values:
-          - disabled
-          - generate
-          - generate-and-submit
-          - generate-submit-and-upload
-          - generate-and-upload
-          - download-and-submit
         inferred:
           type: string
       develocity-allow-untrusted-server:
@@ -9253,17 +8310,6 @@ actions:
           type: integer
         inferred:
           type: string
-      dependency-graph:
-        actual:
-          type: enum
-          allowed-values:
-          - disabled
-          - generate
-          - generate-and-submit
-          - download-and-submit
-          - clear
-        inferred:
-          type: string
       gradle-home-cache-excludes:
         actual:
           type: list
@@ -9289,24 +8335,6 @@ actions:
           type: boolean
   gradle/gradle-build-action@v3:
     inputs:
-      add-job-summary:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
-      add-job-summary-as-pr-comment:
-        actual:
-          type: enum
-          allowed-values:
-          - never
-          - always
-          - on-failure
-        inferred:
-          type: string
       artifact-retention-days:
         actual:
           type: integer
@@ -9322,7 +8350,14 @@ actions:
           - download-and-submit
           - clear
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - disabled
+          - generate
+          - generate-and-submit
+          - generate-and-upload
+          - download-and-submit
+          - clear
       develocity-allow-untrusted-server:
         actual:
           type: boolean
@@ -10045,15 +9080,6 @@ actions:
           type: string
         inferred:
           type: boolean
-      make_latest:
-        actual:
-          type: enum
-          allowed-values:
-          - 'true'
-          - 'false'
-          - legacy
-        inferred:
-          type: string
       overwrite_files:
         actual:
           type: boolean
@@ -10082,15 +9108,6 @@ actions:
           type: string
         inferred:
           type: boolean
-      make_latest:
-        actual:
-          type: enum
-          allowed-values:
-          - 'true'
-          - 'false'
-          - legacy
-        inferred:
-          type: string
       overwrite_files:
         actual:
           type: boolean
@@ -10149,7 +9166,10 @@ actions:
         actual:
           type: boolean
         inferred:
-          type: string
+          type: enum
+          allowed-values:
+          - 'true'
+          - create_git_tag_only
   subosito/flutter-action@v2:
     inputs:
       architecture:

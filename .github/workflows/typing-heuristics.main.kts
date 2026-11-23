@@ -36,6 +36,11 @@ object TypingHeuristics {
     private val multilineRegex = Regex("""\bmultiline\b""", RegexOption.IGNORE_CASE)
     private val commaSeparatedRegex = Regex("""\bcomma[\s-]+separated\b""", RegexOption.IGNORE_CASE)
     private val optionsRegex = Regex("""\boptions\s*:\s*\[([^\]]+)\]""", RegexOption.IGNORE_CASE)
+    private val quotedValuesCueRegex = Regex(
+        """\b(can be|valid values|values are|possible values|one of|supported|set to|supports)\b[^.;\n]{0,200}""",
+        RegexOption.IGNORE_CASE,
+    )
+    private val quotedValueRegex = Regex("""'([^']+)'|"([^"]+)"|`([^`]+)`""")
     private val booleanDescriptionPrefixRegex = Regex("""^\s*(whether|when)\b""", RegexOption.IGNORE_CASE)
     private val booleanDescriptionWordRegex = Regex(
         """\b(boolean|shorthand for|to false|disable|prevent)\b""",
@@ -70,7 +75,7 @@ object TypingHeuristics {
                 type = "string",
                 reason = "the action manifest declares `type: $declaredType`",
             )
-            else -> enumHeuristic(map) ?: listHeuristic(map) ?: run {
+            else -> enumHeuristic(map) ?: quotedValuesEnumHeuristic(map) ?: listHeuristic(map) ?: run {
                 val heuristicReason = booleanHeuristicReason(inputName, map)
                 if (heuristicReason != null) {
                     HeuristicType(type = "boolean", reason = heuristicReason)
@@ -108,6 +113,29 @@ object TypingHeuristics {
         return HeuristicType(
             type = "enum",
             reason = "the input description lists options",
+            allowedValues = allowedValues,
+        )
+    }
+
+    private fun quotedValuesEnumHeuristic(definition: Map<*, *>): HeuristicType? {
+        val description = definition["description"] as? String ?: return null
+        val snippet = quotedValuesCueRegex.find(description)?.value ?: return null
+        val allowedValues = quotedValueRegex.findAll(snippet)
+            .map { match -> match.groupValues.drop(1).first { it.isNotEmpty() }.trim() }
+            .toList()
+            .takeIf { it.size in 2..12 }
+            ?: return null
+
+        val loweredValues = allowedValues.map { it.lowercase() }.toSet()
+        if (loweredValues == setOf("true", "false") ||
+            loweredValues == setOf("true", "always-true", "false")
+        ) {
+            return null
+        }
+
+        return HeuristicType(
+            type = "enum",
+            reason = "the description lists quoted allowed values",
             allowedValues = allowedValues,
         )
     }
@@ -447,7 +475,7 @@ private class TypingHeuristicsTest : FunSpec({
     }
 
     withData(
-        nameFn = { (description, _) -> "keeps string typing for quoted choices in `$description`" },
+        nameFn = { (description, _) -> "infers enum from quoted choices in `$description`" },
         listOf(
             "Can be set to 'read' or 'write'." to listOf("read", "write"),
             "It can be \"maven\", \"gradle\" or \"sbt\"." to listOf("maven", "gradle", "sbt"),
@@ -457,10 +485,11 @@ private class TypingHeuristicsTest : FunSpec({
                 listOf("production", "staging"),
             "The log level can be 'debug', 'info', or 'warn'." to listOf("debug", "info", "warn"),
         ),
-    ) { (description, _) ->
+    ) { (description, allowedValues) ->
         TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
-            type = "string",
-            reason = null,
+            type = "enum",
+            reason = "the description lists quoted allowed values",
+            allowedValues = allowedValues,
             description = description,
         )
     }
