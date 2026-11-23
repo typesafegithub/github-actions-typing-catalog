@@ -253,6 +253,69 @@ private class TypingHeuristicsTest : FunSpec({
         ) shouldBe expected.copy(description = "Not a boolean description")
     }
 
+    withData(
+        nameFn = { (inputName, _) -> "keeps string typing for input `$inputName` before boolean-prefix support" },
+        listOf(
+            "ignore-cache" to "ignore",
+            "show-progress" to "show",
+            "enable-cache" to "enable",
+            "disable-cache" to "disable",
+            "include-paths" to "include",
+            "dry-run" to "dry",
+            "fail-on-warnings" to "fail-on",
+            "force-push" to "force",
+            "lookup-only" to "lookup",
+            "ascending-order" to "ascending",
+            "delete-branch" to "delete",
+            "only-changed" to "only",
+            "debug-only" to "debug-only",
+            "always-publish" to "always",
+            "keep-files" to "keep",
+            "clean-workspace" to "clean",
+            "reset-cache" to "reset",
+        ),
+    ) { (inputName, _) ->
+        TypingHeuristics.inferType(
+            linkedMapOf("description" to "Some arbitrary text"),
+            inputName = inputName,
+        ) shouldBe HeuristicType(
+            type = "string",
+            reason = null,
+            description = "Some arbitrary text",
+        )
+    }
+
+    withData(
+        nameFn = { description -> "keeps string typing for description `$description`" },
+        listOf(
+            "Whether to cache dependencies.",
+            "When enabled, publish the artifact.",
+            "A boolean flag controlling caching.",
+            "This is a shorthand for skipping tests.",
+            "Set the flag to false to opt out.",
+            "Disable caching for this step.",
+            "Prevent the deployment from continuing.",
+        ),
+    ) { description ->
+        listOf(null, "some-input").forEach { inputName ->
+            TypingHeuristics.inferType(linkedMapOf("description" to description), inputName = inputName) shouldBe
+                HeuristicType(type = "string", reason = null, description = description)
+        }
+    }
+
+    test("keeps string typing for descriptions that explicitly accept strings") {
+        listOf(
+            "Whether to push the commit. It can also be used as git push arguments.",
+            "Whether to mask this value. Valid values are 'true' and 'false'.",
+        ).forEach { description ->
+            TypingHeuristics.inferType(linkedMapOf("description" to description)) shouldBe HeuristicType(
+                type = "string",
+                reason = null,
+                description = description,
+            )
+        }
+    }
+
     test("infers booleans from descriptions starting with the word If") {
         TypingHeuristics.inferType(
             linkedMapOf("description" to "If the token is set, use it"),
