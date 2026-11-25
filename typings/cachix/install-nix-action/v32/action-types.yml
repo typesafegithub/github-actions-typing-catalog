@@ -17,3 +17,5 @@ inputs:
     type: boolean
   set_as_trusted_user:
     type: boolean
+  install_sha256:
+    type: string
